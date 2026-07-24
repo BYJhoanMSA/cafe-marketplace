@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   // Optimización de imágenes
   // ============================================================
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         // Cloudflare R2 con custom domain
