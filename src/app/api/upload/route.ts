@@ -48,7 +48,10 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer())
 
     // Obtener configuración de optimización
-    const config = IMAGE_CONFIGS[type] || IMAGE_CONFIGS.product
+    const config = IMAGE_CONFIGS[type] ?? IMAGE_CONFIGS.product
+    if (!config) {
+      return NextResponse.json({ error: 'Configuración de imagen no encontrada' }, { status: 500 })
+    }
 
     // Optimizar con sharp: resize + convert to WebP
     const optimizedBuffer = await sharp(buffer)
