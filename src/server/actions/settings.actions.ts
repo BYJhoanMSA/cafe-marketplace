@@ -1,6 +1,7 @@
 'use server'
 
 import { prisma } from '@/server/db/client'
+import { auth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 
 export type HomepageFeature = {
@@ -111,6 +112,11 @@ export async function getGrindTypes(): Promise<GrindTypeOption[]> {
 }
 
 export async function updateHomepageSettings(data: HomepageConfig) {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'admin') {
+    return { success: false, error: 'No autorizado' }
+  }
+
   try {
     const jsonString = JSON.stringify(data)
     

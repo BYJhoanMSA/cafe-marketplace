@@ -6,8 +6,15 @@ import { signIn } from '@/lib/auth'
 import { prisma } from '@/server/db/client'
 import { RegisterSchema, LoginSchema, type RegisterInput, type LoginInput } from '../validators/user.schema'
 import { AuthError as AuthJsError } from 'next-auth'
+import { rateLimit } from '@/server/cache/rate-limit'
+import { headers } from 'next/headers'
 
 export async function loginUser(data: LoginInput) {
+  const ip = (await headers()).get('x-forwarded-for') ?? 'unknown'
+  if (!rateLimit(`login:${ip}`, 5, 300)) {
+    return { success: false, error: 'Demasiados intentos. Intenta de nuevo en 5 minutos.' }
+  }
+
   try {
     const parsed = LoginSchema.safeParse(data)
     if (!parsed.success) {

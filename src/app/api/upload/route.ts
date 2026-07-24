@@ -8,6 +8,7 @@ import { join } from 'path'
 import { existsSync } from 'fs'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
+import { unlink } from 'fs/promises'
 
 // Configuraciones de optimización por tipo de imagen
 const IMAGE_CONFIGS: Record<string, { width: number; height: number; quality: number }> = {
@@ -29,12 +30,18 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File | null
     const type = (formData.get('type') as string) || 'product'
 
+    // Validar type contra valores permitidos (anti path traversal)
+    const allowedTypes = ['product', 'hero', 'thumbnail', 'feature']
+    if (!allowedTypes.includes(type)) {
+      return NextResponse.json({ error: 'Tipo de imagen no válido' }, { status: 400 })
+    }
+
     if (!file) {
       return NextResponse.json({ error: 'No se envió ningún archivo' }, { status: 400 })
     }
 
     // Validar tipo de archivo
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json({ error: 'Tipo de archivo no permitido. Use JPG, PNG o WebP.' }, { status: 400 })
     }
@@ -120,12 +127,17 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { url } = await req.json()
-    if (!url || !url.startsWith('/uploads/')) {
+    if (!url || typeof url !== 'string') {
       return NextResponse.json({ error: 'URL inválida' }, { status: 400 })
     }
 
-    const { unlink } = await import('fs/promises')
-    const filePath = join(process.cwd(), 'public', url)
+    // Validación estricta anti path traversal
+    const normalized = url.replace(/\\/g, '/')
+    if (!normalized.startsWith('/uploads/') || normalized.includes('..') || normalized.includes('~')) {
+      return NextResponse.json({ error: 'URL inválida' }, { status: 400 })
+    }
+
+    const filePath = join(process.cwd(), 'public', normalized)
     try {
       await unlink(filePath)
     } catch {

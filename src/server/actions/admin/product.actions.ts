@@ -4,6 +4,40 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
 import { auth } from '@/lib/auth'
 import { slugify } from '@/lib/utils'
+import { z } from 'zod'
+
+const ProductSchema = z.object({
+  title: z.string().min(1).max(255),
+  slug: z.string().max(255).optional(),
+  description: z.string().min(1),
+  shortDescription: z.string().max(500).nullable().optional(),
+  vendorId: z.string().optional(),
+  categoryId: z.string().optional(),
+  originId: z.string().optional(),
+  regionName: z.string().optional(),
+  status: z.string().default('draft'),
+  roastLevel: z.string().min(1),
+  processingMethod: z.string().min(1),
+  altitudeMasl: z.string().nullable().optional(),
+  varietal: z.string().nullable().optional(),
+  farmName: z.string().nullable().optional(),
+  producerName: z.string().nullable().optional(),
+  cuppingScore: z.union([z.string(), z.number()]).nullable().optional(),
+  isFeatured: z.boolean().default(false),
+  isNew: z.boolean().default(false),
+  isLimited: z.boolean().default(false),
+  isOrganic: z.boolean().default(false),
+  isPublicity: z.boolean().default(false),
+  isFairTrade: z.boolean().default(false),
+  images: z.array(z.object({
+    url: z.string(),
+    alt: z.string(),
+    position: z.number(),
+  })).default([]),
+  imageUrls: z.array(z.string()).default([]),
+  flavorNotes: z.array(z.string()).default([]),
+  variants: z.array(z.any()).default([]),
+}).passthrough()
 
 export async function getAdminProducts() {
   const session = await auth()
@@ -28,10 +62,15 @@ export async function getAdminProducts() {
   return products
 }
 
-export async function createProduct(data: any) {
+export async function createProduct(data: Record<string, unknown>) {
   const session = await auth()
   if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
     throw new Error('Unauthorized')
+  }
+
+  const parsed = ProductSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: 'Datos inválidos: ' + parsed.error.errors.map(e => e.message).join(', ') }
   }
 
   try {
@@ -42,17 +81,19 @@ export async function createProduct(data: any) {
       return { success: false, error: 'Faltan datos base (Vendor, Category) en la DB.' }
     }
 
+    const d = parsed.data as any
+
     // Gestionar Origen por Región
-    let originId = data.originId
-    if (!originId && data.regionName) {
-      const regionSlug = slugify(`colombia-${data.regionName}`)
+    let originId = d.originId
+    if (!originId && d.regionName) {
+      const regionSlug = slugify(`colombia-${d.regionName}`)
       const origin = await prisma.origin.upsert({
         where: { slug: regionSlug },
-        update: { region: data.regionName },
+        update: { region: d.regionName },
         create: {
           country: 'Colombia',
           countryCode: 'CO',
-          region: data.regionName,
+          region: d.regionName,
           slug: regionSlug,
         }
       })
@@ -61,39 +102,39 @@ export async function createProduct(data: any) {
 
     if (!originId) {
       const defaultOrigin = await prisma.origin.findFirst()
-      originId = defaultOrigin?.id
+      originId = defaultOrigin?.id ?? ''
     }
 
     const product = await prisma.product.create({
       data: {
-        title: data.title,
-        slug: data.slug,
-        description: data.description,
-        status: data.status || 'draft',
-        roastLevel: data.roastLevel || 'medium',
-        processingMethod: data.processingMethod || 'washed',
-        farmName: data.farmName || null,
-        producerName: data.producerName || null,
-        altitudeMasl: data.altitudeMasl || null,
-        varietal: data.varietal || null,
-        cuppingScore: data.cuppingScore ? parseFloat(data.cuppingScore) : null,
-        isFeatured: data.isFeatured ?? false,
-        isNew: data.isNew ?? false,
-        isLimited: data.isLimited ?? false,
-        isOrganic: data.isOrganic ?? false,
-        isPublicity: data.isPublicity ?? false,
-        vendorId: data.vendorId || defaultVendor.id,
-        categoryId: data.categoryId || defaultCategory.id,
+        title: d.title,
+        slug: d.slug ?? '',
+        description: d.description,
+        status: d.status || 'draft',
+        roastLevel: d.roastLevel || 'medium',
+        processingMethod: d.processingMethod || 'washed',
+        farmName: d.farmName || null,
+        producerName: d.producerName || null,
+        altitudeMasl: d.altitudeMasl || null,
+        varietal: d.varietal || null,
+        cuppingScore: d.cuppingScore ? Number(d.cuppingScore) : null,
+        isFeatured: d.isFeatured ?? false,
+        isNew: d.isNew ?? false,
+        isLimited: d.isLimited ?? false,
+        isOrganic: d.isOrganic ?? false,
+        isPublicity: d.isPublicity ?? false,
+        vendorId: d.vendorId || defaultVendor.id,
+        categoryId: d.categoryId || defaultCategory.id,
         originId: originId,
         flavorNotes: {
-          create: (data.flavorNotes || []).map((note: string) => ({ note }))
+          create: (d.flavorNotes || []).map((note: string) => ({ note }))
         },
         // Guardar imágenes si vienen con el formulario
-        ...(data.images && data.images.length > 0 ? {
+        ...(d.images && d.images.length > 0 ? {
           images: {
-            create: data.images.map((img: any, i: number) => ({
+            create: d.images.map((img: any, i: number) => ({
               url: img.url,
-              alt: img.alt || data.title,
+              alt: img.alt || d.title,
               position: i,
               width: img.width || null,
               height: img.height || null,
