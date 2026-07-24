@@ -3,12 +3,10 @@
 // Optimiza con sharp antes de guardar en /public/uploads/
 
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
-import { existsSync } from 'fs'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
-import { unlink } from 'fs/promises'
 
 // Configuraciones de optimización por tipo de imagen
 const IMAGE_CONFIGS: Record<string, { width: number; height: number; quality: number }> = {
@@ -86,9 +84,7 @@ export async function POST(req: NextRequest) {
 
     // Crear directorio si no existe
     const uploadDir = join(process.cwd(), 'public', 'uploads', type)
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
+    await mkdir(uploadDir, { recursive: true })
 
     // Guardar archivos
     const filePath = join(uploadDir, fileName)
