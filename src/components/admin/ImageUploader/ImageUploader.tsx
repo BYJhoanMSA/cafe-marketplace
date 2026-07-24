@@ -103,6 +103,7 @@ export function ImageUploader({
 
   const handleRemove = useCallback(async (index: number) => {
     const img = images[index]
+    if (!img) return
     // Borrar del servidor si es un upload local
     if (img.url.startsWith('/uploads/')) {
       await fetch('/api/upload', {
@@ -119,8 +120,10 @@ export function ImageUploader({
     if (index === 0) return
     const updated = [...images]
     const [item] = updated.splice(index, 1)
-    updated.unshift(item)
-    onChange(updated.map((img, i) => ({ ...img, position: i })))
+    if (item) {
+      updated.unshift(item)
+      onChange(updated.map((img, i) => ({ ...img, position: i })))
+    }
   }, [images, onChange])
 
   const handleAltChange = useCallback((index: number, value: string) => {
