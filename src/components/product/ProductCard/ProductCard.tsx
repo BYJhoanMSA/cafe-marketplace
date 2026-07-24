@@ -6,13 +6,14 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, ShoppingBag, Star, Share2 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice, truncate, getThumbUrl } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
+import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import styles from './ProductCard.module.css'
 
 // ================================================================
@@ -103,6 +104,12 @@ export function ProductCard({
   const [sharedToast, setSharedToast] = useState(false)
   const [imgSrc, setImgSrc] = useState(getThumbUrl(product.imageUrl))
 
+  useEffect(() => {
+    const counts = getSocialCounts(product.id)
+    setFavorites(counts.favorites)
+    setShares(counts.shares)
+  }, [product.id])
+
   const hasDiscount = product.comparePrice && product.comparePrice > product.price
 
   async function handleAddToCart(e: React.MouseEvent) {
@@ -133,7 +140,8 @@ export function ProductCard({
 
     if (!canIncrementSocialCount(product.id)) return
 
-    setShares((s) => s + 1)
+    const newShares = incrementShares(product.id)
+    setShares(newShares)
 
     const shareData = {
       title: product.title,
@@ -155,7 +163,8 @@ export function ProductCard({
     e.stopPropagation()
 
     if (!isFavorited && canIncrementSocialCount(product.id)) {
-      setFavorites((s) => s + 1)
+      const newFavs = incrementFavorites(product.id)
+      setFavorites(newFavs)
     }
 
     toggleFavorite({

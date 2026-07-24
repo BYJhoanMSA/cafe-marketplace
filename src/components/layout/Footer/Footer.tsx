@@ -11,8 +11,9 @@ const FOOTER_LINKS = [
     links: [
       { href: '/', label: 'Inicio' },
       { href: '/catalogo', label: 'Catálogo de Cafés' },
-      { href: '/favoritos', label: 'Mis Favoritos' },
-      { href: '/buscar', label: 'Buscador de Granos' },
+      { href: '/origenes', label: 'Orígenes' },
+      { href: '/envio', label: 'Estrategia de Envío' },
+      { href: '/pqr', label: 'PQR' },
     ],
   },
   {

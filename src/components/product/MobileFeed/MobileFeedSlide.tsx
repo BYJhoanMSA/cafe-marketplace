@@ -3,10 +3,11 @@
 // src/components/product/MobileFeed/MobileFeedSlide.tsx
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin } from 'lucide-react'
 import { formatPrice, getThumbUrl } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
+import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { ReviewDrawer } from './ReviewDrawer'
@@ -30,10 +31,23 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
 
   const isFavorited = isFavorite(product.id)
 
+  useEffect(() => {
+    const counts = getSocialCounts(product.id)
+    setFavorites(counts.favorites)
+    setShares(counts.shares)
+  }, [product.id])
+
+  useEffect(() => {
+    const counts = getSocialCounts(product.id)
+    setFavorites(counts.favorites)
+    setShares(counts.shares)
+  }, [product.id])
+
   function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation()
     if (!isFavorited && canIncrementSocialCount(product.id)) {
-      setFavorites((s) => s + 1)
+      const newFavs = incrementFavorites(product.id)
+      setFavorites(newFavs)
     }
     toggleFavorite({
       id: product.id,
@@ -51,7 +65,8 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   function handleShare(e: React.MouseEvent) {
     e.stopPropagation()
     if (!canIncrementSocialCount(product.id)) return
-    setShares((s) => s + 1)
+    const newShares = incrementShares(product.id)
+    setShares(newShares)
     const shareData = {
       title: product.title,
       text: `Descubre ${product.title} en Cafe Seleccion`,

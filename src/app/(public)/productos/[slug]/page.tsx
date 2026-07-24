@@ -11,6 +11,7 @@ import { formatPrice } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
+import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
 import styles from './page.module.css'
 
@@ -59,6 +60,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [quantity, setQuantity] = useState(1)
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(0)
+
+  useEffect(() => {
+    const counts = getSocialCounts(slug)
+    setFavorites(counts.favorites)
+    setShares(counts.shares)
+  }, [slug])
 
   function findVariant(weightGrams: number | null, grindType: string | null) {
     return product?.variants?.find((v: any) => v.weightGrams === weightGrams && v.grindType === grindType) || null
@@ -116,7 +123,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   const handleShare = () => {
     if (!canIncrementSocialCount(product.id)) return
-    setShares((s: number) => s + 1)
+    const newShares = incrementShares(product.id)
+    setShares(newShares)
     const shareData = {
       title: product.title,
       text: `Descubre ${product.title} en Cafe Seleccion`,
@@ -131,7 +139,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   const handleToggleFavorite = () => {
     if (!isFavorited && canIncrementSocialCount(product.id)) {
-      setFavorites((s: number) => s + 1)
+      const newFavs = incrementFavorites(product.id)
+      setFavorites(newFavs)
     }
     toggleFavorite({
       id: product.id,

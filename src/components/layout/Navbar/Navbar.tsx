@@ -71,7 +71,9 @@ function useTheme() {
 // ================================================================
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
-  { href: '/favoritos', label: 'Favoritos' },
+  { href: '/origenes', label: 'Orígenes' },
+  { href: '/envio', label: 'Envío' },
+  { href: '/pqr', label: 'PQR' },
 ]
 
 // ================================================================
