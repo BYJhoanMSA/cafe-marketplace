@@ -1,6 +1,7 @@
 'use server'
 
 import { prisma } from '@/server/db/client'
+import { withCache } from '@/server/cache/node-cache'
 import type { Prisma } from '@prisma/client'
 
 type ProductWithRelations = Prisma.ProductGetPayload<{
@@ -15,9 +16,11 @@ type ProductWithRelations = Prisma.ProductGetPayload<{
 }>
 
 export async function searchProducts(query: string) {
-  try {
-    const trimmed = query.trim()
-    if (!trimmed) return []
+  const trimmed = query.trim()
+  if (!trimmed) return []
+
+  return withCache(`search:${trimmed.toLowerCase()}`, async () => {
+    try {
 
     const products = await prisma.product.findMany({
       where: {
@@ -88,4 +91,5 @@ export async function searchProducts(query: string) {
     console.error('Error searching products:', error)
     return []
   }
+  }, 300) // Cache 5 min
 }

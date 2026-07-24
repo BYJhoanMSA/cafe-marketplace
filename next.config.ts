@@ -60,6 +60,8 @@ const nextConfig: NextConfig = {
   // Producción
   // ============================================================
   reactStrictMode: true,
+  poweredByHeader: false,
+  serverExternalPackages: ['sharp'],
 
   // Standalone para despliegue en Hostinger:
   // Solo requiere: .next/standalone + .next/static + public

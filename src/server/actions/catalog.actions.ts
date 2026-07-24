@@ -2,6 +2,7 @@
 
 import { prisma } from '@/server/db/client'
 import { getGrindTypes, getVariantSizes } from './settings.actions'
+import { withCache, invalidateCacheByPrefix } from '@/server/cache/node-cache'
 import type { GrindTypeOption } from './settings.actions'
 import type { Prisma } from '@prisma/client'
 
@@ -46,7 +47,12 @@ function altitudeMatchesFilter(altitudeMasl: string | null, filterRange: string)
 }
 
 export async function getActiveProducts(filters?: CatalogFilters) {
-  try {
+  const cacheKey = filters
+    ? `products:${filters.origin ?? ''}:${filters.altitude ?? ''}:${filters.flavorNote ?? ''}:${filters.process ?? ''}`
+    : 'products:all'
+
+  return withCache(cacheKey, async () => {
+    try {
     const where: Prisma.ProductWhereInput = {
       status: 'active',
       deletedAt: null,
@@ -119,6 +125,11 @@ export async function getActiveProducts(filters?: CatalogFilters) {
     console.error('Error fetching active products:', error)
     return []
   }
+  }, 300) // Cache 5 min
+}
+
+export async function invalidateProductsCache() {
+  invalidateCacheByPrefix('products:')
 }
 
 export async function getProductBySlug(slug: string) {
@@ -219,7 +230,8 @@ export async function getProductBySlug(slug: string) {
 }
 
 export async function getHomepageOrigins() {
-  try {
+  return withCache('homepage:origins', async () => {
+    try {
     const origins = await prisma.origin.findMany({
       where: {
         products: {
@@ -279,10 +291,12 @@ export async function getHomepageOrigins() {
     console.error('Error fetching homepage origins:', error)
     return []
   }
+  }, 600) // Cache 10 min
 }
 
 export async function getAvailableCatalogFilters() {
-  try {
+  return withCache('catalog:filters', async () => {
+    try {
     // 1. Obtener orígenes que tengan productos activos
     const origins = await prisma.origin.findMany({
       where: {
@@ -341,4 +355,5 @@ export async function getAvailableCatalogFilters() {
       flavorNotes: ['Frutal', 'Chocolatoso', 'Floral', 'Cítrico', 'Caramelo']
     }
   }
+  }, 600) // Cache 10 min
 }
