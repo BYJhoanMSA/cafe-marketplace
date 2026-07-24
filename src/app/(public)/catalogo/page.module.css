@@ -1,0 +1,98 @@
+/* src/app/(public)/catalogo/page.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================================================
+   VISTA DESKTOP (Grid Tradicional)
+   Visible solo en pantallas >= 768px
+   ================================================================ */
+.desktopView {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktopView {
+    display: block;
+    max-width: var(--max-width-content);
+    margin-inline: auto;
+    padding: var(--space-8) var(--space-10) var(--space-20);
+    width: 100%;
+  }
+}
+
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: var(--text-4xl);
+  color: var(--color-ink-primary);
+  margin-bottom: var(--space-2);
+}
+
+.description {
+  font-size: var(--text-lg);
+  color: var(--color-ink-secondary);
+  max-width: 600px;
+}
+
+/* Filtros Desktop */
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-default);
+  margin-bottom: var(--space-8);
+}
+
+.filterGroup {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.filterLabel {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-tertiary);
+}
+
+/* Grid de Productos Desktop */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-card-grid);
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ================================================================
+   VISTA MOBILE (TikTok Feed)
+   Visible solo en pantallas < 768px
+   ================================================================ */
+.mobileView {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .mobileView {
+    display: none;
+  }
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-16) 0;
+  color: var(--color-ink-tertiary);
+  font-size: var(--text-lg);
+}

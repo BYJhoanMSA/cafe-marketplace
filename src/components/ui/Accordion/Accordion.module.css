@@ -1,0 +1,70 @@
+/* src/components/ui/Accordion/Accordion.module.css */
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.item {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-primary);
+  overflow: hidden;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.item:focus-within {
+  border-color: var(--color-interactive);
+}
+
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-primary);
+  font-family: var(--font-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+}
+
+.icon {
+  color: var(--color-ink-secondary);
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.trigger[aria-expanded="true"] .icon {
+  transform: rotate(180deg);
+}
+
+/* 
+  Truco con CSS Grid para animar height: auto
+  Referencia moderna para transiciones fluidas de height
+*/
+.contentWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-normal) var(--ease-out);
+}
+
+.contentWrapper.open {
+  grid-template-rows: 1fr;
+}
+
+.content {
+  overflow: hidden;
+}
+
+.contentInner {
+  padding: 0 var(--space-5) var(--space-5);
+  color: var(--color-ink-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}

@@ -1,0 +1,65 @@
+/* src/components/ui/QuantitySelector/QuantitySelector.module.css */
+
+.container {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-bg-primary);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.container:focus-within {
+  border-color: var(--color-interactive);
+}
+
+.button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: var(--color-ink-secondary);
+  cursor: pointer;
+  transition: 
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-ink-primary);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input {
+  width: 48px;
+  height: 40px;
+  border: none;
+  border-left: 1px solid var(--color-border-default);
+  border-right: 1px solid var(--color-border-default);
+  text-align: center;
+  font-family: var(--font-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+  background-color: transparent;
+  appearance: textfield;
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input:focus {
+  outline: none;
+}

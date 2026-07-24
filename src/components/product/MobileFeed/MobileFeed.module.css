@@ -1,0 +1,300 @@
+/* src/components/product/MobileFeed/MobileFeed.module.css */
+
+/* Contenedor principal del feed vertical */
+.feedContainer {
+  height: calc(100vh - 64px); /* 100vh menos el tab bar inferior */
+  height: calc(100dvh - 64px);
+  width: 100vw;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  background-color: var(--neutral-900);
+  position: relative;
+}
+
+.feedContainer::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* ----------------------------------------------------------------
+   SLIDE INDIVIDUAL
+   ---------------------------------------------------------------- */
+.slide {
+  height: 100%;
+  width: 100vw;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--neutral-950);
+}
+
+/* Contenedor principal de la imagen */
+.imageContainer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.image {
+  object-fit: cover;
+}
+
+/* Gradientes para legibilidad */
+.overlayTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.overlayBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------------
+   HEADER DEL SLIDE (Top)
+   ---------------------------------------------------------------- */
+.header {
+  position: absolute;
+  top: env(safe-area-inset-top, 16px);
+  left: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.vendorBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border-radius: var(--radius-pill);
+  color: white;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.vendorAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-circle);
+  background-color: var(--gold-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-900);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* ----------------------------------------------------------------
+   ACCIONES LATERALES (Derecha)
+   ---------------------------------------------------------------- */
+.actionsSidebar {
+  position: absolute;
+  right: var(--space-4);
+  bottom: 140px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.actionButton:active {
+  transform: scale(0.85);
+}
+
+.actionIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-circle);
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: background-color var(--duration-normal) var(--ease-out);
+}
+
+.actionButton:hover .actionIconBox {
+  background: rgba(0,0,0,0.5);
+}
+
+.actionButton.favorited .actionIconBox {
+  color: var(--terra-500);
+}
+
+.actionLabel {
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+}
+
+/* ----------------------------------------------------------------
+   CONTENIDO PRINCIPAL (Inferior Izquierda)
+   ---------------------------------------------------------------- */
+.content {
+  position: absolute;
+  bottom: var(--space-8);
+  left: var(--space-4);
+  right: 80px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.buySection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.tag {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-weight: var(--font-weight-bold);
+}
+
+.tag.score {
+  background: var(--gold-500);
+  color: var(--neutral-900);
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: var(--text-2xl);
+  color: white;
+  line-height: var(--leading-tight);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.origin {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.9);
+  line-height: var(--leading-relaxed);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: var(--space-2);
+}
+
+/* ----------------------------------------------------------------
+   PRECIO Y BOTÓN DE COMPRA
+   ---------------------------------------------------------------- */
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.price {
+  font-family: var(--font-secondary);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  font-variant-numeric: tabular-nums;
+}
+
+.buyButton {
+  background-color: var(--color-interactive);
+  color: var(--color-ink-inverted);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--padding-button-md);
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.buyButton:active {
+  transform: scale(0.95);
+}
+
+/* Navegación horizontal para variantes */
+.variantsIndicator {
+  position: absolute;
+  bottom: var(--space-2);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.variantDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-circle);
+  background-color: rgba(255,255,255,0.3);
+}
+
+.variantDot.active {
+  background-color: white;
+  transform: scale(1.2);
+}

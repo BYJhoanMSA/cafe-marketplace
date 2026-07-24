@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Excluir páginas privadas del índice
+Disallow: /admin/
+Disallow: /cuenta/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /checkout/
+Disallow: /carrito/
+Disallow: /pedido/
+
+Sitemap: https://tudominio.com/sitemap.xml

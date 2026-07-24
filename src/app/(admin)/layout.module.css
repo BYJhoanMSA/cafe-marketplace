@@ -1,0 +1,127 @@
+/* src/app/(admin)/layout.module.css */
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg-secondary);
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--color-bg-primary);
+  border-right: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logo {
+  padding: var(--space-6);
+  font-family: var(--font-primary);
+  font-size: var(--text-2xl);
+  color: var(--color-ink-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  color: var(--color-ink-secondary);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.navItem:hover {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-ink-primary);
+}
+
+.navItem.active {
+  background-color: var(--color-interactive-light, rgba(37, 99, 235, 0.1));
+  color: var(--color-interactive);
+}
+
+.userProfile {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-circle);
+  background-color: var(--color-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-inverted);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-sm);
+}
+
+.userInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.userName {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRole {
+  font-size: var(--text-xs);
+  color: var(--color-ink-tertiary);
+  text-transform: capitalize;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.header {
+  height: 64px;
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-8);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.content {
+  padding: var(--space-8);
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}

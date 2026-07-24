@@ -1,0 +1,666 @@
+// prisma/schema.prisma
+// =============================================================================
+// CAFÉ MARKETPLACE — Esquema de Base de Datos
+// ORM: Prisma 5 | DB: MySQL 8 (Hostinger)
+// =============================================================================
+// CONVENCIONES:
+//   - IDs: UUID como VARCHAR(36), generado en la app
+//   - Timestamps: createdAt/updatedAt en todos los modelos
+//   - Soft delete: deletedAt nullable (null = activo)
+//   - Montos: Int en centavos para evitar errores de punto flotante
+//   - Enums: String con validación Zod en la capa de servicio
+// =============================================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// AUTH.JS — Tablas requeridas por NextAuth v5 con Prisma Adapter
+// =============================================================================
+
+model Account {
+  id                String  @id @default(uuid()) @db.VarChar(36)
+  userId            String  @db.VarChar(36)
+  type              String  @db.VarChar(50)
+  provider          String  @db.VarChar(50)
+  providerAccountId String  @db.VarChar(255)
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String? @db.VarChar(50)
+  scope             String? @db.VarChar(255)
+  id_token          String? @db.Text
+  session_state     String? @db.VarChar(255)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  sessionToken String   @unique @db.VarChar(500)
+  userId       String   @db.VarChar(36)
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String   @db.VarChar(255)
+  token      String   @db.VarChar(500)
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// =============================================================================
+// USUARIOS
+// =============================================================================
+
+// roles: "customer" | "admin" | "vendor" (vendor para Fase 2)
+// status: "active" | "inactive" | "banned"
+model User {
+  id            String    @id @default(uuid()) @db.VarChar(36)
+  email         String    @unique @db.VarChar(255)
+  emailVerified DateTime? // Auth.js lo gestiona
+  passwordHash  String?   @db.VarChar(255)
+  firstName     String    @db.VarChar(100)
+  lastName      String    @db.VarChar(100)
+  phone         String?   @db.VarChar(30)
+  avatarUrl     String?   @db.VarChar(500)
+  role          String    @default("customer") @db.VarChar(20)
+  status        String    @default("active") @db.VarChar(20)
+  locale        String    @default("es") @db.VarChar(5)
+  currency      String    @default("USD") @db.VarChar(3)
+  // Stripe Customer ID para guardar métodos de pago
+  stripeCustomerId String? @unique @db.VarChar(100)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // Relaciones Auth.js
+  accounts     Account[]
+  sessions     Session[]
+
+  // Relaciones de negocio
+  addresses    Address[]
+  orders       Order[]
+  carts        Cart[]
+  favorites    Favorite[]
+  reviews      Review[]
+  tasteProfile TasteProfile?
+  vendor       Vendor? // Solo si role="vendor" (Fase 2)
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model Address {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  userId       String   @db.VarChar(36)
+  label        String?  @db.VarChar(100) // "Casa", "Oficina"
+  firstName    String   @db.VarChar(100)
+  lastName     String   @db.VarChar(100)
+  company      String?  @db.VarChar(255)
+  address1     String   @db.VarChar(255)
+  address2     String?  @db.VarChar(255)
+  city         String   @db.VarChar(100)
+  state        String   @db.VarChar(100)
+  postalCode   String   @db.VarChar(20)
+  country      String   @db.VarChar(2) // ISO 3166-1 alpha-2 (CO, US, etc.)
+  phone        String?  @db.VarChar(30)
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[] // Referencia (no FK directa, se copia como snapshot)
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+// Perfil de sabor del cliente (para personalizar recomendaciones)
+model TasteProfile {
+  id              String   @id @default(uuid()) @db.VarChar(36)
+  userId          String   @unique @db.VarChar(36)
+  // roastPreference: "light" | "medium" | "medium-dark" | "dark"
+  roastPreference String?  @db.VarChar(20)
+  // acidityPreference: "low" | "medium" | "high"
+  acidityPreference String? @db.VarChar(20)
+  // bodyPreference: "light" | "medium" | "full"
+  bodyPreference  String?  @db.VarChar(20)
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user        User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flavorNotes TasteProfileFlavorNote[]
+  brewMethods TasteProfileBrewMethod[]
+
+  @@map("taste_profiles")
+}
+
+model TasteProfileFlavorNote {
+  id             String @id @default(uuid()) @db.VarChar(36)
+  tasteProfileId String @db.VarChar(36)
+  note           String @db.VarChar(100) // "frutal", "chocolatoso", "floral", etc.
+
+  tasteProfile TasteProfile @relation(fields: [tasteProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([tasteProfileId, note])
+  @@map("taste_profile_flavor_notes")
+}
+
+model TasteProfileBrewMethod {
+  id             String @id @default(uuid()) @db.VarChar(36)
+  tasteProfileId String @db.VarChar(36)
+  method         String @db.VarChar(50) // "v60", "espresso", "french-press", etc.
+
+  tasteProfile TasteProfile @relation(fields: [tasteProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([tasteProfileId, method])
+  @@map("taste_profile_brew_methods")
+}
+
+// =============================================================================
+// VENDEDORES / TOSTADORES
+// =============================================================================
+
+// En MVP: 1 solo registro (el admin). Fase 2: múltiples tostadores.
+// status: "pending" | "active" | "suspended"
+model Vendor {
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  userId           String    @unique @db.VarChar(36)
+  storeName        String    @db.VarChar(255)
+  slug             String    @unique @db.VarChar(255)
+  description      String?   @db.Text
+  shortDescription String?   @db.VarChar(500)
+  logoUrl          String?   @db.VarChar(500)
+  bannerUrl        String?   @db.VarChar(500)
+  country          String?   @db.VarChar(2)
+  city             String?   @db.VarChar(100)
+  website          String?   @db.VarChar(255)
+  instagram        String?   @db.VarChar(100)
+  facebook         String?   @db.VarChar(100)
+  // SCA Member, Specialty Coffee, etc.
+  certifications   String?   @db.VarChar(500)
+  // Para Fase 2: Stripe Connect
+  stripeAccountId  String?   @unique @db.VarChar(100)
+  // commission en centavos de porcentaje (ej: 1500 = 15%)
+  commissionRate   Int       @default(1500)
+  status           String    @default("active") @db.VarChar(20)
+  avgRating        Decimal   @default(0) @db.Decimal(3, 2)
+  reviewCount      Int       @default(0)
+  totalSold        Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  user     User      @relation(fields: [userId], references: [id])
+  products Product[]
+
+  @@index([status])
+  @@index([slug])
+  @@map("vendors")
+}
+
+// =============================================================================
+// CATÁLOGO
+// =============================================================================
+
+model Category {
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  name        String    @db.VarChar(100)
+  slug        String    @unique @db.VarChar(100)
+  description String?   @db.Text
+  imageUrl    String?   @db.VarChar(500)
+  parentId    String?   @db.VarChar(36)
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
+  products Product[]
+
+  @@index([parentId])
+  @@index([isActive])
+  @@map("categories")
+}
+
+// Origen geográfico del café (país, región, subregión)
+model Origin {
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  country     String    @db.VarChar(100)
+  countryCode String    @db.VarChar(2) // ISO 3166-1 alpha-2
+  region      String?   @db.VarChar(100)
+  subregion   String?   @db.VarChar(100)
+  slug        String    @unique @db.VarChar(255)
+  description String?   @db.Text
+  imageUrl    String?   @db.VarChar(500)
+  // Datos geográficos para mapa
+  latitude    Decimal?  @db.Decimal(10, 7)
+  longitude   Decimal?  @db.Decimal(10, 7)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products Product[]
+
+  @@index([countryCode])
+  @@map("origins")
+}
+
+// Producto principal (café)
+// status: "draft" | "active" | "archived"
+// Los precios base se definen en las Variants
+model Product {
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  vendorId         String    @db.VarChar(36)
+  categoryId       String    @db.VarChar(36)
+  originId         String    @db.VarChar(36)
+  title            String    @db.VarChar(255)
+  slug             String    @unique @db.VarChar(255)
+  description      String    @db.Text
+  shortDescription String?   @db.VarChar(500)
+  status           String    @default("draft") @db.VarChar(20)
+
+  // Datos específicos de café de especialidad
+  // roastLevel: "light" | "medium-light" | "medium" | "medium-dark" | "dark"
+  roastLevel       String    @db.VarChar(30)
+  // processingMethod: "washed" | "natural" | "honey" | "anaerobic" | "wet-hulled"
+  processingMethod String    @db.VarChar(30)
+  altitudeMasl     String?   @db.VarChar(50)   // Ej: "1800-2100"
+  varietal         String?   @db.VarChar(100)   // Ej: "Caturra, Castillo"
+  farmName         String?   @db.VarChar(255)
+  producerName     String?   @db.VarChar(255)
+  harvestDate      String?   @db.VarChar(50)    // Ej: "Ene-Mar 2026"
+  roastDate        DateTime? @db.Date
+  // Cupping score SCA (0-100, típicamente 80-100 para especialidad)
+  cuppingScore     Decimal?  @db.Decimal(4, 1)
+
+  // Flags de merchandising
+  isFeatured       Boolean   @default(false)
+  isNew            Boolean   @default(false)
+  isLimited        Boolean   @default(false)
+  isOrganic        Boolean   @default(false)
+  isPublicity      Boolean   @default(false)
+  isFairTrade      Boolean   @default(false)
+
+  // Métricas calculadas (se actualizan en cada review/venta)
+  avgRating        Decimal   @default(0) @db.Decimal(3, 2)
+  reviewCount      Int       @default(0)
+  totalSold        Int       @default(0)
+
+  // SEO
+  metaTitle        String?   @db.VarChar(70)
+  metaDescription  String?   @db.VarChar(160)
+  canonicalUrl     String?   @db.VarChar(500)
+
+  publishedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  vendor         Vendor                @relation(fields: [vendorId], references: [id])
+  category       Category              @relation(fields: [categoryId], references: [id])
+  origin         Origin                @relation(fields: [originId], references: [id])
+  variants       Variant[]
+  images         ProductImage[]
+  reviews        Review[]
+  favorites      Favorite[]
+  flavorNotes    ProductFlavorNote[]
+  certifications ProductCertification[]
+  lineItems      LineItem[]
+
+  // Índice FULLTEXT para búsqueda MySQL
+  @@fulltext([title, description, farmName, producerName])
+  @@index([status, publishedAt])
+  @@index([vendorId])
+  @@index([categoryId])
+  @@index([originId])
+  @@index([isFeatured])
+  @@index([isNew])
+  @@index([cuppingScore])
+  @@index([deletedAt])
+  @@map("products")
+}
+
+// Notas de sabor del producto (tabla de relación para filtros eficientes)
+// Ej: "cereza", "chocolate", "floral", "cítrico", "caramelo", "avellanado"
+model ProductFlavorNote {
+  id        String @id @default(uuid()) @db.VarChar(36)
+  productId String @db.VarChar(36)
+  note      String @db.VarChar(100)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, note])
+  @@index([note])
+  @@map("product_flavor_notes")
+}
+
+// Certificaciones del producto
+// type: "organic" | "fair-trade" | "rainforest-alliance" | "sca" | "utz"
+model ProductCertification {
+  id        String @id @default(uuid()) @db.VarChar(36)
+  productId String @db.VarChar(36)
+  type      String @db.VarChar(50)
+  issuer    String? @db.VarChar(100)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, type])
+  @@map("product_certifications")
+}
+
+// Variante del producto (presentación específica comprable)
+// Ejemplo: "340g - Grano entero" o "250g - Espresso"
+// status: "active" | "inactive" | "out_of_stock"
+model Variant {
+  id             String    @id @default(uuid()) @db.VarChar(36)
+  productId      String    @db.VarChar(36)
+  sku            String    @unique @db.VarChar(100)
+  title          String    @db.VarChar(255) // Ej: "340g - Grano entero"
+  // weight en gramos
+  weightGrams    Int?
+  // grindType: "whole-bean" | "espresso" | "filter" | "french-press" | "moka"
+  grindType      String?   @db.VarChar(30)
+  // priceInCents: precio en centavos de la moneda (USD o COP)
+  // Ej: $22.00 = 2200
+  priceInCents   Int
+  comparePriceInCents Int?  // Precio original (para mostrar descuento)
+  costInCents    Int?       // Costo del producto (para margen - solo admin)
+  currency       String    @default("USD") @db.VarChar(3)
+  stockQuantity  Int       @default(0)
+  lowStockAlert  Int       @default(5)
+  status         String    @default("active") @db.VarChar(20)
+  position       Int       @default(0) // Orden de display
+  barcode        String?   @db.VarChar(100)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  lineItems LineItem[]
+  cartItems CartItem[]
+
+  @@index([productId])
+  @@index([status])
+  @@index([sku])
+  @@map("variants")
+}
+
+// Imágenes del producto
+// type: "product" | "farm" | "process" | "packaging" | "infographic"
+// position define el orden en el feed (posición 0 = principal)
+model ProductImage {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  productId  String   @db.VarChar(36)
+  url        String   @db.VarChar(500)    // URL del original en R2
+  alt        String   @db.VarChar(255)
+  type       String   @default("product") @db.VarChar(20)
+  position   Int      @default(0)
+  width      Int?
+  height     Int?
+  // Tipo de media: "image" | "video"
+  mediaType  String   @default("image") @db.VarChar(10)
+  createdAt  DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, position])
+  @@map("product_images")
+}
+
+// Reviews de productos
+// status: "pending" | "approved" | "rejected"
+model Review {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  productId        String   @db.VarChar(36)
+  userId           String   @db.VarChar(36)
+  orderId          String?  @db.VarChar(36) // Para verificar compra
+  rating           Int      // 1-5
+  title            String?  @db.VarChar(255)
+  body             String?  @db.Text
+  status           String   @default("pending") @db.VarChar(20)
+  isVerifiedPurchase Boolean @default(false)
+  helpfulCount     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+  order   Order?  @relation(fields: [orderId], references: [id])
+
+  @@unique([productId, userId]) // 1 review por usuario por producto
+  @@index([productId, status])
+  @@index([userId])
+  @@map("reviews")
+}
+
+// Favoritos del usuario
+model Favorite {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  userId    String   @db.VarChar(36)
+  productId String   @db.VarChar(36)
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@map("favorites")
+}
+
+// =============================================================================
+// CARRITO
+// =============================================================================
+
+// status: "active" | "completed" | "abandoned"
+model Cart {
+  id         String    @id @default(uuid()) @db.VarChar(36)
+  userId     String?   @db.VarChar(36)  // null = carrito de invitado
+  // Para invitados: token único en cookie
+  guestToken String?   @unique @db.VarChar(100)
+  status     String    @default("active") @db.VarChar(20)
+  // Contexto de la sesión del invitado
+  email      String?   @db.VarChar(255) // Email ingresado en checkout
+  // Dirección y envío (se llenan durante checkout)
+  shippingAddressSnapshot String? @db.Text  // JSON serializado
+  shippingMethodId String?  @db.VarChar(36)
+  shippingCostInCents Int?
+  // Cupón aplicado
+  couponId   String?   @db.VarChar(36)
+  discountInCents Int? @default(0)
+  // Notas del cliente
+  notes      String?   @db.Text
+  currency   String    @default("USD") @db.VarChar(3)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  expiresAt  DateTime? // Para limpiar carritos abandonados
+
+  user  User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items CartItem[]
+
+  @@index([userId])
+  @@index([guestToken])
+  @@index([status])
+  @@map("carts")
+}
+
+model CartItem {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  cartId       String   @db.VarChar(36)
+  variantId    String   @db.VarChar(36)
+  quantity     Int      @default(1)
+  // Precio al momento de agregar (snapshot por si cambia)
+  unitPriceInCents Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant Variant @relation(fields: [variantId], references: [id])
+
+  @@unique([cartId, variantId])
+  @@index([cartId])
+  @@map("cart_items")
+}
+
+// =============================================================================
+// PEDIDOS
+// =============================================================================
+
+// status: "pending" | "payment_pending" | "paid" | "processing" |
+//         "shipped" | "delivered" | "cancelled" | "refunded"
+model Order {
+  id              String    @id @default(uuid()) @db.VarChar(36)
+  // Número legible para el cliente (auto-increment en la app, no en DB)
+  displayId       Int       @unique @default(autoincrement())
+  userId          String?   @db.VarChar(36)
+  vendorId        String?   @db.VarChar(36)
+  status          String    @default("pending") @db.VarChar(30)
+
+  // Email del cliente (por si es guest o cambió el email)
+  customerEmail   String    @db.VarChar(255)
+  customerFirstName String  @db.VarChar(100)
+  customerLastName String   @db.VarChar(100)
+  customerPhone   String?   @db.VarChar(30)
+
+  // Dirección de envío SNAPSHOT (copia inmutable al momento del pedido)
+  // Se copia para que cambios futuros en Address no alteren el historial
+  shippingAddress String    @db.Text  // JSON: {firstName, address1, city, ...}
+
+  // Montos en centavos
+  subtotalInCents     Int
+  shippingInCents     Int   @default(0)
+  discountInCents     Int   @default(0)
+  taxInCents          Int   @default(0)
+  totalInCents        Int
+  currency            String @default("USD") @db.VarChar(3)
+
+  // Pago
+  paymentStatus       String @default("pending") @db.VarChar(20)
+  // stripePaymentIntentId: para recuperar el estado del pago
+  stripePaymentIntentId String? @unique @db.VarChar(255)
+  paidAt              DateTime?
+
+  // Envío
+  trackingNumber      String?  @db.VarChar(255)
+  trackingUrl         String?  @db.VarChar(500)
+  shippingCarrier     String?  @db.VarChar(100)
+  shippedAt           DateTime?
+  deliveredAt         DateTime?
+
+  // Cupón
+  couponCode          String?  @db.VarChar(50)
+
+  // Notas
+  customerNotes       String?  @db.Text
+  internalNotes       String?  @db.Text
+
+  cancelledAt         DateTime?
+  cancelReason        String?  @db.VarChar(255)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  lineItems LineItem[]
+  reviews   Review[]
+  address   Address?   @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId String? @db.VarChar(36)
+
+  @@index([userId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([stripePaymentIntentId])
+  @@index([displayId])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model LineItem {
+  id              String   @id @default(uuid()) @db.VarChar(36)
+  orderId         String   @db.VarChar(36)
+  productId       String   @db.VarChar(36)
+  variantId       String   @db.VarChar(36)
+  quantity        Int
+  // Snapshots del precio y datos del producto AL MOMENTO DE LA COMPRA
+  unitPriceInCents Int
+  totalInCents    Int
+  // Snapshot del producto (para que no cambie aunque el producto cambie)
+  productTitle    String   @db.VarChar(255)
+  variantTitle    String   @db.VarChar(255)
+  productImageUrl String?  @db.VarChar(500)
+  vendorId        String?  @db.VarChar(36)
+  vendorName      String?  @db.VarChar(255)
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  variant Variant @relation(fields: [variantId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("line_items")
+}
+
+// =============================================================================
+// CONTENIDO Y CONFIGURACIÓN
+// =============================================================================
+
+// Cupones de descuento
+// type: "percentage" | "fixed_amount" | "free_shipping"
+// status: "active" | "inactive" | "expired"
+model Coupon {
+  id              String    @id @default(uuid()) @db.VarChar(36)
+  code            String    @unique @db.VarChar(50)
+  type            String    @db.VarChar(20)
+  // Para percentage: 0-100. Para fixed: centavos
+  discountValue   Int
+  minimumOrderInCents Int?
+  maximumDiscountInCents Int?
+  usageLimit      Int?      // null = ilimitado
+  usageCount      Int       @default(0)
+  // Restricciones
+  startsAt        DateTime?
+  expiresAt       DateTime?
+  status          String    @default("active") @db.VarChar(20)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([code])
+  @@index([status])
+  @@map("coupons")
+}
+
+// Configuración global de la tienda (tabla de key-value)
+model StoreSettings {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  key       String   @unique @db.VarChar(100)
+  value     String   @db.Text
+  group     String   @default("general") @db.VarChar(50) // "general", "shipping", "payment", "email"
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
+  @@map("store_settings")
+}
