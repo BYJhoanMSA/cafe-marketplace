@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Heart, ShoppingBag, Star, Share2 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
-import { formatPrice, truncate } from '@/lib/utils'
+import { formatPrice, truncate, getThumbUrl } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
@@ -101,6 +101,7 @@ export function ProductCard({
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [sharedToast, setSharedToast] = useState(false)
+  const [imgSrc, setImgSrc] = useState(getThumbUrl(product.imageUrl))
 
   const hasDiscount = product.comparePrice && product.comparePrice > product.price
 
@@ -180,12 +181,13 @@ export function ProductCard({
       {/* ---- IMAGEN ---- */}
       <div className={styles.imageWrapper}>
         <Image
-          src={product.imageUrl}
+          src={imgSrc}
           alt={product.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className={styles.image}
           priority={priority}
+          onError={() => setImgSrc(product.imageUrl)}
         />
 
         {/* Badges superiores */}

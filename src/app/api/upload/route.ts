@@ -11,10 +11,10 @@ import { auth } from '@/lib/auth'
 
 // Configuraciones de optimización por tipo de imagen
 const IMAGE_CONFIGS: Record<string, { width: number; height: number; quality: number }> = {
-  product: { width: 1200, height: 1200, quality: 85 },   // Imágenes de producto (cuadradas)
-  hero: { width: 1920, height: 1080, quality: 80 },       // Hero de página de inicio (16:9)
-  thumbnail: { width: 400, height: 400, quality: 80 },    // Miniaturas
-  feature: { width: 800, height: 600, quality: 82 },      // Tarjetas "Por qué elegirnos"
+  product: { width: 1080, height: 1080, quality: 80 },   // Imágenes de producto (cuadradas)
+  hero: { width: 1920, height: 1080, quality: 75 },       // Hero de página de inicio (16:9)
+  thumbnail: { width: 400, height: 400, quality: 70 },    // Miniaturas
+  feature: { width: 800, height: 600, quality: 75 },      // Tarjetas "Por qué elegirnos"
 }
 
 export async function POST(req: NextRequest) {
@@ -56,16 +56,26 @@ export async function POST(req: NextRequest) {
     // Optimizar con sharp: resize + convert to WebP
     const optimizedBuffer = await sharp(buffer)
       .resize(config.width, config.height, {
-        fit: 'inside',        // Mantiene proporción, no recorta
-        withoutEnlargement: true, // No ampliar imágenes pequeñas
+        fit: 'inside',
+        withoutEnlargement: true,
       })
       .webp({ quality: config.quality })
+      .toBuffer()
+
+    // Generar thumbnail (400px) para catálogo y cards
+    const thumbBuffer = await sharp(buffer)
+      .resize(400, 400, {
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 70 })
       .toBuffer()
 
     // Crear nombre único para el archivo
     const timestamp = Date.now()
     const randomSuffix = Math.random().toString(36).substring(2, 8)
     const fileName = `${type}-${timestamp}-${randomSuffix}.webp`
+    const thumbFileName = `${type}-${timestamp}-${randomSuffix}-thumb.webp`
 
     // Crear directorio si no existe
     const uploadDir = join(process.cwd(), 'public', 'uploads', type)
@@ -73,12 +83,15 @@ export async function POST(req: NextRequest) {
       await mkdir(uploadDir, { recursive: true })
     }
 
-    // Guardar archivo optimizado
+    // Guardar archivos
     const filePath = join(uploadDir, fileName)
     await writeFile(filePath, optimizedBuffer)
+    const thumbPath = join(uploadDir, thumbFileName)
+    await writeFile(thumbPath, thumbBuffer)
 
-    // URL pública accesible
+    // URLs públicas
     const url = `/uploads/${type}/${fileName}`
+    const thumbUrl = `/uploads/${type}/${thumbFileName}`
 
     // Obtener dimensiones del archivo optimizado
     const metadata = await sharp(optimizedBuffer).metadata()
@@ -86,6 +99,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       url,
+      thumbUrl,
       width: metadata.width,
       height: metadata.height,
       size: optimizedBuffer.length,

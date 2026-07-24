@@ -100,6 +100,13 @@ export function getCuppingScoreCategory(score: number): { label: string; color: 
   return { label: 'Bueno', color: 'var(--neutral-500)' }
 }
 
+/** Genera URL de thumbnail a partir de la URL completa de la imagen */
+export function getThumbUrl(imageUrl: string): string {
+  if (!imageUrl || !imageUrl.includes('.')) return imageUrl
+  const dotIndex = imageUrl.lastIndexOf('.')
+  return imageUrl.slice(0, dotIndex) + '-thumb' + imageUrl.slice(dotIndex)
+}
+
 /** Respuesta estándar de API Route exitosa */
 export function apiResponse<T>(data: T, status: number = 200): Response {
   return Response.json({ success: true, data }, { status })
