@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin } from 'lucide-react'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, getImageUrl } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { useCart } from '@/context/CartContext'
@@ -36,11 +36,9 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     setShares(counts.shares)
   }, [product.id])
 
-  useEffect(() => {
-    const counts = getSocialCounts(product.id)
-    setFavorites(counts.favorites)
-    setShares(counts.shares)
-  }, [product.id])
+  const optimizedImage = isActive
+    ? getImageUrl(product.imageUrl, { width: 500, quality: 80 })
+    : getImageUrl(product.imageUrl, { width: 300, quality: 60 })
 
   function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation()
@@ -102,7 +100,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
       {/* IMAGEN DE FONDO */}
       <div className={styles.imageContainer}>
         <Image
-          src={product.imageUrl}
+          src={optimizedImage}
           alt={product.imageAlt}
           fill
           priority={isActive}

@@ -105,6 +105,8 @@ export default function RootLayout({
       className={`${dmSerifDisplay.variable} ${inter.variable} ${dmMono.variable}`}
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/*
          * Script inline para detectar el tema ANTES de que React hidrate.
          * Previene el "flash" de tema incorrecto (FOUC).

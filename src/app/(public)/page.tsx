@@ -9,7 +9,8 @@ import { ProductCard, ProductCardSkeleton } from '@/components/product/ProductCa
 import { OriginCard } from '@/components/home/OriginCard'
 import { Suspense } from 'react'
 import { getHomepageSettings } from '@/server/actions/settings.actions'
-import { getActiveProducts, getHomepageOrigins } from '@/server/actions/catalog.actions'
+import { getActiveProducts } from '@/server/actions/catalog.actions'
+import { HomepageOrigins, HomepageValues } from './HomepageLazy'
 import styles from './page.module.css'
 
 // ================================================================
@@ -43,10 +44,9 @@ const FILTER_CHIPS = [
 // Página
 // ================================================================
 export default async function HomePage() {
-  const [config, allProducts, origins] = await Promise.all([
+  const [config, allProducts] = await Promise.all([
     getHomepageSettings(),
     getActiveProducts(),
-    getHomepageOrigins(),
   ])
 
   const featuredProducts = allProducts.slice(0, 4)
@@ -198,19 +198,15 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.originGrid}>
-            {origins.length > 0 ? origins.map((origin) => (
-              <OriginCard
-                key={origin.slug}
-                label={origin.label}
-                slug={origin.slug}
-                count={origin.count}
-                images={origin.images}
-              />
-            )) : (
-              <p style={{ color: 'var(--neutral-400)', textAlign: 'center', padding: 'var(--space-8)' }}>
-                Pronto agregaremos más orígenes.
-              </p>
-            )}
+            <Suspense fallback={
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ height: 200, background: 'var(--neutral-800)', borderRadius: 'var(--radius-xl)' }} />
+              ))}
+            </div>
+          }>
+            <HomepageOrigins />
+          </Suspense>
           </div>
         </div>
       </section>
@@ -229,17 +225,15 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className={styles.valueGrid}>
-            {config.features.map((value) => (
-              <div key={value.title} className={styles.valueCard}>
-                <span className={styles.valueIcon} aria-hidden="true">
-                  {value.icon}
-                </span>
-                <h3 className={styles.valueTitle}>{value.title}</h3>
-                <p className={styles.valueDesc}>{value.desc}</p>
-              </div>
-            ))}
-          </div>
+          <Suspense fallback={
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ height: 160, background: 'var(--neutral-100)', borderRadius: 'var(--radius-xl)' }} />
+              ))}
+            </div>
+          }>
+            <HomepageValues />
+          </Suspense>
         </div>
       </section>
 
