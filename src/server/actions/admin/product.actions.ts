@@ -271,49 +271,40 @@ export async function deleteProduct(formData: FormData) {
   }
 
   const id = formData.get('productId') as string
-  if (!id) {
-    return { success: false, error: 'ID de producto no proporcionado' }
+  if (!id) return
+
+  const product = await prisma.product.findUnique({
+    where: { id },
+    include: { images: true, lineItems: { take: 1 } }
+  })
+
+  if (!product) return
+
+  for (const image of product.images) {
+    const normalized = image.url.replace(/\\/g, '/')
+    if (normalized.startsWith('/uploads/') && !normalized.includes('..') && !normalized.includes('~')) {
+      const filePath = join(process.cwd(), 'public', normalized)
+      try { await unlink(filePath) } catch { }
+    }
   }
 
-  try {
-    const product = await prisma.product.findUnique({
-      where: { id },
-      include: { images: true, lineItems: { take: 1 } }
-    })
+  const hasOrders = product.lineItems.length > 0
 
-    if (!product) {
-      return { success: false, error: 'Producto no encontrado' }
-    }
-
-    for (const image of product.images) {
-      const normalized = image.url.replace(/\\/g, '/')
-      if (normalized.startsWith('/uploads/') && !normalized.includes('..') && !normalized.includes('~')) {
-        const filePath = join(process.cwd(), 'public', normalized)
-        try { await unlink(filePath) } catch { }
-      }
-    }
-
-    const hasOrders = product.lineItems.length > 0
-
-    if (hasOrders) {
-      await prisma.$transaction([
-        prisma.productImage.deleteMany({ where: { productId: id } }),
-        prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
-        prisma.productCertification.deleteMany({ where: { productId: id } }),
-        prisma.favorite.deleteMany({ where: { productId: id } }),
-        prisma.review.deleteMany({ where: { productId: id } }),
-        prisma.product.update({
-          where: { id },
-          data: { deletedAt: new Date() }
-        }),
-      ])
-    } else {
-      await prisma.product.delete({ where: { id } })
-    }
-
-    revalidatePath('/admin/productos')
-    return { success: true }
-  } catch (error: any) {
-    return { success: false, error: 'Error al eliminar el producto' }
+  if (hasOrders) {
+    await prisma.$transaction([
+      prisma.productImage.deleteMany({ where: { productId: id } }),
+      prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
+      prisma.productCertification.deleteMany({ where: { productId: id } }),
+      prisma.favorite.deleteMany({ where: { productId: id } }),
+      prisma.review.deleteMany({ where: { productId: id } }),
+      prisma.product.update({
+        where: { id },
+        data: { deletedAt: new Date() }
+      }),
+    ])
+  } else {
+    await prisma.product.delete({ where: { id } })
   }
+
+  revalidatePath('/admin/productos')
 }
