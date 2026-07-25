@@ -61,6 +61,7 @@ const nextConfig: NextConfig = {
   // ============================================================
   reactStrictMode: true,
   poweredByHeader: false,
+  productionBrowserSourceMaps: false,
   serverExternalPackages: ['sharp'],
 
   // Standalone para despliegue en Hostinger:
@@ -68,6 +69,10 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   compress: true,
+
+  experimental: {
+    cpus: 1,
+  },
 
   logging: {
     fetches: {
