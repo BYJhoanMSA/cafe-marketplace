@@ -8,14 +8,24 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        // Cloudflare R2 con custom domain
+        // Hostinger (dominio actual de producción)
         protocol: 'https',
-        hostname: 'assets.tudominio.com',
+        hostname: 'peachpuff-goose-681416.hostingersite.com',
       },
       {
-        // R2 bucket directo (para desarrollo)
+        // Assets locales en desarrollo
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        // Cloudflare R2 — bucket directo
         protocol: 'https',
         hostname: '*.r2.cloudflarestorage.com',
+      },
+      {
+        // Cloudflare R2 — dominio personalizado (cuando se configure)
+        protocol: 'https',
+        hostname: 'assets.*',
       },
       {
         // Sanity CMS
