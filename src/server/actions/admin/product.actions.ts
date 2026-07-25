@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
 import { auth } from '@/lib/auth'
 import { slugify } from '@/lib/utils'
+import { unlink } from 'fs/promises'
+import { join } from 'path'
 import { z } from 'zod'
 
 const ProductSchema = z.object({
@@ -259,5 +261,55 @@ export async function archiveProduct(id: string) {
     return { success: true }
   } catch (error: any) {
     return { success: false, error: 'Error al archivar el producto' }
+  }
+}
+
+export async function deleteProduct(id: string) {
+  const session = await auth()
+  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { images: true, lineItems: { take: 1 } }
+    })
+
+    if (!product) {
+      return { success: false, error: 'Producto no encontrado' }
+    }
+
+    // Eliminar archivos de imágenes del disco
+    for (const image of product.images) {
+      const normalized = image.url.replace(/\\/g, '/')
+      if (normalized.startsWith('/uploads/') && !normalized.includes('..') && !normalized.includes('~')) {
+        const filePath = join(process.cwd(), 'public', normalized)
+        try { await unlink(filePath) } catch { }
+      }
+    }
+
+    const hasOrders = product.lineItems.length > 0
+
+    if (hasOrders) {
+      await prisma.$transaction([
+        prisma.productImage.deleteMany({ where: { productId: id } }),
+        prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
+        prisma.productCertification.deleteMany({ where: { productId: id } }),
+        prisma.favorite.deleteMany({ where: { productId: id } }),
+        prisma.review.deleteMany({ where: { productId: id } }),
+        prisma.product.update({
+          where: { id },
+          data: { deletedAt: new Date() }
+        }),
+      ])
+    } else {
+      await prisma.product.delete({ where: { id } })
+    }
+
+    revalidatePath('/admin/productos')
+    return { success: true }
+  } catch (error: any) {
+    return { success: false, error: 'Error al eliminar el producto' }
   }
 }

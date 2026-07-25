@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import { getAdminProducts } from '@/server/actions/admin/product.actions'
 import { Badge } from '@/components/ui/Badge'
-import { Plus, Edit2, Archive } from 'lucide-react'
+import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { deleteProduct } from '@/server/actions/admin/product.actions'
 
 export const metadata = {
   title: 'Productos | Panel Admin',
@@ -74,11 +75,11 @@ export default async function AdminProductsPage() {
                     >
                       <Edit2 size={16} />
                     </Link>
-                    {/* Botón de archivar se haría con Client Component envolviéndolo, 
-                        o un action en un form. En este MVP lo dejamos visual por simplicidad. */}
-                    <button style={{ background: 'none', border: 'none', color: 'var(--terra-500)', cursor: 'pointer', padding: 'var(--space-2)' }} title="Archivar">
-                      <Archive size={16} />
-                    </button>
+<form action={deleteProduct.bind(null, product.id)}>
+                      <button type="submit" style={{ background: 'none', border: 'none', color: 'var(--terra-500)', cursor: 'pointer', padding: 'var(--space-2)' }} title="Eliminar">
+                        <Trash2 size={16} />
+                      </button>
+                    </form>
                   </div>
                 </td>
               </tr>
