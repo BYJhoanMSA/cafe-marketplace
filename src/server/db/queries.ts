@@ -11,7 +11,6 @@ export const productCardInclude = {
   images: {
     where: { mediaType: 'image' },
     orderBy: { position: 'asc' as const },
-    take: 1
   },
   flavorNotes: { select: { note: true } }
 } satisfies Prisma.ProductInclude
@@ -25,6 +24,7 @@ export interface ProductCard {
   shortDescription: string | null
   imageUrl: string
   imageAlt: string
+  images: string[]
   origin: { country: string; region: string | null }
   vendor: { name: string }
   price: number
@@ -49,6 +49,7 @@ export function mapToProductCard(p: ProductCardRaw): ProductCard {
     shortDescription: p.shortDescription,
     imageUrl: p.images[0]?.url || '/images/products/placeholder-1.jpg',
     imageAlt: p.images[0]?.alt || `${p.title} — bolsa de café`,
+    images: p.images.map(img => img.url),
     origin: { country: p.origin.country, region: p.origin.region },
     vendor: { name: p.vendor.storeName },
     price: p.variants[0]?.priceInCents || 0,
