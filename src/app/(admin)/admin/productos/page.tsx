@@ -75,7 +75,8 @@ export default async function AdminProductsPage() {
                     >
                       <Edit2 size={16} />
                     </Link>
-<form action={deleteProduct.bind(null, product.id)}>
+<form action={deleteProduct}>
+                      <input type="hidden" name="productId" value={product.id} />
                       <button type="submit" style={{ background: 'none', border: 'none', color: 'var(--terra-500)', cursor: 'pointer', padding: 'var(--space-2)' }} title="Eliminar">
                         <Trash2 size={16} />
                       </button>

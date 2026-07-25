@@ -264,10 +264,15 @@ export async function archiveProduct(id: string) {
   }
 }
 
-export async function deleteProduct(id: string) {
+export async function deleteProduct(formData: FormData) {
   const session = await auth()
   if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
     throw new Error('Unauthorized')
+  }
+
+  const id = formData.get('productId') as string
+  if (!id) {
+    return { success: false, error: 'ID de producto no proporcionado' }
   }
 
   try {
@@ -280,7 +285,6 @@ export async function deleteProduct(id: string) {
       return { success: false, error: 'Producto no encontrado' }
     }
 
-    // Eliminar archivos de imágenes del disco
     for (const image of product.images) {
       const normalized = image.url.replace(/\\/g, '/')
       if (normalized.startsWith('/uploads/') && !normalized.includes('..') && !normalized.includes('~')) {
