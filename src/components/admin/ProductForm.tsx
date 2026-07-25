@@ -139,7 +139,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
                 productId: result.product.id,
                 sku,
                 title: `${size?.label || sizeValue} - ${grind?.label || grindValue}`,
-                weightGrams: size ? parseInt(size.grams as unknown as string) || null : null,
+                weightGrams: size?.grams ?? null,
                 grindType: grindValue,
                 priceInCents: Math.round(parseFloat(price) * 100),
                 stockQuantity: 0,
