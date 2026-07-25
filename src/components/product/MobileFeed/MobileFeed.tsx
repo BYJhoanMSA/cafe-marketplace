@@ -15,44 +15,54 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
-  // Intersection Observer para detectar qué slide está activo
+  // Intersection Observer — 1 sola instancia para todos los slides
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
-            // El índice se pasa mediante un atributo data-index en cada slide
             const index = Number(entry.target.getAttribute('data-index'))
             setActiveIndex(index)
           }
-        })
+        }
       },
       {
         root: container,
-        threshold: 0.6, // Se considera activo cuando >60% está visible
+        threshold: 0.6,
       }
     )
 
-    const slides = container.querySelectorAll(`.${styles.slide}`)
-    slides.forEach((slide) => observer.observe(slide))
+    const slides = container.querySelectorAll('[data-index]')
+    for (const slide of slides) observer.observe(slide)
 
     return () => observer.disconnect()
   }, [products])
 
+  // Renderizar solo slide activo ± 1 para reducir DOM
+  const start = Math.max(0, activeIndex - 1)
+  const end = Math.min(products.length - 1, activeIndex + 1)
+  const visibleProducts = products.slice(start, end + 1)
+  const offsetStart = start
+
   return (
     <div className={styles.feedContainer} ref={containerRef}>
-      {products.map((product, index) => (
-        <div key={product.id} data-index={index} className={styles.slide}>
-          <MobileFeedSlide 
-            product={product} 
-            isActive={index === activeIndex}
-            onAddToCart={onAddToCart}
-          />
-        </div>
-      ))}
+      <div style={{ height: `${offsetStart * 100}vh` }} />
+      {visibleProducts.map((product, index) => {
+        const realIndex = offsetStart + index
+        return (
+          <div key={product.id} data-index={realIndex} className={styles.slide}>
+            <MobileFeedSlide 
+              product={product} 
+              isActive={realIndex === activeIndex}
+              onAddToCart={onAddToCart}
+            />
+          </div>
+        )
+      })}
+      <div style={{ height: `${(products.length - 1 - end) * 100}vh` }} />
     </div>
   )
 }

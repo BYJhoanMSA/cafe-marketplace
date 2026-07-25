@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, getImageUrl } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { useCart } from '@/context/CartContext'
@@ -50,6 +50,10 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   useEffect(() => {
     setActiveImageIndex(0)
   }, [product.id])
+
+  const optimizedImage = isActive
+    ? getImageUrl(product.imageUrl, { width: 500, quality: 80 })
+    : getImageUrl(product.imageUrl, { width: 300, quality: 60 })
 
   const goToIndex = useCallback((index: number, animated: boolean) => {
     if (!stripRef.current) return
@@ -188,7 +192,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
           {images.map((img, idx) => (
             <div key={idx} className={styles.imageStripItem}>
               <Image
-                src={img}
+                src={getImageUrl(img, { width: 500, quality: 80 })}
                 alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
                 fill
                 priority={isActive && idx === 0}
@@ -221,7 +225,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
             )}
           </>
         )}
-
         <div className={styles.overlayTop} />
         <div className={styles.overlayBottom} />
       </div>

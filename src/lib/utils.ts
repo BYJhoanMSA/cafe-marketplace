@@ -86,7 +86,8 @@ export function getImageUrl(
   params.push(`fit=${fit}`)
   params.push(`format=${format}`)
   params.push(`quality=${quality}`)
-  return `${originalUrl}?${params.join('&')}`
+  const separator = originalUrl.includes('?') ? '&' : '?'
+  return `${originalUrl}${separator}${params.join('&')}`
 }
 
 /**
