@@ -86,10 +86,6 @@
   background-color: var(--color-bg-elevated);
 }
 
-.sectionPolicy {
-  background-color: var(--color-bg-elevated);
-}
-
 @media (max-width: 767px) {
   .section {
     padding: var(--padding-section-sm);
@@ -144,12 +140,6 @@
   margin-top: var(--space-2);
 }
 
-.sectionDesc {
-  font-size: var(--text-base);
-  color: var(--color-ink-secondary);
-  line-height: var(--leading-relaxed);
-}
-
 .textContent {
   max-width: 720px;
 }
@@ -172,82 +162,6 @@
 
 .textContent p:last-child {
   margin-bottom: 0;
-}
-
-.cardGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-6);
-}
-
-@media (min-width: 640px) {
-  .cardGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .cardGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.shippingCard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-6);
-  background-color: var(--color-bg-elevated);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-xl);
-  transition: box-shadow var(--duration-moderate) var(--ease-out),
-              border-color var(--duration-moderate) var(--ease-out);
-}
-
-.shippingCard:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-border-strong);
-}
-
-.cardIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-lg);
-  background-color: var(--color-interactive);
-  color: var(--color-ink-inverted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cardTitle {
-  font-family: var(--font-secondary);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-primary);
-}
-
-.cardTime {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--text-sm);
-  color: var(--color-ink-secondary);
-}
-
-.cardCost {
-  font-family: var(--font-mono);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-ink-primary);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.cardNote {
-  font-size: var(--text-sm);
-  color: var(--color-accent-primary);
-  line-height: var(--leading-snug);
 }
 
 .valueGrid {
@@ -304,40 +218,6 @@
 }
 
 .valueDesc {
-  font-size: var(--text-sm);
-  color: var(--color-ink-secondary);
-  line-height: var(--leading-relaxed);
-}
-
-.policyGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-6);
-}
-
-@media (min-width: 640px) {
-  .policyGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.policyCard {
-  padding: var(--space-6);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.policyTitle {
-  font-family: var(--font-secondary);
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-primary);
-}
-
-.policyText {
   font-size: var(--text-sm);
   color: var(--color-ink-secondary);
   line-height: var(--leading-relaxed);
