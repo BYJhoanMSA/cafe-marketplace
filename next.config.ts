@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        // Hostinger (dominio actual de producción)
+        // Hostinger (dominio actual de produccion)
         protocol: 'https',
         hostname: 'peachpuff-goose-681416.hostingersite.com',
       },
@@ -16,21 +16,6 @@ const nextConfig: NextConfig = {
         // Assets locales en desarrollo
         protocol: 'http',
         hostname: 'localhost',
-      },
-      {
-        // Cloudflare R2 — bucket directo
-        protocol: 'https',
-        hostname: '*.r2.cloudflarestorage.com',
-      },
-      {
-        // Cloudflare R2 — dominio personalizado (cuando se configure)
-        protocol: 'https',
-        hostname: 'assets.*',
-      },
-      {
-        // Sanity CMS
-        protocol: 'https',
-        hostname: 'cdn.sanity.io',
       },
     ],
     formats: ['image/avif', 'image/webp'],

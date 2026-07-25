@@ -3,22 +3,12 @@ import { writeFile, mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
-import { uploadToR2, deleteFromR2, r2Configured } from '@/lib/r2'
 
 const IMAGE_CONFIGS: Record<string, { width: number; height: number; quality: number }> = {
   product: { width: 1080, height: 1080, quality: 80 },
   hero: { width: 1920, height: 1080, quality: 75 },
   thumbnail: { width: 400, height: 400, quality: 70 },
   feature: { width: 800, height: 600, quality: 75 },
-}
-
-function generateFileName(type: string): { fileName: string; thumbFileName: string } {
-  const timestamp = Date.now()
-  const randomSuffix = Math.random().toString(36).substring(2, 8)
-  return {
-    fileName: `${type}-${timestamp}-${randomSuffix}.webp`,
-    thumbFileName: `${type}-${timestamp}-${randomSuffix}-thumb.webp`,
-  }
 }
 
 export async function POST(req: NextRequest) {
@@ -51,10 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    const config = IMAGE_CONFIGS[type] ?? IMAGE_CONFIGS.product!
-    if (!config) {
-      return NextResponse.json({ error: 'Configuracion de imagen no encontrada' }, { status: 500 })
-    }
+    const config = (IMAGE_CONFIGS[type] ?? IMAGE_CONFIGS.product)!
 
     const optimizedBuffer = await sharp(buffer)
       .resize(config.width, config.height, {
@@ -72,27 +59,18 @@ export async function POST(req: NextRequest) {
       .webp({ quality: 70 })
       .toBuffer()
 
-    const { fileName, thumbFileName } = generateFileName(type)
-    const key = `uploads/${type}/${fileName}`
-    const thumbKey = `uploads/${type}/${thumbFileName}`
+    const timestamp = Date.now()
+    const randomSuffix = Math.random().toString(36).substring(2, 8)
+    const fileName = `${type}-${timestamp}-${randomSuffix}.webp`
+    const thumbFileName = `${type}-${timestamp}-${randomSuffix}-thumb.webp`
 
-    let url: string
-    let thumbUrl: string
+    const uploadDir = join(process.cwd(), 'public', 'uploads', type)
+    await mkdir(uploadDir, { recursive: true })
+    await writeFile(join(uploadDir, fileName), optimizedBuffer)
+    await writeFile(join(uploadDir, thumbFileName), thumbBuffer)
 
-    if (r2Configured) {
-      await uploadToR2(key, optimizedBuffer, 'image/webp')
-      await uploadToR2(thumbKey, thumbBuffer, 'image/webp')
-      const cdnBase = process.env.NEXT_PUBLIC_CDN_URL?.replace(/\/+$/, '') || ''
-      url = `${cdnBase}/${key}`
-      thumbUrl = `${cdnBase}/${thumbKey}`
-    } else {
-      const uploadDir = join(process.cwd(), 'public', 'uploads', type)
-      await mkdir(uploadDir, { recursive: true })
-      await writeFile(join(uploadDir, fileName), optimizedBuffer)
-      await writeFile(join(uploadDir, thumbFileName), thumbBuffer)
-      url = `/uploads/${type}/${fileName}`
-      thumbUrl = `/uploads/${type}/${thumbFileName}`
-    }
+    const url = `/uploads/${type}/${fileName}`
+    const thumbUrl = `/uploads/${type}/${thumbFileName}`
 
     const metadata = await sharp(optimizedBuffer).metadata()
 
@@ -125,24 +103,14 @@ export async function DELETE(req: NextRequest) {
     }
 
     const normalized = url.replace(/\\/g, '/')
-
-    if (r2Configured) {
-      const cdnBase = process.env.NEXT_PUBLIC_CDN_URL?.replace(/\/+$/, '') || ''
-      const key = normalized.startsWith(cdnBase)
-        ? normalized.slice(cdnBase.length + 1)
-        : normalized.replace(/^\/uploads\//, 'uploads/')
-      await deleteFromR2(key)
-      const thumbKey = key.replace('.webp', '-thumb.webp')
-      await deleteFromR2(thumbKey)
-    } else {
-      if (!normalized.startsWith('/uploads/') || normalized.includes('..') || normalized.includes('~')) {
-        return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
-      }
-      const filePath = join(process.cwd(), 'public', normalized)
-      try { await unlink(filePath) } catch {}
-      const thumbPath = filePath.replace('.webp', '-thumb.webp')
-      try { await unlink(thumbPath) } catch {}
+    if (!normalized.startsWith('/uploads/') || normalized.includes('..') || normalized.includes('~')) {
+      return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
     }
+
+    const filePath = join(process.cwd(), 'public', normalized)
+    try { await unlink(filePath) } catch {}
+    const thumbPath = filePath.replace('.webp', '-thumb.webp')
+    try { await unlink(thumbPath) } catch {}
 
     return NextResponse.json({ success: true })
   } catch (error) {

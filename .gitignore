@@ -39,6 +39,9 @@ desktop.ini
 # Tests
 coverage/
 
+# Uploads locales (se respaldan en deploy via scripts/deploy.sh)
+/public/uploads/
+
 # Cache
 .eslintcache
 .prettiercache
