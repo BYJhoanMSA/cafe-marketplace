@@ -15,7 +15,8 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "type-check": "tsc --noEmit",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
