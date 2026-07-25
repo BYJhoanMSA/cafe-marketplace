@@ -3,7 +3,7 @@
 // src/components/ui/Drawer/Drawer.tsx
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { X } from '@phosphor-icons/react'
+import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import styles from './Drawer.module.css'
 

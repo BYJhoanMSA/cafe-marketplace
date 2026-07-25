@@ -1,12 +1,22 @@
+/* src/components/product/ProductCard/ProductCard.module.css */
+
+/* ================================================================
+   PRODUCT CARD — Versión desktop (grid tradicional)
+   Mobile usa MobileProductSlide (feed TikTok)
+   ================================================================ */
+
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-elevated);
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  transition: var(--transition-moderate);
+  transition:
+    box-shadow var(--duration-moderate) var(--ease-out),
+    transform var(--duration-moderate) var(--ease-out),
+    border-color var(--duration-moderate) var(--ease-out);
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -14,7 +24,7 @@
 
 .card:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: var(--color-border-strong);
 }
 
@@ -23,6 +33,9 @@
   outline-offset: 2px;
 }
 
+/* ----------------------------------------------------------------
+   IMAGEN
+   ---------------------------------------------------------------- */
 .imageWrapper {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -34,13 +47,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--duration-slow) var(--ease-out);
+  transition: transform var(--duration-deliberate) var(--ease-out);
 }
 
 .card:hover .image {
   transform: scale(1.05);
 }
 
+/* Badges sobre la imagen */
 .imageBadges {
   position: absolute;
   top: var(--space-3);
@@ -59,6 +73,7 @@
   gap: var(--space-1);
 }
 
+/* Botón de favorito */
 .favoriteButton {
   position: absolute;
   top: var(--space-3);
@@ -66,15 +81,18 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-circle);
-  background-color: rgba(247, 244, 239, 0.9);
+  background-color: rgba(253, 250, 246, 0.92);
   backdrop-filter: blur(8px);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--neutral-500);
-  transition: var(--transition-fast);
+  color: var(--neutral-600);
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
   z-index: 2;
 }
 
@@ -91,6 +109,7 @@
   transform: scale(0.88);
 }
 
+/* Cupping score */
 .cuppingScore {
   position: absolute;
   bottom: var(--space-3);
@@ -98,7 +117,7 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  background-color: rgba(30, 24, 24, 0.80);
+  background-color: rgba(15, 12, 10, 0.80);
   backdrop-filter: blur(4px);
   color: var(--gold-300);
   font-family: var(--font-mono);
@@ -109,14 +128,18 @@
   z-index: 1;
 }
 
+/* ----------------------------------------------------------------
+   CONTENIDO
+   ---------------------------------------------------------------- */
 .content {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--padding-card-sm);
+  padding: var(--space-4);
   flex: 1;
 }
 
+/* Origen + Tostador */
 .meta {
   display: flex;
   align-items: center;
@@ -151,6 +174,7 @@
   text-overflow: ellipsis;
 }
 
+/* Nombre del producto */
 .title {
   font-family: var(--font-primary);
   font-size: var(--text-lg);
@@ -163,6 +187,7 @@
   overflow: hidden;
 }
 
+/* Notas de sabor */
 .flavorNotes {
   display: flex;
   flex-wrap: wrap;
@@ -170,6 +195,7 @@
   min-height: 20px;
 }
 
+/* Rating */
 .rating {
   display: flex;
   align-items: center;
@@ -188,11 +214,14 @@
   color: var(--color-ink-tertiary);
 }
 
+/* ----------------------------------------------------------------
+   FOOTER DE LA CARD — Precio + CTA
+   ---------------------------------------------------------------- */
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--padding-card-sm) var(--padding-card-sm);
+  padding: var(--space-3) var(--space-4) var(--space-4);
   border-top: 1px solid var(--color-border-default);
   gap: var(--space-3);
 }
@@ -230,26 +259,31 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-circle);
-  background-color: var(--color-accent-primary);
-  color: #FFFFFF;
+  background-color: var(--color-interactive);
+  color: var(--color-ink-inverted);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-fast);
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
 }
 
 .addToCartButton:hover {
-  background-color: var(--gold-700);
+  background-color: var(--color-interactive-hover);
 }
 
 .addToCartButton:active {
   transform: scale(0.90);
 }
 
+/* ----------------------------------------------------------------
+   SKELETON
+   ---------------------------------------------------------------- */
 .skeleton {
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--color-border-default);
 }
@@ -259,7 +293,7 @@
 }
 
 .skeletonContent {
-  padding: var(--padding-card-sm);
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);

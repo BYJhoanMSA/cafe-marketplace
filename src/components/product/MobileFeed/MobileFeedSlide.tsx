@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Heart, ChatCircle, ShareNetwork, ShoppingBag, MapPin, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatPrice, getImageUrl } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
@@ -211,7 +211,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
                 onClick={handlePrevImage}
                 aria-label="Imagen anterior"
               >
-                <CaretLeft size={20} />
+                <ChevronLeft size={20} />
               </button>
             )}
             {activeImageIndex < images.length - 1 && (
@@ -220,7 +220,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
                 onClick={handleNextImage}
                 aria-label="Siguiente imagen"
               >
-                <CaretRight size={20} />
+                <ChevronRight size={20} />
               </button>
             )}
           </>
@@ -264,14 +264,14 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
 
         <button className={styles.actionButton} onClick={(e) => { e.stopPropagation(); setReviewsOpen(true) }}>
           <div className={styles.actionIconBox}>
-            <ChatCircle size={24} />
+            <MessageCircle size={24} />
           </div>
           <span className={styles.actionLabel}>Ver</span>
         </button>
 
         <button className={styles.actionButton} onClick={handleShare}>
           <div className={styles.actionIconBox}>
-            <ShareNetwork size={24} />
+            <Share2 size={24} />
           </div>
           <span className={styles.actionLabel}>{shares}</span>
         </button>

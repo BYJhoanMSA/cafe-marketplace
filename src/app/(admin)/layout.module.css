@@ -1,3 +1,5 @@
+/* src/app/(admin)/layout.module.css */
+
 .container {
   display: flex;
   min-height: 100vh;
@@ -5,8 +7,8 @@
 }
 
 .sidebar {
-  width: 260px;
-  background-color: var(--color-bg-elevated);
+  width: 250px;
+  background-color: var(--color-bg-primary);
   border-right: 1px solid var(--color-border-default);
   display: flex;
   flex-direction: column;
@@ -17,11 +19,10 @@
 }
 
 .logo {
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-6);
   font-family: var(--font-primary);
   font-size: var(--text-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-accent-primary);
+  color: var(--color-ink-primary);
   text-decoration: none;
   border-bottom: 1px solid var(--color-border-default);
 }
@@ -30,7 +31,7 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-4);
-  gap: var(--space-1);
+  gap: var(--space-2);
   flex: 1;
 }
 
@@ -39,22 +40,22 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-pill);
-  color: var(--color-ink-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--color-ink-secondary);
   text-decoration: none;
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
-  transition: var(--transition-fast);
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .navItem:hover {
-  background-color: var(--neutral-100);
+  background-color: var(--color-bg-elevated);
   color: var(--color-ink-primary);
 }
 
 .navItem.active {
-  background-color: var(--gold-100);
-  color: var(--gold-700);
+  background-color: var(--color-interactive-light, rgba(37, 99, 235, 0.1));
+  color: var(--color-interactive);
 }
 
 .userProfile {
@@ -69,11 +70,11 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-circle);
-  background-color: var(--color-accent-primary);
+  background-color: var(--color-border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: var(--color-ink-inverted);
   font-weight: var(--font-weight-bold);
   font-size: var(--text-sm);
 }
@@ -107,7 +108,7 @@
 
 .header {
   height: 64px;
-  background-color: var(--color-bg-elevated);
+  background-color: var(--color-bg-primary);
   border-bottom: 1px solid var(--color-border-default);
   display: flex;
   align-items: center;

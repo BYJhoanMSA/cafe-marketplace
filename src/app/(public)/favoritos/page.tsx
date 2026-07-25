@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useCart } from '@/context/CartContext'
 import { formatPrice } from '@/lib/utils'
-import { Heart, ShoppingBag, Trash, ArrowLeft, Coffee } from '@phosphor-icons/react'
+import { Heart, ShoppingBag, Trash2, ArrowLeft } from 'lucide-react'
 import styles from './page.module.css'
 
 export default function FavoritosPage() {
@@ -52,7 +52,7 @@ export default function FavoritosPage() {
           alignItems: 'center',
           gap: 'var(--space-4)'
         }}>
-          <Coffee size={56} />
+          <span style={{ fontSize: '3.5rem' }}>☕</span>
           <h2 style={{ fontFamily: 'var(--font-primary)', fontSize: 'var(--text-xl)' }}>Aún no tienes favoritos guardados</h2>
           <p style={{ color: 'var(--color-ink-secondary)', maxWidth: '400px', margin: 0 }}>
             Explora nuestro catálogo de origen y presiona el corazón en los cafés que quieras guardar.
@@ -117,7 +117,7 @@ export default function FavoritosPage() {
                   }}
                   title="Quitar de favoritos"
                 >
-                  <Trash size={18} />
+                  <Trash2 size={18} />
                 </button>
               </div>
 

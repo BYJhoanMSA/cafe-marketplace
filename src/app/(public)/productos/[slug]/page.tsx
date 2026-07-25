@@ -4,7 +4,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
-import { Star, Heart, ShareNetwork, ArrowLeft, Coffee, Leaf } from '@phosphor-icons/react'
+import { Star, Heart, Share2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice } from '@/lib/utils'
@@ -241,7 +241,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           
           <div className={styles.meta}>
             {product.cuppingScore && (
-              <Badge variant="gold" icon={<Coffee size={14} weight="fill" />}>
+              <Badge variant="gold" icon="☕">
                 SCA {product.cuppingScore}
               </Badge>
             )}
@@ -264,7 +264,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 title="Compartir producto"
                 aria-label="Compartir producto"
               >
-                <ShareNetwork size={14} />
+                <Share2 size={14} />
               </button>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               color: product.category === 'Café Orgánico' ? 'var(--forest-600)' : 'var(--color-ink-secondary)',
               display: 'flex', alignItems: 'center', gap: '6px',
             }}>
-              <span>{product.category === 'Café Orgánico' ? <Leaf size={16} weight="fill" color="var(--forest-500)" /> : <Coffee size={16} weight="fill" />}</span>
+              <span>{product.category === 'Café Orgánico' ? '🌱' : '☕'}</span>
               {product.category}
             </div>
           )}

@@ -1,3 +1,5 @@
+/* src/components/ui/Toast/Toast.module.css */
+
 .viewport {
   position: fixed;
   top: 0;
@@ -12,53 +14,53 @@
   list-style: none;
   z-index: 200;
   outline: none;
-  pointer-events: none;
+  pointer-events: none; /* Dejar pasar clicks entre los toasts */
 }
 
 @media (max-width: 767px) {
   .viewport {
     top: auto;
-    bottom: env(safe-area-inset-bottom, 80px);
+    bottom: env(safe-area-inset-bottom, 80px); /* Arriba del tab bar */
     padding: var(--space-4);
   }
 }
 
 .toast {
   position: relative;
-  pointer-events: auto;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-4) var(--space-5);
+  pointer-events: auto; /* El toast en sí debe capturar clicks (cerrar, acciones) */
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
   box-shadow: var(--shadow-lg);
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
   overflow: hidden;
-  animation: slideIn var(--duration-normal) var(--ease-out);
+  
+  /* Animación */
+  animation: slideIn var(--duration-normal) var(--ease-spring);
   transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
 .toast.removing {
   opacity: 0;
-  transform: translateX(100%);
+  transform: translateX(100%); /* Hacia la derecha al irse */
 }
 
 @media (max-width: 767px) {
   .toast.removing {
-    transform: translateY(100%);
+    transform: translateY(100%); /* Hacia abajo en móviles */
   }
 }
 
+/* Tipos */
 .toast.success {
   border-left: 4px solid var(--forest-500);
 }
-
 .toast.error {
-  border-left: 4px solid var(--error-text);
+  border-left: 4px solid var(--terra-500);
 }
-
 .toast.info {
   border-left: 4px solid var(--gold-500);
 }
@@ -66,9 +68,8 @@
 .icon {
   flex-shrink: 0;
 }
-
 .success .icon { color: var(--forest-500); }
-.error .icon { color: var(--error-text); }
+.error .icon { color: var(--terra-500); }
 .info .icon { color: var(--gold-500); }
 
 .content {
@@ -102,13 +103,13 @@
   border-radius: var(--radius-circle);
   border: none;
   background: transparent;
-  color: var(--color-ink-tertiary);
+  color: var(--color-ink-secondary);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background-color var(--duration-fast) var(--ease-out);
 }
 
 .closeButton:hover {
-  background-color: var(--neutral-100);
+  background-color: var(--color-bg-elevated-2);
   color: var(--color-ink-primary);
 }
 

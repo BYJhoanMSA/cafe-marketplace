@@ -1,3 +1,5 @@
+/* src/components/ui/Select/Select.module.css */
+
 .container {
   position: relative;
   display: inline-block;
@@ -9,16 +11,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-5);
-  height: 52px;
-  background-color: var(--color-bg-input);
-  border: 1.5px solid var(--color-border-default);
-  border-radius: var(--radius-lg);
+  padding: 0 var(--space-4);
+  height: 48px;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
   font-family: var(--font-secondary);
   font-size: var(--text-base);
   color: var(--color-ink-primary);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .trigger:hover {
@@ -27,8 +29,8 @@
 
 .trigger:focus {
   outline: none;
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(200, 168, 113, 0.15);
+  border-color: var(--color-interactive);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .placeholder {
@@ -36,8 +38,8 @@
 }
 
 .icon {
-  color: var(--color-ink-tertiary);
-  transition: transform var(--duration-fast) var(--ease-out);
+  color: var(--color-ink-secondary);
+  transition: transform var(--duration-fast) var(--ease-spring);
 }
 
 .icon.open {
@@ -53,18 +55,20 @@
   overflow-y: auto;
   background-color: var(--color-bg-elevated);
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   z-index: 50;
   padding: var(--space-2) 0;
   scrollbar-width: thin;
+  
+  /* Animación */
   transform-origin: top;
   animation: slideDown var(--duration-fast) var(--ease-out);
 }
 
 .option {
   width: 100%;
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-3) var(--space-4);
   text-align: left;
   background-color: transparent;
   border: none;
@@ -72,19 +76,18 @@
   font-size: var(--text-base);
   color: var(--color-ink-secondary);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
 }
 
-.option:hover,
-.option:focus {
-  background-color: var(--neutral-100);
+.option:hover, .option:focus {
+  background-color: var(--color-bg-elevated-2);
   color: var(--color-ink-primary);
   outline: none;
 }
 
 .option.selected {
-  background-color: var(--gold-100);
-  color: var(--gold-700);
+  background-color: var(--color-interactive-light, rgba(37, 99, 235, 0.1));
+  color: var(--color-interactive);
   font-weight: var(--font-weight-medium);
 }
 

@@ -1,15 +1,17 @@
+/* src/components/ui/QuantitySelector/QuantitySelector.module.css */
+
 .container {
   display: inline-flex;
   align-items: center;
-  border: 1.5px solid var(--color-border-default);
-  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  background-color: var(--color-bg-elevated);
+  background-color: var(--color-bg-primary);
   transition: border-color var(--duration-fast) var(--ease-out);
 }
 
 .container:focus-within {
-  border-color: var(--color-border-focus);
+  border-color: var(--color-interactive);
 }
 
 .button {
@@ -20,13 +22,15 @@
   justify-content: center;
   background-color: transparent;
   border: none;
-  color: var(--color-ink-tertiary);
+  color: var(--color-ink-secondary);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: 
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 .button:hover:not(:disabled) {
-  background-color: var(--neutral-100);
+  background-color: var(--color-bg-elevated);
   color: var(--color-ink-primary);
 }
 

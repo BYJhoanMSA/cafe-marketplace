@@ -1,7 +1,5 @@
 'use client'
 
-import { Tag } from '@phosphor-icons/react'
-
 interface ProductBadgesSectionProps {
   isNew: boolean
   isLimited: boolean
@@ -29,7 +27,7 @@ export function ProductBadgesSection({ isNew, isLimited, isOrganic, isPublicity,
       gap: 'var(--space-6)',
       flexWrap: 'wrap',
     }}>
-      <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)', display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}><Tag size={16} weight="fill" /> Badges</span>
+      <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)' }}>🏷️ Badges</span>
       {badges.map(({ key, label, color, value }) => (
         <label key={key} style={{
           display: 'flex', alignItems: 'center', gap: 'var(--space-2)',

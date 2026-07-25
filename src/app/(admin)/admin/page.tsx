@@ -1,5 +1,5 @@
 // src/app/(admin)/admin/page.tsx
-import { CurrencyDollar, ShoppingBag, Package, Users } from '@phosphor-icons/react'
+import { DollarSign, ShoppingBag, Package, Users } from 'lucide-react'
 import { getDashboardStats, getRecentOrders } from '@/server/actions/admin/dashboard.actions'
 import { StatCard } from '@/components/admin/StatCard'
 import { RecentOrdersTable } from '@/components/admin/RecentOrdersTable'
@@ -41,7 +41,7 @@ export default async function DashboardPage() {
         <StatCard 
           title="Ingresos Totales" 
           value={formatPrice(stats.totalRevenue, 'USD')}
-          icon={<CurrencyDollar size={24} />}
+          icon={<DollarSign size={24} />}
           trend={{ value: '0% (MVP)', isPositive: true }}
         />
         <StatCard 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Drawer } from '@/components/ui/Drawer/Drawer'
-import { Star, PaperPlaneTilt } from '@phosphor-icons/react'
+import { Star, Send } from 'lucide-react'
 
 interface Review {
   id: string
@@ -199,7 +199,7 @@ export function ReviewDrawer({ isOpen, onClose, productName }: ReviewDrawerProps
               transition: 'var(--transition-normal)',
             }}
           >
-            <PaperPlaneTilt size={16} />
+            <Send size={16} />
             Publicar reseña
           </button>
         </form>

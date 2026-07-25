@@ -2,7 +2,7 @@
 
 // src/components/ui/Accordion/Accordion.tsx
 import { useState, type ReactNode } from 'react'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import styles from './Accordion.module.css'
 
@@ -51,7 +51,7 @@ export function Accordion({ items, allowMultiple = false, className }: Accordion
                 id={`accordion-header-${item.id}`}
               >
                 {item.title}
-                <CaretDown className={styles.icon} size={20} aria-hidden="true" />
+                <ChevronDown className={styles.icon} size={20} aria-hidden="true" />
               </button>
             </h3>
             

@@ -1,31 +1,50 @@
+/* src/components/layout/Navbar/Navbar.module.css */
+
+/* ================================================================
+   NAVBAR — Desktop header + Mobile tab bar
+   Strategy:
+     Desktop: barra superior fija, logo centrado, nav a izquierda, acciones a derecha
+     Mobile: oculta el header, muestra un tab bar inferior tipo iOS/TikTok
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   HEADER (Desktop y Tablet ≥ 768px)
+   ---------------------------------------------------------------- */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--glass-border);
-  transition: var(--transition-normal);
+  background-color: rgba(253, 250, 246, 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--color-border-default);
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
+}
+
+[data-theme="dark"] .header {
+  background-color: rgba(15, 12, 10, 0.92);
 }
 
 .header.scrolled {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .headerInner {
   max-width: var(--max-width-content);
   margin-inline: auto;
   padding-inline: var(--space-10);
-  height: 72px;
+  height: 64px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--space-6);
 }
 
+/* ---- Logo ---- */
 .logo {
   justify-self: center;
   display: flex;
@@ -37,8 +56,7 @@
 .logoText {
   font-family: var(--font-primary);
   font-size: var(--text-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-accent-primary);
+  color: var(--color-ink-primary);
   letter-spacing: var(--tracking-tight);
   line-height: 1;
 }
@@ -48,6 +66,7 @@
   line-height: 1;
 }
 
+/* ---- Navegación principal ---- */
 .nav {
   display: flex;
   align-items: center;
@@ -59,27 +78,29 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   font-family: var(--font-secondary);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-ink-tertiary);
+  color: var(--color-ink-secondary);
   text-decoration: none;
-  transition: var(--transition-fast);
+  transition:
+    color var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out);
   white-space: nowrap;
 }
 
 .navLink:hover {
   color: var(--color-ink-primary);
-  background-color: var(--neutral-100);
+  background-color: var(--color-bg-elevated-2);
 }
 
 .navLink.active {
   color: var(--color-ink-primary);
   font-weight: var(--font-weight-semibold);
-  background-color: var(--neutral-100);
 }
 
+/* ---- Acciones (derecha) ---- */
 .actions {
   justify-self: end;
   display: flex;
@@ -91,21 +112,23 @@
   position: relative;
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-circle);
+  border-radius: var(--radius-md);
   background: transparent;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-ink-tertiary);
-  transition: var(--transition-fast);
+  color: var(--color-ink-secondary);
+  transition:
+    color var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out);
   text-decoration: none;
 }
 
 .actionButton:hover {
   color: var(--color-ink-primary);
-  background-color: var(--neutral-100);
+  background-color: var(--color-bg-elevated-2);
 }
 
 .actionButton:focus-visible {
@@ -113,16 +136,17 @@
   outline-offset: 2px;
 }
 
+/* Badge de cantidad en carrito */
 .cartBadge {
   position: absolute;
   top: 4px;
   right: 4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
   border-radius: var(--radius-pill);
-  background-color: var(--color-accent-primary);
-  color: #FFFFFF;
+  background-color: var(--gold-500);
+  color: var(--neutral-900);
   font-size: 10px;
   font-weight: var(--font-weight-bold);
   display: flex;
@@ -132,6 +156,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Barra de búsqueda expandible */
 .searchWrapper {
   position: relative;
 }
@@ -140,7 +165,9 @@
   width: 0;
   overflow: hidden;
   opacity: 0;
-  transition: var(--transition-moderate);
+  transition:
+    width var(--duration-moderate) var(--ease-out),
+    opacity var(--duration-moderate) var(--ease-out);
 }
 
 .searchInput.open {
@@ -148,6 +175,9 @@
   opacity: 1;
 }
 
+/* ================================================================
+   MOBILE — Ocultar header, mostrar tab bar
+   ================================================================ */
 @media (max-width: 767px) {
   .header {
     display: none;
@@ -164,6 +194,9 @@
   }
 }
 
+/* ----------------------------------------------------------------
+   TAB BAR MOBILE (Inferior, estilo iOS/TikTok)
+   ---------------------------------------------------------------- */
 .tabBar {
   position: fixed;
   bottom: 0;
@@ -171,12 +204,16 @@
   right: 0;
   width: 100%;
   z-index: 100;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-top: 1px solid var(--glass-border);
+  background-color: rgba(253, 250, 246, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--color-border-default);
   height: 64px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+[data-theme="dark"] .tabBar {
+  background-color: rgba(15, 12, 10, 0.95);
 }
 
 .tabBarInner {
@@ -200,7 +237,7 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: color var(--duration-normal) var(--ease-out);
   -webkit-tap-highlight-color: transparent;
   position: relative;
 }
@@ -228,6 +265,7 @@
   letter-spacing: 0.02em;
 }
 
+/* Tab central (Catálogo) — más prominente */
 .tabItemCenter {
   flex: 1;
   display: flex;
@@ -247,12 +285,14 @@
   width: 44px;
   height: 44px;
   border-radius: var(--radius-xl);
-  background-color: var(--color-accent-primary);
-  color: #FFFFFF;
+  background-color: var(--color-interactive);
+  color: var(--color-ink-inverted);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-fast);
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
 }
 
 .tabItemCenter:active .tabCenterIcon {
@@ -267,6 +307,7 @@
   line-height: 1;
 }
 
+/* Indicador activo — pequeño punto dorado */
 .tabActiveIndicator {
   position: absolute;
   bottom: -2px;
@@ -275,7 +316,7 @@
   width: 4px;
   height: 4px;
   border-radius: var(--radius-circle);
-  background-color: var(--color-accent-primary);
+  background-color: var(--gold-500);
   opacity: 0;
   transition: opacity var(--duration-normal) var(--ease-out);
 }
@@ -284,8 +325,9 @@
   opacity: 1;
 }
 
+/* Espaciador para el header fijo en desktop */
 .headerSpacer {
-  height: 72px;
+  height: 64px;
 }
 
 @media (max-width: 767px) {

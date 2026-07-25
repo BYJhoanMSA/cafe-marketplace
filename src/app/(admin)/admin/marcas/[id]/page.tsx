@@ -1,7 +1,7 @@
 // src/app/(admin)/admin/marcas/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft } from '@phosphor-icons/react'
+import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/server/db/client'
 import { VendorForm } from '@/components/admin/VendorForm'
 

@@ -1,6 +1,6 @@
 // src/app/(admin)/admin/inventario/nuevo/page.tsx
 import Link from 'next/link'
-import { ArrowLeft } from '@phosphor-icons/react'
+import { ArrowLeft } from 'lucide-react'
 import { getProductsForSelect } from '@/server/actions/admin/inventory.actions'
 import { getVariantSizes, getGrindTypes } from '@/server/actions/settings.actions'
 import { VariantForm } from '@/components/admin/VariantForm'

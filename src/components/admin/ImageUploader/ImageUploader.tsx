@@ -9,8 +9,8 @@
 // - Reordenamiento por arrastre
 // - Eliminación individual
 
-import { useState, useRef, useCallback, type ReactNode } from 'react'
-import { UploadSimple, X, Image, SpinnerGap, DotsSixVertical, Star, Warning } from '@phosphor-icons/react'
+import { useState, useRef, useCallback } from 'react'
+import { Upload, X, ImageIcon, Loader2, GripVertical, Star } from 'lucide-react'
 import styles from './ImageUploader.module.css'
 
 export interface UploadedImage {
@@ -26,7 +26,7 @@ interface ImageUploaderProps {
   onChange: (images: UploadedImage[]) => void
   type?: 'product' | 'hero' | 'feature'
   maxImages?: number
-  label?: ReactNode
+  label?: string
 }
 
 export function ImageUploader({
@@ -154,12 +154,12 @@ export function ImageUploader({
           />
           {uploading.length > 0 ? (
             <div className={styles.uploadingIndicator}>
-              <SpinnerGap size={28} className={styles.spin} />
+              <Loader2 size={28} className={styles.spin} />
               <span>Optimizando y subiendo {uploading.length} imagen{uploading.length > 1 ? 'es' : ''}...</span>
             </div>
           ) : (
             <>
-              <UploadSimple size={32} className={styles.uploadIcon} />
+              <Upload size={32} className={styles.uploadIcon} />
               <div className={styles.dropzoneText}>
                 <strong>Arrastra imágenes aquí</strong>
                 <span>o haz clic para seleccionar</span>
@@ -174,7 +174,7 @@ export function ImageUploader({
       {errors.length > 0 && (
         <div className={styles.errorList}>
           {errors.map((err, i) => (
-            <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}><Warning size={14} weight="bold" /> {err}</span>
+            <span key={i}>⚠️ {err}</span>
           ))}
         </div>
       )}
@@ -230,7 +230,7 @@ export function ImageUploader({
 
       {images.length === 0 && uploading.length === 0 && (
         <div className={styles.emptyState}>
-          <Image size={36} className={styles.emptyIcon} />
+          <ImageIcon size={36} className={styles.emptyIcon} />
           <span>Sin imágenes aún</span>
         </div>
       )}

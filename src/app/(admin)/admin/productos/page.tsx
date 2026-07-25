@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { getAdminProducts } from '@/server/actions/admin/product.actions'
 import { Badge } from '@/components/ui/Badge'
-import { Plus, PencilSimple, Trash } from '@phosphor-icons/react'
+import { Plus, Edit2, Trash2 } from 'lucide-react'
 import { deleteProduct } from '@/server/actions/admin/product.actions'
 
 export const metadata = {
@@ -73,12 +73,12 @@ export default async function AdminProductsPage() {
                       style={{ color: 'var(--color-ink-secondary)', padding: 'var(--space-2)' }}
                       title="Editar"
                     >
-                      <PencilSimple size={16} />
+                      <Edit2 size={16} />
                     </Link>
 <form action={deleteProduct}>
                       <input type="hidden" name="productId" value={product.id} />
                       <button type="submit" style={{ background: 'none', border: 'none', color: 'var(--terra-500)', cursor: 'pointer', padding: 'var(--space-2)' }} title="Eliminar">
-                        <Trash size={16} />
+                        <Trash2 size={16} />
                       </button>
                     </form>
                   </div>

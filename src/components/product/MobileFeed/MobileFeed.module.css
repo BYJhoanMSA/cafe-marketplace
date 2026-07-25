@@ -1,19 +1,25 @@
+/* src/components/product/MobileFeed/MobileFeed.module.css */
+
+/* Contenedor principal del feed vertical */
 .feedContainer {
-  height: calc(100vh - 64px);
+  height: calc(100vh - 64px); /* 100vh menos el tab bar inferior */
   height: calc(100dvh - 64px);
   width: 100vw;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  scrollbar-width: none; /* Firefox */
   background-color: var(--neutral-900);
   position: relative;
 }
 
 .feedContainer::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome/Safari */
 }
 
+/* ----------------------------------------------------------------
+   SLIDE INDIVIDUAL
+   ---------------------------------------------------------------- */
 .slide {
   height: 100%;
   width: 100vw;
@@ -24,6 +30,7 @@
   background-color: var(--neutral-950);
 }
 
+/* Contenedor principal de la imagen */
 .imageContainer {
   position: absolute;
   inset: 0;
@@ -48,13 +55,14 @@
   object-fit: cover;
 }
 
+/* Gradientes para legibilidad */
 .overlayTop {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 150px;
-  background: linear-gradient(to bottom, rgba(30,24,24,0.7) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
   z-index: 1;
   pointer-events: none;
 }
@@ -65,11 +73,14 @@
   left: 0;
   right: 0;
   height: 50%;
-  background: linear-gradient(to top, rgba(30,24,24,0.9) 0%, rgba(30,24,24,0.5) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
   z-index: 1;
   pointer-events: none;
 }
 
+/* ----------------------------------------------------------------
+   HEADER DEL SLIDE (Top)
+   ---------------------------------------------------------------- */
 .header {
   position: absolute;
   top: env(safe-area-inset-top, 16px);
@@ -86,7 +97,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.15);
   backdrop-filter: blur(8px);
   padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
   border-radius: var(--radius-pill);
@@ -105,11 +116,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: var(--neutral-900);
   font-size: 10px;
   font-weight: bold;
 }
 
+/* ----------------------------------------------------------------
+   ACCIONES LATERALES (Derecha)
+   ---------------------------------------------------------------- */
 .actionsSidebar {
   position: absolute;
   right: var(--space-4);
@@ -130,8 +144,8 @@
   border: none;
   color: white;
   cursor: pointer;
-  filter: drop-shadow(0 2px 4px rgba(30,24,24,0.4));
-  transition: transform var(--duration-fast) var(--ease-out);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  transition: transform var(--duration-fast) var(--ease-spring);
 }
 
 .actionButton:active {
@@ -148,7 +162,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255,255,255,0.1);
-  transition: var(--transition-fast);
+  transition: background-color var(--duration-normal) var(--ease-out);
 }
 
 .actionButton:hover .actionIconBox {
@@ -164,6 +178,9 @@
   font-weight: var(--font-weight-medium);
 }
 
+/* ----------------------------------------------------------------
+   CONTENIDO PRINCIPAL (Inferior Izquierda)
+   ---------------------------------------------------------------- */
 .content {
   position: absolute;
   bottom: var(--space-8);
@@ -191,7 +208,7 @@
 }
 
 .tag {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.2);
   backdrop-filter: blur(4px);
   color: white;
   padding: 2px var(--space-2);
@@ -204,7 +221,7 @@
 
 .tag.score {
   background: var(--gold-500);
-  color: #FFFFFF;
+  color: var(--neutral-900);
 }
 
 .title {
@@ -212,7 +229,7 @@
   font-size: var(--text-2xl);
   color: white;
   line-height: var(--leading-tight);
-  text-shadow: 0 2px 4px rgba(30,24,24,0.5);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .origin {
@@ -234,6 +251,9 @@
   margin-top: var(--space-2);
 }
 
+/* ----------------------------------------------------------------
+   PRECIO Y BOTÓN DE COMPRA
+   ---------------------------------------------------------------- */
 .priceBlock {
   display: flex;
   flex-direction: column;
@@ -248,13 +268,13 @@
 }
 
 .buyButton {
-  background-color: var(--gold-500);
-  color: #FFFFFF;
+  background-color: var(--color-interactive);
+  color: var(--color-ink-inverted);
   border: none;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   padding: var(--padding-button-md);
   font-family: var(--font-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   font-size: var(--text-base);
   display: flex;
   align-items: center;
@@ -262,13 +282,14 @@
   gap: var(--space-2);
   cursor: pointer;
   white-space: nowrap;
-  transition: var(--transition-fast);
+  transition: transform var(--duration-fast) var(--ease-spring);
 }
 
 .buyButton:active {
   transform: scale(0.95);
 }
 
+/* Navegación horizontal para imágenes */
 .imageDots {
   position: absolute;
   top: calc(env(safe-area-inset-top, 16px) + 40px);
@@ -288,7 +309,7 @@
   background-color: rgba(255,255,255,0.4);
   border: none;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-spring);
   pointer-events: auto;
   padding: 0;
 }
@@ -300,6 +321,7 @@
   border-radius: 3px;
 }
 
+/* Flechas de navegación */
 .navArrow {
   position: absolute;
   top: 50%;
@@ -316,7 +338,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background-color var(--duration-fast) var(--ease-out);
   pointer-events: auto;
 }
 

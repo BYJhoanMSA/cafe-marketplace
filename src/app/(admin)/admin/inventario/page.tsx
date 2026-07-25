@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getVariants } from '@/server/actions/admin/inventory.actions'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice } from '@/lib/utils'
-import { Plus, PencilSimple, Warning } from '@phosphor-icons/react'
+import { Plus, Edit2, AlertTriangle } from 'lucide-react'
 
 export const metadata = {
   title: 'Inventario | Panel Admin',
@@ -86,7 +86,7 @@ export default async function AdminInventoryPage() {
                       <span style={{ fontWeight: 'var(--font-weight-bold)' }}>{variant.stockQuantity}</span>
                       {isLowStock && (
                         <span style={{ color: 'var(--terra-500)', display: 'inline-flex', alignItems: 'center', gap: '2px', fontSize: 'var(--text-xs)' }} title="Stock Bajo">
-                          <Warning size={14} /> Bajo
+                          <AlertTriangle size={14} /> Bajo
                         </span>
                       )}
                       {isOutOfStock && (
@@ -105,7 +105,7 @@ export default async function AdminInventoryPage() {
                       style={{ color: 'var(--color-ink-secondary)', padding: 'var(--space-2)', display: 'inline-block' }}
                       title="Editar Variante"
                     >
-                      <PencilSimple size={16} />
+                      <Edit2 size={16} />
                     </Link>
                   </td>
                 </tr>

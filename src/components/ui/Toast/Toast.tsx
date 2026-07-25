@@ -2,7 +2,7 @@
 
 // src/components/ui/Toast/Toast.tsx
 import { useEffect, useState } from 'react'
-import { CheckCircle, WarningCircle, Info, X } from '@phosphor-icons/react'
+import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import styles from './Toast.module.css'
 
@@ -22,8 +22,8 @@ interface ToastProps {
 }
 
 const ICONS = {
-  success: CheckCircle,
-  error: WarningCircle,
+  success: CheckCircle2,
+  error: AlertCircle,
   info: Info,
 }
 

@@ -1,3 +1,5 @@
+/* src/app/(public)/pqr/page.module.css */
+
 .hero {
   position: relative;
   min-height: 50vh;
@@ -18,8 +20,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 30% 40%, rgba(107, 75, 46, 0.18) 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 60%, rgba(200, 168, 113, 0.12) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 30% 40%, var(--terra-900) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 60%, var(--gold-900) 0%, transparent 50%);
+  opacity: 0.25;
   pointer-events: none;
 }
 
@@ -60,7 +63,7 @@
 .heroTitle {
   font-family: var(--font-primary);
   font-size: clamp(2.2rem, 6vw, var(--text-5xl));
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-regular);
   color: var(--neutral-0);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -124,7 +127,6 @@
 .sectionTitle {
   font-family: var(--font-primary);
   font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
-  font-weight: var(--font-weight-bold);
   color: var(--color-ink-primary);
   line-height: var(--leading-tight);
   margin-bottom: var(--space-3);
@@ -158,11 +160,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--padding-card);
+  padding: var(--space-6);
   background-color: var(--color-bg-elevated);
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-2xl);
-  transition: var(--transition-moderate);
+  border-radius: var(--radius-xl);
+  transition: box-shadow var(--duration-moderate) var(--ease-out),
+              border-color var(--duration-moderate) var(--ease-out);
 }
 
 .pqrCard:hover {
@@ -174,8 +177,8 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-lg);
-  background-color: var(--color-accent-primary);
-  color: #FFFFFF;
+  background-color: var(--terra-500);
+  color: var(--neutral-0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,11 +228,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--padding-card);
+  padding: var(--space-6);
   background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-2xl);
-  transition: var(--transition-moderate);
+  border-radius: var(--radius-xl);
+  transition: box-shadow var(--duration-moderate) var(--ease-out),
+              border-color var(--duration-moderate) var(--ease-out);
 }
 
 .channelCard:hover {
@@ -242,7 +246,7 @@
   height: 48px;
   border-radius: var(--radius-lg);
   background-color: var(--gold-500);
-  color: #FFFFFF;
+  color: var(--neutral-900);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,7 +275,7 @@
 .formBanner {
   background: linear-gradient(135deg, var(--neutral-900) 0%, var(--neutral-950) 100%);
   border-radius: var(--radius-2xl);
-  padding: var(--space-12) var(--space-8);
+  padding: var(--space-10) var(--space-8);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -285,7 +289,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 50%, rgba(107, 75, 46, 0.2) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 50% 50%, var(--terra-900) 0%, transparent 60%);
+  opacity: 0.3;
   pointer-events: none;
 }
 
@@ -293,7 +298,7 @@
   .formBanner {
     flex-direction: row;
     text-align: left;
-    padding: var(--space-12) var(--space-16);
+    padding: var(--space-10) var(--space-16);
   }
 }
 
@@ -309,7 +314,6 @@
 .formBannerTitle {
   font-family: var(--font-primary);
   font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
-  font-weight: var(--font-weight-bold);
   color: var(--gold-100);
   line-height: var(--leading-tight);
 }
@@ -327,20 +331,21 @@
   gap: var(--space-2);
   padding: var(--padding-button-lg);
   background-color: var(--gold-500);
-  color: #FFFFFF;
-  border-radius: var(--radius-pill);
+  color: var(--neutral-950);
+  border-radius: var(--radius-md);
   font-family: var(--font-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   font-size: var(--text-base);
   text-decoration: none;
   position: relative;
   z-index: 1;
-  transition: var(--transition-fast);
+  transition: background-color var(--duration-normal) var(--ease-out),
+              transform var(--duration-fast) var(--ease-spring);
   flex-shrink: 0;
 }
 
 .formBannerCTA:hover {
-  background-color: var(--gold-700);
+  background-color: var(--gold-300);
   transform: translateY(-1px);
 }
 
@@ -353,7 +358,7 @@
 
 .faqItem {
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   transition: border-color var(--duration-normal) var(--ease-out);
 }
@@ -367,14 +372,14 @@
   font-size: var(--text-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-ink-primary);
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-4) var(--space-5);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   list-style: none;
-  transition: var(--transition-fast);
+  transition: color var(--duration-normal) var(--ease-out);
 }
 
 .faqQuestion::-webkit-details-marker {
@@ -394,12 +399,12 @@
 }
 
 .faqQuestion:hover {
-  color: var(--color-accent-primary);
+  color: var(--color-ink-primary);
 }
 
 .faqAnswer {
   font-size: var(--text-sm);
   color: var(--color-ink-secondary);
   line-height: var(--leading-relaxed);
-  padding: 0 var(--space-6) var(--space-6);
+  padding: 0 var(--space-5) var(--space-4);
 }

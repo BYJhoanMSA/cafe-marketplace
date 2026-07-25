@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Coffee } from '@phosphor-icons/react'
 
 export const metadata: Metadata = {
   title: 'Página no encontrada',
@@ -23,8 +22,8 @@ export default function NotFound() {
         gap: 'var(--space-6)',
       }}
     >
-      <span style={{ lineHeight: 1 }} role="img" aria-label="Taza de café">
-        <Coffee size={64} />
+      <span style={{ fontSize: '4rem', lineHeight: 1 }} role="img" aria-label="Taza de café">
+        ☕
       </span>
       <h1
         style={{

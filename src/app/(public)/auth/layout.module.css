@@ -1,5 +1,7 @@
+/* src/app/(public)/auth/layout.module.css */
+
 .container {
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - 64px); /* Asumiendo header de 64px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,19 +15,18 @@
   background-color: var(--color-bg-elevated);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-2xl);
-  padding: var(--space-10);
+  padding: var(--space-8);
   box-shadow: var(--shadow-xl);
 }
 
 .header {
   text-align: center;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .title {
   font-family: var(--font-primary);
   font-size: var(--text-3xl);
-  font-weight: var(--font-weight-bold);
   color: var(--color-ink-primary);
   margin-bottom: var(--space-2);
 }
@@ -69,22 +70,21 @@
 }
 
 .link {
-  color: var(--color-accent-primary);
+  color: var(--color-interactive);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
-  transition: var(--transition-fast);
 }
 
 .link:hover {
-  color: var(--gold-700);
+  text-decoration: underline;
 }
 
 .errorBox {
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--error-bg);
-  border: 1px solid rgba(153, 27, 27, 0.2);
-  border-radius: var(--radius-lg);
-  color: var(--error-text);
+  padding: var(--space-3);
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--terra-300);
+  border-radius: var(--radius-md);
+  color: var(--terra-600);
   font-size: var(--text-sm);
   margin-bottom: var(--space-4);
   text-align: center;

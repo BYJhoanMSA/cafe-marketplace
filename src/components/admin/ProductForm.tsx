@@ -10,7 +10,6 @@ import { ImageUploader, type UploadedImage } from '@/components/admin/ImageUploa
 import { FlavorNotePicker } from '@/components/admin/FlavorNotePicker'
 import { OriginTerroirSection } from '@/components/admin/OriginTerroirSection'
 import { ProductBadgesSection } from '@/components/admin/ProductBadgesSection'
-import { Camera, Package } from '@phosphor-icons/react'
 import { createProduct, updateProduct } from '@/server/actions/admin/product.actions'
 import { createVariantsBulk } from '@/server/actions/admin/inventory.actions'
 import { slugify } from '@/lib/utils'
@@ -239,7 +238,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           onChange={setImages}
           type="product"
           maxImages={8}
-          label={<><Camera size={18} /> Imágenes del producto</>}
+          label="📸 Imágenes del producto"
         />
       </div>
 
@@ -259,7 +258,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         gap: 'var(--space-4)',
       }}>
         <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
-          <Package size={18} weight="fill" /> Precios por Tamaño y Molienda
+          📦 Precios por Tamaño y Molienda
         </h3>
         <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
           Marca los tamaños y moliendas que ofrece este producto y asigna el precio a cada combinación.
