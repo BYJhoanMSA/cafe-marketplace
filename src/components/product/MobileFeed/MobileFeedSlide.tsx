@@ -1,10 +1,9 @@
 'use client'
 
-// src/components/product/MobileFeed/MobileFeedSlide.tsx
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { Heart, MessageCircle, Share2, ShoppingBag, MapPin } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatPrice, getThumbUrl } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
@@ -20,17 +19,31 @@ interface MobileFeedSlideProps {
   onAddToCart?: (productId: string) => void
 }
 
+const SWIPE_THRESHOLD = 60
+
 export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSlideProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [reviewsOpen, setReviewsOpen] = useState(false)
-  const [imgSrc, setImgSrc] = useState(getThumbUrl(product.imageUrl))
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
 
   const isFavorited = isFavorite(product.id)
 
+  const images: string[] = product.images?.length ? product.images : [product.imageUrl]
+
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [thumbSrc, setThumbSrc] = useState(getThumbUrl(images[0] ?? product.imageUrl))
+  const [fullLoaded, setFullLoaded] = useState(false)
+
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
+  const touchStartScrollTop = useRef(0)
+  const isDragging = useRef(false)
+  const dragOffsetX = useRef(0)
+  const slideTrackRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const counts = getSocialCounts(product.id)
     setFavorites(counts.favorites)
@@ -38,10 +51,89 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   }, [product.id])
 
   useEffect(() => {
-    const counts = getSocialCounts(product.id)
-    setFavorites(counts.favorites)
-    setShares(counts.shares)
+    setActiveImageIndex(0)
   }, [product.id])
+
+  useEffect(() => {
+    const currentImage = images[activeImageIndex] || images[0] || product.imageUrl
+    setThumbSrc(getThumbUrl(currentImage))
+    setFullLoaded(false)
+
+    const preloader = new window.Image()
+    preloader.src = currentImage
+    preloader.onload = () => setFullLoaded(true)
+    preloader.onerror = () => setFullLoaded(true)
+
+    return () => {
+      preloader.onload = null
+      preloader.onerror = null
+    }
+  }, [activeImageIndex, images])
+
+  const currentSrc = fullLoaded ? (images[activeImageIndex] || images[0] || product.imageUrl) : thumbSrc
+
+  const updateTranslate = useCallback((offsetX: number, animated: boolean) => {
+    if (slideTrackRef.current) {
+      slideTrackRef.current.style.transition = animated ? 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none'
+      slideTrackRef.current.style.transform = `translateX(${offsetX}px)`
+    }
+  }, [])
+
+  function handleTouchStart(e: React.TouchEvent) {
+    const touch = e.touches[0]
+    if (!touch) return
+    touchStartX.current = touch.clientX
+    touchStartY.current = touch.clientY
+    isDragging.current = false
+    dragOffsetX.current = 0
+    updateTranslate(0, false)
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    const touch = e.touches[0]
+    if (!touch) return
+    const dx = touch.clientX - touchStartX.current
+    const dy = Math.abs(touch.clientY - touchStartY.current)
+
+    if (!isDragging.current && Math.abs(dx) > 10 && Math.abs(dx) > dy) {
+      isDragging.current = true
+      touchStartScrollTop.current = document.documentElement.scrollTop
+    }
+
+    if (isDragging.current) {
+      e.preventDefault()
+      dragOffsetX.current = dx
+      updateTranslate(dx, false)
+    }
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (!isDragging.current) return
+
+    const dx = dragOffsetX.current
+    updateTranslate(0, true)
+
+    if (Math.abs(dx) > SWIPE_THRESHOLD) {
+      if (dx > 0 && activeImageIndex > 0) {
+        setActiveImageIndex((prev) => prev - 1)
+      } else if (dx < 0 && activeImageIndex < images.length - 1) {
+        setActiveImageIndex((prev) => prev + 1)
+      }
+    }
+
+    isDragging.current = false
+    dragOffsetX.current = 0
+  }
+
+  const handlePrevImage = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (activeImageIndex > 0) setActiveImageIndex((prev) => prev - 1)
+  }, [activeImageIndex])
+
+  const handleNextImage = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (activeImageIndex < images.length - 1) setActiveImageIndex((prev) => prev + 1)
+  }, [activeImageIndex, images.length])
 
   function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation()
@@ -100,22 +192,66 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
 
   return (
     <div className={styles.slide}>
-      {/* IMAGEN DE FONDO */}
-      <div className={styles.imageContainer}>
-        <Image
-          src={imgSrc}
-          alt={product.imageAlt}
-          fill
-          priority={isActive}
-          className={styles.image}
-          sizes="100vw"
-          onError={() => setImgSrc(product.imageUrl)}
-        />
+      <div
+        className={styles.imageContainer}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className={styles.slideTrack} ref={slideTrackRef}>
+          <div className={styles.slideTrackInner}>
+            <Image
+              src={currentSrc}
+              alt={product.imageAlt}
+              fill
+              priority={isActive}
+              className={styles.image}
+              sizes="100vw"
+              onError={() => setThumbSrc(images[activeImageIndex] || images[0] || product.imageUrl)}
+            />
+          </div>
+        </div>
+
+        {images.length > 1 && !isDragging.current && (
+          <>
+            {activeImageIndex > 0 && (
+              <button
+                className={`${styles.navArrow} ${styles.navArrowLeft}`}
+                onClick={handlePrevImage}
+                aria-label="Imagen anterior"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            {activeImageIndex < images.length - 1 && (
+              <button
+                className={`${styles.navArrow} ${styles.navArrowRight}`}
+                onClick={handleNextImage}
+                aria-label="Siguiente imagen"
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
+          </>
+        )}
+
         <div className={styles.overlayTop} />
         <div className={styles.overlayBottom} />
       </div>
 
-      {/* HEADER: Tostador */}
+      {images.length > 1 && (
+        <div className={styles.imageDots}>
+          {images.map((_, idx) => (
+            <button
+              key={idx}
+              className={`${styles.imageDot} ${idx === activeImageIndex ? styles.imageDotActive : ''}`}
+              onClick={(e) => { e.stopPropagation(); setActiveImageIndex(idx) }}
+              aria-label={`Imagen ${idx + 1} de ${images.length}`}
+            />
+          ))}
+        </div>
+      )}
+
       <div className={styles.header}>
         <Link href={`/tostadores/${product.vendor.name.toLowerCase()}`} className={styles.vendorBadge}>
           <div className={styles.vendorAvatar}>
@@ -125,9 +261,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         </Link>
       </div>
 
-      {/* SIDEBAR: Acciones estilo TikTok */}
       <div className={styles.actionsSidebar}>
-        {/* Favorito */}
         <button 
           className={`${styles.actionButton} ${isFavorited ? styles.favorited : ''}`}
           onClick={handleToggleFavorite}
@@ -138,7 +272,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
           <span className={styles.actionLabel}>{favorites}</span>
         </button>
 
-        {/* Reseñas */}
         <button className={styles.actionButton} onClick={(e) => { e.stopPropagation(); setReviewsOpen(true) }}>
           <div className={styles.actionIconBox}>
             <MessageCircle size={24} />
@@ -146,7 +279,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
           <span className={styles.actionLabel}>Ver</span>
         </button>
 
-        {/* Compartir */}
         <button className={styles.actionButton} onClick={handleShare}>
           <div className={styles.actionIconBox}>
             <Share2 size={24} />
@@ -155,7 +287,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         </button>
       </div>
 
-      {/* CONTENIDO PRINCIPAL */}
       <div className={styles.content}>
         <div className={styles.tags}>
           {product.cuppingScore && (
@@ -179,7 +310,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
           </p>
         </Link>
 
-        {/* BOTÓN DE COMPRA RÁPIDA */}
         <div className={styles.buySection}>
           <div className={styles.priceBlock}>
             <span className={styles.price}>{formatPrice(product.price, product.currency)}</span>
@@ -193,13 +323,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
             {isAdding ? 'Agregando...' : 'Agregar'}
           </button>
         </div>
-      </div>
-      
-      {/* Swipe Horizontal Indicator (Variantes) - Mock visual por ahora */}
-      <div className={styles.variantsIndicator}>
-        <div className={`${styles.variantDot} ${styles.active}`} />
-        <div className={styles.variantDot} />
-        <div className={styles.variantDot} />
       </div>
 
       <ReviewDrawer
