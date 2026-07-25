@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
-import { auth } from '@/lib/auth'
+import { requireRole } from '@/server/middleware/auth.middleware'
 import { z } from 'zod'
 
 const VendorSchema = z.object({
@@ -17,10 +17,7 @@ const VendorSchema = z.object({
 })
 
 export async function getAdminVendors() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   const vendors = await prisma.vendor.findMany({
     where: {
@@ -40,10 +37,7 @@ export async function getAdminVendors() {
 }
 
 export async function createVendor(data: z.infer<typeof VendorSchema>) {
-  const session = await auth()
-  if (!session || session.user.role !== 'admin') {
-    throw new Error('Solo los administradores pueden crear marcas')
-  }
+  const session = await requireRole(['admin'])
 
   const parsed = VendorSchema.safeParse(data)
   if (!parsed.success) {
@@ -84,10 +78,7 @@ export async function createVendor(data: z.infer<typeof VendorSchema>) {
 }
 
 export async function updateVendor(id: string, data: z.infer<typeof VendorSchema>) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     const vendor = await prisma.vendor.update({

@@ -1,13 +1,10 @@
 'use server'
 
 import { prisma } from '@/server/db/client'
-import { auth } from '@/lib/auth'
+import { requireRole } from '@/server/middleware/auth.middleware'
 
 export async function getDashboardStats() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     // Total de ingresos (asumimos estado 'paid')
@@ -54,10 +51,7 @@ export async function getDashboardStats() {
 }
 
 export async function getRecentOrders() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     const orders = await prisma.order.findMany({

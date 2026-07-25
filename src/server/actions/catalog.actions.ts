@@ -1,6 +1,7 @@
 'use server'
 
 import { prisma } from '@/server/db/client'
+import { productCardInclude, mapToProductCard } from '@/server/db/queries'
 import { getGrindTypes, getVariantSizes } from './settings.actions'
 import { withCache, invalidateCacheByPrefix } from '@/server/cache/node-cache'
 import type { GrindTypeOption } from './settings.actions'
@@ -77,21 +78,7 @@ export async function getActiveProducts(filters?: CatalogFilters) {
 
     let products = await prisma.product.findMany({
       where,
-      include: {
-        origin: { select: { country: true, region: true } },
-        vendor: { select: { storeName: true } },
-        category: { select: { name: true } },
-        variants: {
-          where: { status: 'active' },
-          orderBy: { priceInCents: 'asc' }
-        },
-        images: {
-          where: { mediaType: 'image' },
-          orderBy: { position: 'asc' },
-          take: 1
-        },
-        flavorNotes: { select: { note: true } }
-      },
+      include: productCardInclude,
       orderBy: { createdAt: 'desc' }
     })
 
@@ -99,28 +86,7 @@ export async function getActiveProducts(filters?: CatalogFilters) {
       products = products.filter(p => altitudeMatchesFilter(p.altitudeMasl, filters.altitude!))
     }
 
-    return products.map(p => ({
-      id: p.id,
-      slug: p.slug,
-      title: p.title,
-      shortDescription: p.shortDescription,
-      imageUrl: p.images[0]?.url || '/images/products/placeholder-1.jpg',
-      imageAlt: p.images[0]?.alt || `${p.title} — bolsa de café`,
-      origin: { country: p.origin.country, region: p.origin.region },
-      vendor: { name: p.vendor.storeName },
-      price: p.variants[0]?.priceInCents || 0,
-      comparePrice: p.variants[0]?.comparePriceInCents || null,
-      currency: p.variants[0]?.currency || 'USD',
-      roastLevel: p.roastLevel,
-      cuppingScore: p.cuppingScore ? Number(p.cuppingScore) : null,
-      avgRating: Number(p.avgRating),
-      reviewCount: p.reviewCount,
-      flavorNotes: p.flavorNotes.map(fn => fn.note),
-      isNew: p.isNew,
-      isLimited: p.isLimited,
-      isOrganic: p.isOrganic,
-      category: p.category?.name || null,
-    }))
+    return products.map(mapToProductCard)
   } catch (error) {
     console.error('Error fetching active products:', error)
     return []

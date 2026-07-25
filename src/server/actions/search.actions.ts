@@ -1,18 +1,12 @@
 'use server'
 
 import { prisma } from '@/server/db/client'
+import { productCardInclude, mapToProductCard } from '@/server/db/queries'
 import { withCache } from '@/server/cache/node-cache'
 import type { Prisma } from '@prisma/client'
 
 type ProductWithRelations = Prisma.ProductGetPayload<{
-  include: {
-    origin: { select: { country: true; region: true } }
-    vendor: { select: { storeName: true } }
-    category: { select: { name: true } }
-    variants: { where: { status: string }; orderBy: { priceInCents: 'asc' } }
-    images: { where: { mediaType: string }; orderBy: { position: 'asc' }; take: number }
-    flavorNotes: { select: { note: true } }
-  }
+  include: typeof productCardInclude
 }>
 
 export async function searchProducts(query: string) {
@@ -42,47 +36,12 @@ export async function searchProducts(query: string) {
           }
         }
       },
-      include: {
-        origin: { select: { country: true, region: true } },
-        vendor: { select: { storeName: true } },
-        category: { select: { name: true } },
-        variants: {
-          where: { status: 'active' },
-          orderBy: { priceInCents: 'asc' }
-        },
-        images: {
-          where: { mediaType: 'image' },
-          orderBy: { position: 'asc' },
-          take: 1
-        },
-        flavorNotes: { select: { note: true } }
-      },
+      include: productCardInclude,
       take: 20,
       orderBy: { createdAt: 'desc' }
     }) as unknown as ProductWithRelations[]
 
-    return products.map(p => ({
-      id: p.id,
-      slug: p.slug,
-      title: p.title,
-      shortDescription: p.shortDescription,
-      imageUrl: p.images[0]?.url || '/images/products/placeholder-1.jpg',
-      imageAlt: p.images[0]?.alt || `${p.title} — bolsa de café`,
-      origin: { country: p.origin.country, region: p.origin.region },
-      vendor: { name: p.vendor.storeName },
-      price: p.variants[0]?.priceInCents || 0,
-      comparePrice: p.variants[0]?.comparePriceInCents || null,
-      currency: p.variants[0]?.currency || 'USD',
-      roastLevel: p.roastLevel,
-      cuppingScore: p.cuppingScore ? Number(p.cuppingScore) : null,
-      avgRating: Number(p.avgRating),
-      reviewCount: p.reviewCount,
-      flavorNotes: p.flavorNotes.map(fn => fn.note),
-      isNew: p.isNew,
-      isLimited: p.isLimited,
-      isOrganic: p.isOrganic,
-      category: p.category?.name || null,
-    }))
+    return products.map(mapToProductCard)
   } catch (error) {
     console.error('Error searching products:', error)
     return []

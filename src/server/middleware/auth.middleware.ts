@@ -41,3 +41,16 @@ export function requireCronSecret(request: Request): void {
     throw apiError('No autorizado', 401)
   }
 }
+
+/**
+ * Para Server Actions: verifica que el usuario tenga un rol permitido.
+ * Uso: const session = await requireRole(['admin', 'vendor'])
+ * Lanza Error (no Response) porque Server Actions manejan errores como objetos.
+ */
+export async function requireRole(allowedRoles: string[]) {
+  const session = await auth()
+  if (!session?.user || !allowedRoles.includes(session.user.role ?? '')) {
+    throw new Error('Unauthorized')
+  }
+  return session
+}

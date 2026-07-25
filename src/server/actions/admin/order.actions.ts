@@ -2,13 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
-import { auth } from '@/lib/auth'
+import { requireRole } from '@/server/middleware/auth.middleware'
 
 export async function getAdminOrders() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   const orders = await prisma.order.findMany({
     orderBy: {
@@ -26,11 +23,7 @@ export async function getAdminOrders() {
 }
 
 export async function getAdminOrderById(id: string) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
-
+  await requireRole(['admin', 'vendor'])
   const order = await prisma.order.findUnique({
     where: { id },
     include: {
@@ -59,10 +52,7 @@ export async function updateOrderStatus(
     trackingUrl?: string 
   }
 ) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     const updatePayload: any = {

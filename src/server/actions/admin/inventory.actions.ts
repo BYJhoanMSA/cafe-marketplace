@@ -2,13 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
-import { auth } from '@/lib/auth'
+import { requireRole } from '@/server/middleware/auth.middleware'
 
 export async function getVariants() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   const variants = await prisma.variant.findMany({
     include: {
@@ -32,10 +29,7 @@ export async function getVariants() {
 }
 
 export async function getProductsForSelect() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   const products = await prisma.product.findMany({
     where: { deletedAt: null },
@@ -52,10 +46,7 @@ export async function getProductsForSelect() {
 }
 
 export async function createVariant(data: any) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     const existingSku = await prisma.variant.findUnique({
@@ -101,10 +92,7 @@ export async function createVariantsBulk(
     status: string
   }>
 ) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     const result = await prisma.variant.createMany({
@@ -120,10 +108,7 @@ export async function createVariantsBulk(
 }
 
 export async function updateVariant(id: string, data: any) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     const variant = await prisma.variant.update({

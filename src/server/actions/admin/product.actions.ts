@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
-import { auth } from '@/lib/auth'
+import { requireRole } from '@/server/middleware/auth.middleware'
 import { slugify } from '@/lib/utils'
 import { unlink } from 'fs/promises'
 import { join } from 'path'
@@ -42,34 +42,33 @@ const ProductSchema = z.object({
   variants: z.array(z.any()).default([]),
 }).passthrough()
 
-export async function getAdminProducts() {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+export async function getAdminProducts(page = 1, limit = 50) {
+  await requireRole(['admin', 'vendor'])
 
-  const products = await prisma.product.findMany({
-    where: {
-      deletedAt: null,
-    },
-    include: {
-      category: true,
-      origin: true,
-      vendor: true,
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where: {
+        deletedAt: null,
+      },
+      include: {
+        category: true,
+        origin: true,
+        vendor: true,
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.product.count({ where: { deletedAt: null } })
+  ])
 
-  return products
+  return { products, total, page, limit }
 }
 
 export async function createProduct(data: Record<string, unknown>) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   const parsed = ProductSchema.safeParse(data)
   if (!parsed.success) {
@@ -160,10 +159,7 @@ export async function createProduct(data: Record<string, unknown>) {
 }
 
 export async function updateProduct(id: string, data: any) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     let originId = data.originId
@@ -249,10 +245,7 @@ export async function updateProduct(id: string, data: any) {
 }
 
 export async function archiveProduct(id: string) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   try {
     await prisma.product.update({
@@ -269,10 +262,7 @@ export async function archiveProduct(id: string) {
 }
 
 export async function deleteProduct(formData: FormData) {
-  const session = await auth()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
-    throw new Error('Unauthorized')
-  }
+  await requireRole(['admin', 'vendor'])
 
   const id = formData.get('productId') as string
   if (!id) return

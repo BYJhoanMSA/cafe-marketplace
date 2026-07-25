@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { ImageUploader, type UploadedImage } from '@/components/admin/ImageUploader'
+import { FlavorNotePicker } from '@/components/admin/FlavorNotePicker'
+import { OriginTerroirSection } from '@/components/admin/OriginTerroirSection'
+import { ProductBadgesSection } from '@/components/admin/ProductBadgesSection'
 import { createProduct, updateProduct } from '@/server/actions/admin/product.actions'
 import { createVariantsBulk } from '@/server/actions/admin/inventory.actions'
 import { slugify } from '@/lib/utils'
@@ -29,12 +32,6 @@ interface ProductFormProps {
   variantSizes?: VariantSizeOption[]
   grindTypes?: GrindTypeOption[]
 }
-
-const FLAVOR_NOTE_OPTIONS = [
-  'Frambuesa', 'Durazno', 'Jazmín', 'Bergamota', 'Limón', 
-  'Panela', 'Caramelo', 'Manzana', 'Chocolate', 'Mora', 
-  'Fermentado', 'Cacao', 'Floral', 'Avellanado', 'Cítrico', 'Miel'
-]
 
 export function ProductForm({ initialData, vendors = [], categories = [], variantSizes = [], grindTypes = [] }: ProductFormProps) {
   const router = useRouter()
@@ -245,49 +242,10 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         />
       </div>
 
-      {/* SECCIÓN: NOTAS DE SABOR (EDITABLES) */}
-      <div style={{
-        padding: 'var(--space-5)',
-        backgroundColor: 'var(--color-bg-secondary)',
-        borderRadius: 'var(--radius-xl)',
-        border: '1px solid var(--color-border-default)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-3)'
-      }}>
-        <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
-          🍒 Perfil Sensorial (Notas de Sabor)
-        </h3>
-        <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
-          Selecciona las notas que caracterizan este café (se usarán para los filtros del catálogo):
-        </p>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
-          {FLAVOR_NOTE_OPTIONS.map((note) => {
-            const isSelected = formData.flavorNotes.includes(note)
-            return (
-              <button
-                type="button"
-                key={note}
-                onClick={() => toggleFlavorNote(note)}
-                style={{
-                  padding: 'var(--space-2) var(--space-3)',
-                  borderRadius: 'var(--radius-pill)',
-                  border: isSelected ? '1px solid var(--color-interactive)' : '1px solid var(--color-border-default)',
-                  backgroundColor: isSelected ? 'var(--color-interactive-light, rgba(37,99,235,0.1))' : 'var(--color-bg-primary)',
-                  color: isSelected ? 'var(--color-interactive)' : 'var(--color-ink-secondary)',
-                  fontWeight: isSelected ? 'var(--font-weight-bold)' : 'var(--font-weight-regular)',
-                  fontSize: 'var(--text-xs)',
-                  cursor: 'pointer',
-                  transition: 'all var(--duration-fast)',
-                }}
-              >
-                {isSelected ? '✓ ' : ''}{note}
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      <FlavorNotePicker
+        selected={formData.flavorNotes}
+        onToggle={toggleFlavorNote}
+      />
 
       {/* SECCIÓN: VARIANTES — MATRIZ DE PRECIOS */}
       <div style={{
@@ -425,76 +383,16 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         )}
       </div>
 
-      {/* SECCIÓN: FICHA DE ORIGEN Y TERRUÑO */}
-      <div style={{
-        padding: 'var(--space-5)',
-        backgroundColor: 'var(--color-bg-secondary)',
-        borderRadius: 'var(--radius-xl)',
-        border: '1px solid var(--color-border-default)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-4)'
-      }}>
-        <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
-          📍 Ficha de Ubicación y Terruño (Origen Colombia)
-        </h3>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-            <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Región / Origen</label>
-            <Select 
-              options={[
-                { label: '🇨🇴 Huila', value: 'Huila' },
-                { label: '🇨🇴 Nariño', value: 'Nariño' },
-                { label: '🇨🇴 Tolima', value: 'Tolima' },
-                { label: '🇨🇴 Antioquia', value: 'Antioquia' },
-                { label: '🇨🇴 Cauca', value: 'Cauca' },
-                { label: '🇨🇴 Quindío / Eje Cafetero', value: 'Quindío' },
-                { label: '🇨🇴 Caldas', value: 'Caldas' },
-                { label: '🇨🇴 Risaralda', value: 'Risaralda' },
-                { label: '🇨🇴 Cundinamarca', value: 'Cundinamarca' },
-                { label: '🇨🇴 Santander', value: 'Santander' },
-                { label: '🇨🇴 Sierra Nevada', value: 'Sierra Nevada' },
-              ]}
-              value={formData.regionName}
-              onChange={(val) => handleSelectChange('regionName', val)}
-            />
-          </div>
-
-          <Input 
-            label="Finca / Lote" 
-            name="farmName" 
-            value={formData.farmName} 
-            onChange={handleChange} 
-            placeholder="Ej: Finca La Palma"
-          />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' }}>
-          <Input 
-            label="Productor" 
-            name="producerName" 
-            value={formData.producerName} 
-            onChange={handleChange} 
-            placeholder="Ej: Familia Ortiz"
-          />
-          <Input 
-            label="Altitud en Metros (Número msnm)" 
-            name="altitudeMasl" 
-            type="number"
-            value={formData.altitudeMasl} 
-            onChange={handleChange} 
-            placeholder="1850"
-          />
-          <Input 
-            label="Variedad de Grano" 
-            name="varietal" 
-            value={formData.varietal} 
-            onChange={handleChange} 
-            placeholder="Ej: Bourbon Rosado, Geisha"
-          />
-        </div>
-      </div>
+      <OriginTerroirSection
+        regionName={formData.regionName}
+        farmName={formData.farmName}
+        producerName={formData.producerName}
+        altitudeMasl={formData.altitudeMasl}
+        varietal={formData.varietal}
+        cuppingScore={formData.cuppingScore}
+        onFieldChange={handleChange}
+        onSelectChange={handleSelectChange}
+      />
 
       {/* SECCIÓN: ATRIBUTOS TÉCNICOS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
@@ -550,40 +448,13 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         />
       </div>
 
-      {/* SECCIÓN: BADGES / FLAGS */}
-      <div style={{
-        padding: 'var(--space-4) var(--space-5)',
-        backgroundColor: 'var(--color-bg-secondary)',
-        borderRadius: 'var(--radius-xl)',
-        border: '1px solid var(--color-border-default)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--space-6)',
-        flexWrap: 'wrap',
-      }}>
-        <span style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)' }}>🏷️ Badges</span>
-        {[
-          { key: 'isNew' as const, label: 'Nuevo', color: 'var(--gold-500)' },
-          { key: 'isLimited' as const, label: 'Edición limitada', color: 'var(--terra-500)' },
-          { key: 'isOrganic' as const, label: 'Orgánico', color: 'var(--forest-500)' },
-          { key: 'isPublicity' as const, label: 'Publicidad', color: 'var(--color-interactive)' },
-        ].map(({ key, label, color }) => (
-          <label key={key} style={{
-            display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
-            cursor: 'pointer', fontSize: 'var(--text-sm)',
-          }}>
-            <input
-              type="checkbox"
-              checked={formData[key]}
-              onChange={() => setFormData(prev => ({ ...prev, [key]: !prev[key] }))}
-            />
-            <span style={{
-              color: formData[key] ? color : undefined,
-              fontWeight: formData[key] ? 'var(--font-weight-semibold)' : undefined,
-            }}>{label}</span>
-          </label>
-        ))}
-      </div>
+      <ProductBadgesSection
+        isNew={formData.isNew}
+        isLimited={formData.isLimited}
+        isOrganic={formData.isOrganic}
+        isPublicity={formData.isPublicity}
+        onToggle={(key) => setFormData(prev => ({ ...prev, [key]: !prev[key] }))}
+      />
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
         <Button 

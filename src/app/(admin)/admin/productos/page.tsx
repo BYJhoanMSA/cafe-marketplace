@@ -10,7 +10,7 @@ export const metadata = {
 }
 
 export default async function AdminProductsPage() {
-  const products = await getAdminProducts()
+  const { products, total } = await getAdminProducts()
 
   return (
     <div>
