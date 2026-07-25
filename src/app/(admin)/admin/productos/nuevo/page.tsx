@@ -1,6 +1,6 @@
 // src/app/(admin)/admin/productos/nuevo/page.tsx
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from '@phosphor-icons/react'
 import { prisma } from '@/server/db/client'
 import { getVariantSizes, getGrindTypes } from '@/server/actions/settings.actions'
 import { ProductForm } from '@/components/admin/ProductForm'

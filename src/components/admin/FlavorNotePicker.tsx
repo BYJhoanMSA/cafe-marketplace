@@ -1,5 +1,7 @@
 'use client'
 
+import { CoffeeBean } from '@phosphor-icons/react'
+
 const FLAVOR_NOTE_OPTIONS = [
   'Frambuesa', 'Durazno', 'Jazmín', 'Bergamota', 'Limón',
   'Panela', 'Caramelo', 'Manzana', 'Chocolate', 'Mora',
@@ -23,7 +25,7 @@ export function FlavorNotePicker({ selected, onToggle }: FlavorNotePickerProps) 
       gap: 'var(--space-3)'
     }}>
       <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
-        🍒 Perfil Sensorial (Notas de Sabor)
+        <CoffeeBean size={18} weight="fill" /> Perfil Sensorial (Notas de Sabor)
       </h3>
       <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
         Selecciona las notas que caracterizan este café (se usarán para los filtros del catálogo):

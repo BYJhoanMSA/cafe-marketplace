@@ -3,7 +3,7 @@
 // src/components/product/CatalogFilterBar.tsx
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, Filter, X } from 'lucide-react'
+import { MagnifyingGlass, Funnel, X } from '@phosphor-icons/react'
 import { getAvailableCatalogFilters } from '@/server/actions/catalog.actions'
 import styles from './CatalogFilterBar.module.css'
 
@@ -69,7 +69,7 @@ export function CatalogFilterBar({ initialFilters = {} }: CatalogFilterBarProps)
     <div className={styles.container}>
       <div className={styles.filtersGroup}>
         <span style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-ink-secondary)', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase' }}>
-          <Filter size={14} /> Filtros:
+          <Funnel size={14} /> Filtros:
         </span>
 
         {/* 1. ORIGEN DINÁMICO (Solo regiones con stock > 0) */}
@@ -146,7 +146,7 @@ export function CatalogFilterBar({ initialFilters = {} }: CatalogFilterBarProps)
 
       {/* 5. BOTÓN BUSCAR / APLICAR */}
       <button type="button" className={styles.searchButton} onClick={handleSearch}>
-        <Search size={16} />
+        <MagnifyingGlass size={16} />
         Buscar
       </button>
     </div>

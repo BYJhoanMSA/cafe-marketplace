@@ -3,7 +3,7 @@
 // src/app/(public)/buscar/page.tsx
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Search, Coffee } from 'lucide-react'
+import { MagnifyingGlass, Coffee } from '@phosphor-icons/react'
 import Link from 'next/link'
 import { ProductCard } from '@/components/product/ProductCard'
 import { searchProducts } from '@/server/actions/search.actions'
@@ -51,7 +51,7 @@ export default function SearchPage() {
       <header className={styles.header}>
         <h1 className={styles.title}>¿Qué estás buscando?</h1>
         <form className={styles.searchBox} onSubmit={handleSearch}>
-          <Search size={24} className={styles.searchIcon} />
+          <MagnifyingGlass size={24} className={styles.searchIcon} />
           <input
             type="search"
             value={query}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { CheckCircle, X, Mountains } from '@phosphor-icons/react'
 import { updateHomepageSettings, type HomepageConfig, type HomepageFeature } from '@/server/actions/settings.actions'
 import { ImageUploader, type UploadedImage } from '@/components/admin/ImageUploader'
 import { Button } from '@/components/ui/Button'
@@ -29,14 +30,14 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
       }
       const res = await updateHomepageSettings(finalConfig)
       if (res.success) {
-        setSaveMsg('✅ Cambios guardados exitosamente')
+        setSaveMsg('Cambios guardados exitosamente')
         router.refresh()
       } else {
-        setSaveMsg('❌ Error al guardar la configuración')
+        setSaveMsg('Error al guardar la configuración')
       }
     } catch (e) {
       console.error(e)
-      setSaveMsg('❌ Error de conexión')
+      setSaveMsg('Error de conexión')
     } finally {
       setIsSaving(false)
       setTimeout(() => setSaveMsg(''), 4000)
@@ -84,7 +85,7 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
       {/* SECCIÓN HERO */}
       <section style={sectionStyle}>
         <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-weight-bold)', margin: 0 }}>
-          🏔️ Sección Hero (Banner Principal)
+          <Mountains size={20} weight="fill" /> Sección Hero (Banner Principal)
         </h3>
 
         <ImageUploader
@@ -197,7 +198,8 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
       {/* BOTÓN GUARDAR */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 'var(--space-4)', marginBottom: 'var(--space-10)' }}>
         {saveMsg && (
-          <span style={{ fontSize: 'var(--text-sm)', color: saveMsg.startsWith('✅') ? 'green' : 'red' }}>
+          <span style={{ fontSize: 'var(--text-sm)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', color: saveMsg === 'Cambios guardados exitosamente' ? 'green' : 'red' }}>
+            {saveMsg === 'Cambios guardados exitosamente' ? <CheckCircle size={16} weight="fill" /> : <X size={16} weight="bold" />}
             {saveMsg}
           </span>
         )}

@@ -1,7 +1,7 @@
 // src/app/(admin)/layout.tsx
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Package, Tags, Box, ShoppingCart, LogOut } from 'lucide-react'
+import { Package, Tag, ShoppingCartSimple, SignOut, SquaresFour, House, Clipboard, Users, User, Shield, ChartBar, Gear, Scroll } from '@phosphor-icons/react'
 import { auth, signOut } from '@/lib/auth'
 import styles from './layout.module.css'
 
@@ -28,11 +28,11 @@ export default async function AdminLayout({
         
         <nav className={styles.nav}>
           <Link href="/admin" className={styles.navItem}>
-            <Box size={20} />
+            <SquaresFour size={20} />
             Dashboard
           </Link>
           <Link href="/admin/inicio" className={styles.navItem}>
-            <Box size={20} />
+            <House size={20} />
             Página de Inicio
           </Link>
           <Link href="/admin/productos" className={styles.navItem}>
@@ -40,39 +40,39 @@ export default async function AdminLayout({
             Productos
           </Link>
           <Link href="/admin/marcas" className={styles.navItem}>
-            <Tags size={20} />
+            <Tag size={20} />
             Marcas
           </Link>
           <Link href="/admin/inventario" className={styles.navItem}>
-            <Box size={20} />
+            <Clipboard size={20} />
             Inventario
           </Link>
           <Link href="/admin/pedidos" className={styles.navItem}>
-            <ShoppingCart size={20} />
+            <ShoppingCartSimple size={20} />
             Pedidos
           </Link>
           <Link href="/admin/clientes" className={styles.navItem}>
-            <ShoppingCart size={20} /> {/* Placeholder icon */}
+            <Users size={20} />
             Clientes
           </Link>
           <Link href="/admin/usuarios" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
+            <User size={20} />
             Usuarios
           </Link>
           <Link href="/admin/roles" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
+            <Shield size={20} />
             Roles
           </Link>
           <Link href="/admin/reportes" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
+            <ChartBar size={20} />
             Reportes
           </Link>
           <Link href="/admin/configuraciones" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
+            <Gear size={20} />
             Configuración
           </Link>
           <Link href="/admin/logs" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
+            <Scroll size={20} />
             Logs
           </Link>
         </nav>
@@ -94,7 +94,7 @@ export default async function AdminLayout({
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-ink-secondary)' }}
               title="Cerrar sesión"
             >
-              <LogOut size={20} />
+              <SignOut size={20} />
             </button>
           </form>
         </div>

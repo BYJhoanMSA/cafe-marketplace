@@ -10,14 +10,15 @@ import {
   ShoppingBag,
   Heart,
   User,
-  Search,
-  Home,
-  Grid3x3,
-  Menu,
+  MagnifyingGlass,
+  House,
+  GridFour,
+  List,
   X,
   Moon,
   Sun,
-} from 'lucide-react'
+  Coffee,
+} from '@phosphor-icons/react'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import styles from './Navbar.module.css'
@@ -79,9 +80,9 @@ const NAV_LINKS = [
 // Items del Tab Bar (mobile)
 // ================================================================
 const TAB_ITEMS = [
-  { href: '/', icon: Home, label: 'Inicio' },
-  { href: '/catalogo', icon: Grid3x3, label: 'Catálogo' },
-  { href: '/buscar', icon: Search, label: 'Buscar' },
+  { href: '/', icon: House, label: 'Inicio' },
+  { href: '/catalogo', icon: GridFour, label: 'Catálogo' },
+  { href: '/buscar', icon: MagnifyingGlass, label: 'Buscar' },
   { href: '/favoritos', icon: Heart, label: 'Favoritos' },
 ]
 
@@ -140,7 +141,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
 
           {/* Logo centrado */}
           <Link href="/" className={styles.logo} aria-label="Cafe Seleccion — Inicio">
-            <span className={styles.logoIcon} aria-hidden="true">☕</span>
+            <span className={styles.logoIcon} aria-hidden="true"><Coffee size={24} weight="fill" /></span>
             <span className={styles.logoText}>Cafe Seleccion</span>
           </Link>
 
@@ -154,7 +155,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
                 aria-label={searchOpen ? 'Cerrar búsqueda' : 'Buscar productos'}
                 aria-expanded={searchOpen}
               >
-                {searchOpen ? <X size={20} /> : <Search size={20} />}
+                {searchOpen ? <X size={20} /> : <MagnifyingGlass size={20} />}
               </button>
             </div>
 
@@ -228,7 +229,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-current={isActive('/') ? 'page' : undefined}
           >
             <span className={styles.tabIcon}>
-              <Home size={22} />
+              <House size={22} />
               <span className={styles.tabActiveIndicator} aria-hidden="true" />
             </span>
             <span className={styles.tabLabel}>Inicio</span>
@@ -242,7 +243,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-current={isActive('/buscar') ? 'page' : undefined}
           >
             <span className={styles.tabIcon}>
-              <Search size={22} />
+              <MagnifyingGlass size={22} />
               <span className={styles.tabActiveIndicator} aria-hidden="true" />
             </span>
             <span className={styles.tabLabel}>Buscar</span>
@@ -255,7 +256,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-label="Ver catálogo"
           >
             <span className={styles.tabCenterIcon}>
-              <Grid3x3 size={22} />
+              <GridFour size={22} />
             </span>
             <span className={styles.tabCenterLabel}>Catálogo</span>
           </Link>

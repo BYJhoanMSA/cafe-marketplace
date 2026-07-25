@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAdminOrders } from '@/server/actions/admin/order.actions'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice, formatRelativeDate } from '@/lib/utils'
-import { Eye } from 'lucide-react'
+import { Eye } from '@phosphor-icons/react'
 
 export const metadata = {
   title: 'Pedidos | Panel Admin',

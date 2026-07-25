@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Package, Truck, Clock, Shield, CreditCard, MapPin } from 'lucide-react'
+import { Package, Truck, Clock, ShieldCheck, CreditCard, MapPin } from '@phosphor-icons/react'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ const SHIPPING_INFO = {
         note: 'Disponible en principales ciudades',
       },
       {
-        icon: Shield,
+        icon: ShieldCheck,
         title: 'Same Day',
         time: 'Mismo día',
         cost: '$22.900 COP',
@@ -69,8 +69,8 @@ const SHIPPING_INFO = {
 
 const PACKAGING_FEATURES = [
   { icon: Package, title: 'Empaque al vacío', desc: 'Sellado al vacío para preservar frescura y aroma por más tiempo.' },
-  { icon: Shield, title: 'Protección triple', desc: 'Caja corrugada + empaque hermético + bolsa exterior impermeable.' },
-  { icon: Shield, title: 'Sin impacto ambiental', desc: 'Empaques 100% reciclables y biodegradables certificados.' },
+  { icon: ShieldCheck, title: 'Protección triple', desc: 'Caja corrugada + empaque hermético + bolsa exterior impermeable.' },
+  { icon: ShieldCheck, title: 'Sin impacto ambiental', desc: 'Empaques 100% reciclables y biodegradables certificados.' },
 ]
 
 export default function EnvioPage() {

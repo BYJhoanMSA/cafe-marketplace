@@ -2,7 +2,7 @@
 
 // src/components/ui/QuantitySelector/QuantitySelector.tsx
 import { useEffect, useState } from 'react'
-import { Minus, Plus } from 'lucide-react'
+import { Minus, Plus } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import styles from './QuantitySelector.module.css'
 

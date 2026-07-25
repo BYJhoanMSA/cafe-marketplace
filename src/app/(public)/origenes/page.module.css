@@ -1,8 +1,7 @@
-/* src/app/(public)/origenes/page.module.css */
 .container {
   max-width: var(--max-width-content);
   margin-inline: auto;
-  padding: var(--space-8) var(--space-4) var(--space-20);
+  padding: var(--space-10) var(--space-4) var(--space-24);
 }
 
 @media (min-width: 768px) {
@@ -13,12 +12,13 @@
 
 .header {
   text-align: center;
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-16);
 }
 
 .title {
   font-family: var(--font-primary);
-  font-size: clamp(var(--text-4xl), 5vw, var(--text-6xl));
+  font-size: clamp(var(--text-4xl), 5vw, var(--text-5xl));
+  font-weight: var(--font-weight-bold);
   color: var(--color-ink-primary);
   margin-bottom: var(--space-4);
   line-height: var(--leading-tight);
@@ -32,7 +32,6 @@
   line-height: var(--leading-relaxed);
 }
 
-/* Grid de orígenes */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -52,7 +51,6 @@
   }
 }
 
-/* Tarjeta de Origen */
 .card {
   display: flex;
   flex-direction: column;
@@ -61,10 +59,7 @@
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-2xl);
   overflow: hidden;
-  transition:
-    transform var(--duration-moderate) var(--ease-out),
-    box-shadow var(--duration-moderate) var(--ease-out),
-    border-color var(--duration-moderate) var(--ease-out);
+  transition: var(--transition-moderate);
 }
 
 .card:hover {
@@ -81,7 +76,7 @@
 
 .image {
   object-fit: cover;
-  transition: transform var(--duration-deliberate) var(--ease-out);
+  transition: transform var(--duration-slow) var(--ease-out);
 }
 
 .card:hover .image {
@@ -89,7 +84,7 @@
 }
 
 .content {
-  padding: var(--space-6);
+  padding: var(--padding-card);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -99,6 +94,7 @@
 .country {
   font-family: var(--font-primary);
   font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-ink-primary);
   line-height: var(--leading-tight);
 }
@@ -127,6 +123,6 @@
 
 .link {
   font-size: var(--text-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-interactive);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent-primary);
 }

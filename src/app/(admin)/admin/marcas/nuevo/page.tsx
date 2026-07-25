@@ -1,6 +1,6 @@
 // src/app/(admin)/admin/marcas/nuevo/page.tsx
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from '@phosphor-icons/react'
 import { VendorForm } from '@/components/admin/VendorForm'
 
 export const metadata = {

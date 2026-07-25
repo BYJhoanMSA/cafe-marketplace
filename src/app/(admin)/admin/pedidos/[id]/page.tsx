@@ -1,7 +1,7 @@
 // src/app/(admin)/admin/pedidos/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Package, Truck, User } from 'lucide-react'
+import { ArrowLeft, Package, Truck, User } from '@phosphor-icons/react'
 import { getAdminOrderById } from '@/server/actions/admin/order.actions'
 import { OrderStatusSelector } from '@/components/admin/OrderStatusSelector'
 import { Badge } from '@/components/ui/Badge'

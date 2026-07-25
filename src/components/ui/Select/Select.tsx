@@ -2,7 +2,7 @@
 
 // src/components/ui/Select/Select.tsx
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { CaretDown } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import styles from './Select.module.css'
 
@@ -81,7 +81,7 @@ export function Select({
         <span className={selectedOption ? '' : styles.placeholder}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown size={20} className={cn(styles.icon, isOpen && styles.open)} aria-hidden="true" />
+        <CaretDown size={20} className={cn(styles.icon, isOpen && styles.open)} aria-hidden="true" />
       </button>
 
       {isOpen && (

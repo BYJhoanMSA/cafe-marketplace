@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { MessageSquare, ThumbsUp, AlertTriangle, Mail, Phone, Clock } from 'lucide-react'
+import { ChatTeardrop, ThumbsUp, Warning, EnvelopeSimple, Phone, Clock } from '@phosphor-icons/react'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const PQR_CATEGORIES = [
   {
-    icon: AlertTriangle,
+    icon: Warning,
     title: 'Quejas y Reclamos',
     desc: '¿El producto llegó en mal estado, incompleto o incorrecto? Te ayudamos a resolverlo de inmediato.',
     responseTime: 'Respuesta en menos de 24 horas',
@@ -22,7 +22,7 @@ const PQR_CATEGORIES = [
     responseTime: 'Respuesta en menos de 48 horas',
   },
   {
-    icon: MessageSquare,
+    icon: ChatTeardrop,
     title: 'Peticiones',
     desc: 'Solicita información sobre nuestros productos, procesos de tostión, trazabilidad o cualquier otra inquietud.',
     responseTime: 'Respuesta en menos de 72 horas',
@@ -31,7 +31,7 @@ const PQR_CATEGORIES = [
 
 const CONTACT_CHANNELS = [
   {
-    icon: Mail,
+    icon: EnvelopeSimple,
     title: 'Correo electrónico',
     value: 'pqr@cafeseleccion.co',
     desc: 'Respuesta en 24–72 horas hábiles',

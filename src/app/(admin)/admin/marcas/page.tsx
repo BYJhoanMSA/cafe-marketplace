@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { getAdminVendors } from '@/server/actions/admin/vendor.actions'
 import { Badge } from '@/components/ui/Badge'
-import { Plus, Edit2, Ban } from 'lucide-react'
+import { Plus, PencilSimple, Prohibit } from '@phosphor-icons/react'
 
 export const metadata = {
   title: 'Marcas | Panel Admin',
@@ -76,10 +76,10 @@ export default async function AdminVendorsPage() {
                       style={{ color: 'var(--color-ink-secondary)', padding: 'var(--space-2)' }}
                       title="Editar"
                     >
-                      <Edit2 size={16} />
+                      <PencilSimple size={16} />
                     </Link>
                     <button style={{ background: 'none', border: 'none', color: 'var(--terra-500)', cursor: 'pointer', padding: 'var(--space-2)' }} title="Suspender">
-                      <Ban size={16} />
+                      <Prohibit size={16} />
                     </button>
                   </div>
                 </td>

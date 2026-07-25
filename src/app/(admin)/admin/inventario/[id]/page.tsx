@@ -1,7 +1,7 @@
 // src/app/(admin)/admin/inventario/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from '@phosphor-icons/react'
 import { prisma } from '@/server/db/client'
 import { getProductsForSelect } from '@/server/actions/admin/inventory.actions'
 import { getVariantSizes, getGrindTypes } from '@/server/actions/settings.actions'

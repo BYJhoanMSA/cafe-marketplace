@@ -7,7 +7,7 @@ import { QuantitySelector } from '@/components/ui/QuantitySelector'
 import { useCart } from '@/context/CartContext'
 import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 import { formatPrice } from '@/lib/utils'
-import { Trash2, ShoppingBag } from 'lucide-react'
+import { Trash, ShoppingBag, Coffee } from '@phosphor-icons/react'
 import styles from './CartDrawer.module.css'
 
 export function CartDrawer() {
@@ -28,7 +28,7 @@ export function CartDrawer() {
       <div className={styles.container}>
         {items.length === 0 ? (
           <div className={styles.emptyState}>
-            <span className={styles.emptyIcon}>☕</span>
+            <span className={styles.emptyIcon}><Coffee size={48} /></span>
             <h3 className={styles.emptyTitle}>Tu carrito está vacío</h3>
             <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
               Explora nuestra selección de granos de especialidad y añade tus favoritos.
@@ -76,7 +76,7 @@ export function CartDrawer() {
                       title="Eliminar producto"
                       aria-label="Eliminar producto"
                     >
-                      <Trash2 size={16} />
+                      <Trash size={16} />
                     </button>
                   </div>
                 </div>

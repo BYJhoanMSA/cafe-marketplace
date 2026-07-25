@@ -7,7 +7,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ProductCard, ProductCardSkeleton } from '@/components/product/ProductCard'
 import { OriginCard } from '@/components/home/OriginCard'
-import { Suspense } from 'react'
+import { Suspense, type ReactNode } from 'react'
+import { Coffee, Sun, Moon } from '@phosphor-icons/react'
 import { getHomepageSettings } from '@/server/actions/settings.actions'
 import { getActiveProducts } from '@/server/actions/catalog.actions'
 import { HomepageOrigins, HomepageValues } from './HomepageLazy'
@@ -28,16 +29,16 @@ export const revalidate = 3600
 // ================================================================
 // Datos estáticos de ejemplo (reemplazar con datos de DB en Fase 5)
 // ================================================================
-const FILTER_CHIPS = [
-  { emoji: '☕', label: 'Todo', href: '/catalogo' },
-  { emoji: '🍒', label: 'Frutal', href: '/catalogo?nota=frutal' },
-  { emoji: '🍫', label: 'Chocolatoso', href: '/catalogo?nota=chocolatoso' },
-  { emoji: '🌸', label: 'Floral', href: '/catalogo?nota=floral' },
-  { emoji: '🍋', label: 'Cítrico', href: '/catalogo?nota=citrico' },
-  { emoji: '🌰', label: 'Avellanado', href: '/catalogo?nota=avellanado' },
-  { emoji: '🍬', label: 'Caramelo', href: '/catalogo?nota=caramelo' },
-  { emoji: '☀️', label: 'Ligero', href: '/catalogo?tueste=light' },
-  { emoji: '🌑', label: 'Oscuro', href: '/catalogo?tueste=dark' },
+const FILTER_CHIPS: { icon: ReactNode; label: string; href: string }[] = [
+  { icon: <Coffee size={16} weight="fill" />, label: 'Todo', href: '/catalogo' },
+  { icon: '🍒', label: 'Frutal', href: '/catalogo?nota=frutal' },
+  { icon: '🍫', label: 'Chocolatoso', href: '/catalogo?nota=chocolatoso' },
+  { icon: '🌸', label: 'Floral', href: '/catalogo?nota=floral' },
+  { icon: '🍋', label: 'Cítrico', href: '/catalogo?nota=citrico' },
+  { icon: '🌰', label: 'Avellanado', href: '/catalogo?nota=avellanado' },
+  { icon: '🍬', label: 'Caramelo', href: '/catalogo?nota=caramelo' },
+  { icon: <Sun size={16} weight="fill" />, label: 'Ligero', href: '/catalogo?tueste=light' },
+  { icon: <Moon size={16} weight="fill" />, label: 'Oscuro', href: '/catalogo?tueste=dark' },
 ]
 
 // ================================================================
@@ -118,7 +119,7 @@ export default async function HomePage() {
         <div className={styles.filterBarInner}>
           {FILTER_CHIPS.map((chip) => (
             <Link key={chip.href} href={chip.href} className={styles.filterChip}>
-              <span className={styles.filterEmoji}>{chip.emoji}</span>
+              <span className={styles.filterEmoji}>{chip.icon}</span>
               <span className={styles.filterLabel}>{chip.label}</span>
             </Link>
           ))}

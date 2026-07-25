@@ -7,7 +7,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Heart, ShoppingBag, Star, Share2 } from 'lucide-react'
+import { Heart, ShoppingBag, Star, ShareNetwork, Coffee } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice, truncate, getThumbUrl, getImageUrl } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
@@ -226,7 +226,7 @@ export function ProductCard({
         {/* Cupping score */}
         {product.cuppingScore && (
           <div className={styles.cuppingScore} aria-label={`Cupping score: ${product.cuppingScore} puntos`}>
-            ☕ {product.cuppingScore}
+            <Coffee size={14} weight="fill" /> {product.cuppingScore}
           </div>
         )}
       </div>
@@ -263,11 +263,11 @@ export function ProductCard({
         <div className={styles.rating} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <span>❤️</span>
+              <Heart size={12} weight="fill" color="var(--terra-500)" />
               <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--terra-500)' }}>{favorites}</span>
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <span>⭐</span>
+              <Star size={12} weight="fill" color="var(--gold-500)" />
               <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--gold-600)' }}>{shares}</span>
             </span>
           </div>
@@ -288,7 +288,7 @@ export function ProductCard({
             }}
             title="Compartir producto"
           >
-            <Share2 size={14} />
+            <ShareNetwork size={14} />
             {sharedToast ? '¡Copiado!' : ''}
           </button>
         </div>

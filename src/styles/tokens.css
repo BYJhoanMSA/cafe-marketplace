@@ -5,56 +5,57 @@
    El modo oscuro se activa con: document.documentElement.dataset.theme = 'dark'
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
 /* =============================================================================
    TOKENS BASE — Paleta de colores (no usar directamente en componentes)
    ============================================================================= */
 :root {
-  /* Neutrales cálidos (Cloud Dancer & Pizarra) */
-  --neutral-0:   #FDFAF6;
-  --neutral-50:  #F7F3EE;
-  --neutral-100: #EDE8E0;
-  --neutral-200: #DDD7CD;
-  --neutral-300: #C8BFB2;
-  --neutral-400: #A89E91;
-  --neutral-500: #8A7E72;
-  --neutral-600: #6B6058;
-  --neutral-700: #4D4440;
-  --neutral-800: #2E2724;
-  --neutral-900: #1A1410;
-  --neutral-950: #0F0C0A;
+  /* Neutrales premium — Terroir (cálidos, elegantes, base marfil) */
+  --neutral-0:   #F7F4EF;  /* Marketplace — fondo principal */
+  --neutral-50:  #F2EDE6;  /* hover sutil */
+  --neutral-100: #ECE6DA;  /* Marfil — fondos secundarios */
+  --neutral-200: #DFD6C6;  /* Sand — bordes suaves */
+  --neutral-300: #CBBEAC;  /* Pebble — bordes fuertes */
+  --neutral-400: #B0A28E;  /* Stone — texto terciario */
+  --neutral-500: #8F7F6B;  /* Cocoa — texto disabled */
+  --neutral-600: #5A524A;  /* Texto secundario */
+  --neutral-700: #423934;  /* hover interactivos */
+  --neutral-800: #1E1B18;  /* Texto principal */
+  --neutral-900: #1E1818;  /* Hero — fondos oscuros */
+  --neutral-950: #120D0A;  /* Casi negro — dark mode */
 
-  /* Accent Gold */
-  --gold-100: #FDF3DC;
-  --gold-300: #F5C842;
-  --gold-500: #E6A817;
-  --gold-700: #B8840A;
-  --gold-900: #7A5505;
+  /* Dorado — acento principal (reemplaza gold anterior) */
+  --gold-100: #F5EDDE;
+  --gold-300: #DFC99C;
+  --gold-400: #D5B57C;  /* hover dorado */
+  --gold-500: #C8A871;  /* Dorado principal */
+  --gold-700: #B08954;
+  --gold-900: #8A6A3A;
 
-  /* Accent Terra */
-  --terra-100: #F5EDE8;
-  --terra-300: #D4906A;
-  --terra-500: #C2703E;
-  --terra-700: #9A5328;
-  --terra-900: #5C2E10;
+  /* Café — acento secundario (reemplaza terra anterior) */
+  --terra-100: #EDE2D8;
+  --terra-300: #A68464;
+  --terra-500: #6B4B2E;  /* Café */
+  --terra-700: #4E3420;
+  --terra-900: #2C1E15;  /* Fondo oscuro */
 
-  /* Accent Forest */
-  --forest-100: #EAF2EC;
-  --forest-300: #6BB57A;
-  --forest-500: #3E9650;
-  --forest-700: #2C6E38;
-  --forest-900: #1A4422;
+  /* Verde — orgánico / sostenibilidad (reemplaza forest anterior) */
+  --forest-100: #EDF1E8;
+  --forest-300: #93A380;
+  --forest-500: #5D6B4F;  /* Verde */
+  --forest-700: #424D38;
+  --forest-900: #2A3224;
 
   /* Estados semánticos */
-  --success-bg:   #EAF2EC;
-  --success-text: #2C6E38;
-  --warning-bg:   #FDF3DC;
-  --warning-text: #7A5505;
-  --error-bg:     #FDE8E8;
-  --error-text:   #C22222;
-  --info-bg:      #E8EFFD;
-  --info-text:    #2244C2;
+  --success-bg:   #ECFDF5;
+  --success-text: #065F46;
+  --warning-bg:   #FFFBEB;
+  --warning-text: #92400E;
+  --error-bg:     #FEF2F2;
+  --error-text:   #991B1B;
+  --info-bg:      #F0F5FF;
+  --info-text:    #1E40AF;
 }
 
 /* =============================================================================
@@ -65,11 +66,11 @@
 [data-theme="light"] {
   /* Fondos */
   --color-bg-primary:   var(--neutral-0);
-  --color-bg-secondary: var(--neutral-50);
+  --color-bg-secondary: var(--neutral-100);
   --color-bg-elevated:  #FFFFFF;
   --color-bg-elevated-2: var(--neutral-50);
   --color-bg-input:     #FFFFFF;
-  --color-bg-overlay:   rgba(15, 12, 10, 0.60);
+  --color-bg-overlay:   rgba(30, 24, 24, 0.65);
 
   /* Bordes */
   --color-border-default: var(--neutral-200);
@@ -79,9 +80,9 @@
   /* Texto */
   --color-ink-primary:   var(--neutral-800);
   --color-ink-secondary: var(--neutral-600);
-  --color-ink-tertiary:  var(--neutral-500);
-  --color-ink-inverted:  var(--neutral-0);
-  --color-ink-disabled:  var(--neutral-400);
+  --color-ink-tertiary:  var(--neutral-400);
+  --color-ink-inverted:  #FFFFFF;
+  --color-ink-disabled:  var(--neutral-300);
 
   /* Acentos */
   --color-accent-primary:   var(--gold-500);
@@ -93,11 +94,16 @@
   --color-interactive-hover: var(--neutral-900);
   --color-interactive-active: var(--neutral-950);
 
-  /* Sombras */
-  --shadow-sm: 0 1px 3px rgba(15, 12, 10, 0.08);
-  --shadow-md: 0 4px 12px rgba(15, 12, 10, 0.12);
-  --shadow-lg: 0 8px 24px rgba(15, 12, 10, 0.16);
-  --shadow-xl: 0 16px 48px rgba(15, 12, 10, 0.20);
+  /* Glass cálido — navbar, buscador, modales, carrito, paneles */
+  --glass-bg:     rgba(247, 244, 239, 0.88);
+  --glass-border: rgba(223, 214, 198, 0.50);
+  --glass-blur:   18px;
+
+  /* Sombras cálidas — NUNCA usar sombras negras */
+  --shadow-sm: 0 4px 12px rgba(45, 30, 15, 0.10);
+  --shadow-md: 0 8px 24px rgba(45, 30, 15, 0.14);
+  --shadow-lg: 0 15px 45px rgba(45, 30, 15, 0.18);
+  --shadow-xl: 0 20px 60px rgba(45, 30, 15, 0.22);
 }
 
 /* =============================================================================
@@ -105,21 +111,21 @@
    ============================================================================= */
 [data-theme="dark"] {
   /* Fondos */
-  --color-bg-primary:    var(--neutral-950);
-  --color-bg-secondary:  #171210;
-  --color-bg-elevated:   #1F1B18;
-  --color-bg-elevated-2: #2A2420;
-  --color-bg-input:      #262018;
+  --color-bg-primary:    #120D0A;
+  --color-bg-secondary:  #1A1410;
+  --color-bg-elevated:   var(--terra-900);
+  --color-bg-elevated-2: #3D3026;
+  --color-bg-input:      #2C1E15;
   --color-bg-overlay:    rgba(0, 0, 0, 0.80);
 
   /* Bordes */
-  --color-border-default: #2E2824;
-  --color-border-strong:  #3D3530;
+  --color-border-default: #3D3026;
+  --color-border-strong:  #4D3D30;
   --color-border-focus:   var(--gold-300);
 
   /* Texto */
-  --color-ink-primary:   var(--neutral-50);
-  --color-ink-secondary: var(--neutral-400);
+  --color-ink-primary:   var(--neutral-0);
+  --color-ink-secondary: var(--neutral-300);
   --color-ink-tertiary:  var(--neutral-500);
   --color-ink-inverted:  var(--neutral-900);
   --color-ink-disabled:  var(--neutral-600);
@@ -130,11 +136,16 @@
   --color-accent-success:   var(--forest-300);
 
   /* Interactivos */
-  --color-interactive:       var(--neutral-50);
+  --color-interactive:       var(--neutral-0);
   --color-interactive-hover: #FFFFFF;
   --color-interactive-active: var(--neutral-100);
 
-  /* Sombras — en dark mode, usamos luminosidad, no sombras */
+  /* Glass cálido — dark mode */
+  --glass-bg:     rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-blur:   18px;
+
+  /* Sombras — en dark mode no hay sombras, solo luminosidad */
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
@@ -145,8 +156,8 @@
    TIPOGRAFÍA
    ============================================================================= */
 :root {
-  --font-primary:   'DM Serif Display', Georgia, serif;
-  --font-secondary: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-primary:   'Playfair Display', Georgia, serif;
+  --font-secondary: 'DM Sans', system-ui, -apple-system, sans-serif;
   --font-mono:      'DM Mono', 'Courier New', monospace;
 
   /* Pesos */
@@ -201,15 +212,15 @@
   --space-24: 6rem;      /* 96px */
   --space-32: 8rem;      /* 128px */
 
-  /* Semánticos */
-  --padding-button-sm:  0.5rem 1rem;       /*  8px 16px */
-  --padding-button-md:  0.75rem 1.5rem;    /* 12px 24px */
-  --padding-button-lg:  1rem 2rem;         /* 16px 32px */
-  --padding-input:      0.75rem 1rem;      /* 12px 16px */
-  --padding-card:       var(--space-6);    /* 24px */
-  --padding-card-sm:    var(--space-4);    /* 16px */
-  --padding-section:    var(--space-20) 0; /* 80px 0 */
-  --padding-section-sm: var(--space-12) 0; /* 48px 0 */
+  /* Semánticos — más aire, más lujo */
+  --padding-button-sm:  0.5rem 1.25rem;    /*  8px 20px */
+  --padding-button-md:  0.75rem 1.75rem;   /* 12px 28px */
+  --padding-button-lg:  1rem 2.5rem;       /* 16px 40px */
+  --padding-input:      0.875rem 1.25rem;  /* 14px 20px */
+  --padding-card:       var(--space-8);    /* 32px */
+  --padding-card-sm:    var(--space-6);    /* 24px */
+  --padding-section:    var(--space-24) 0; /* 96px 0 */
+  --padding-section-sm: var(--space-16) 0; /* 64px 0 */
   --padding-page:       0 var(--space-4);  /* 0 16px (mobile) */
   --padding-page-md:    0 var(--space-10); /* 0 40px (tablet) */
   --padding-page-lg:    0 var(--space-16); /* 0 64px (desktop) */
@@ -218,49 +229,48 @@
   --max-width-content: 1280px;
   --max-width-narrow:  768px;
   --max-width-form:    480px;
-  --gap-card-grid:     var(--space-6);   /* 24px */
-  --gap-card-grid-sm:  var(--space-4);   /* 16px */
+  --gap-card-grid:     var(--space-8);   /* 32px */
+  --gap-card-grid-sm:  var(--space-6);   /* 24px */
 }
 
 /* =============================================================================
-   BORDER RADIUS
+   BORDER RADIUS — Orgánicos, generosos
+   Navbar: 18px | Cards: 24px | Botones: pill | Inputs: 16px
    ============================================================================= */
 :root {
-  --radius-sm:     0.25rem;   /*  4px */
-  --radius-md:     0.5rem;    /*  8px */
-  --radius-lg:     0.75rem;   /* 12px */
-  --radius-xl:     1rem;      /* 16px */
-  --radius-2xl:    1.5rem;    /* 24px */
+  --radius-sm:     0.375rem;  /*  6px */
+  --radius-md:     0.75rem;   /* 12px */
+  --radius-lg:     1rem;      /* 16px — inputs */
+  --radius-xl:     1.125rem;  /* 18px — navbar */
+  --radius-2xl:    1.5rem;    /* 24px — cards */
   --radius-pill:   9999px;
   --radius-circle: 50%;
 }
 
 /* =============================================================================
-   ANIMACIONES Y MOVIMIENTO
+   ANIMACIONES Y MOVIMIENTO — 300ms ease-out
+   Solo: fade, opacity, translateY, scale(1.02)
    ============================================================================= */
 :root {
-  /* Duraciones */
   --duration-instant:    0ms;
-  --duration-fast:       100ms;
-  --duration-normal:     200ms;
-  --duration-moderate:   300ms;
-  --duration-slow:       400ms;
-  --duration-deliberate: 600ms;
-  --duration-cinematic:  800ms;
-  --duration-lazy:       1200ms;
+  --duration-fast:       150ms;
+  --duration-normal:     300ms;   /* pulso principal */
+  --duration-moderate:   400ms;
+  --duration-slow:       600ms;
+  --duration-deliberate: 800ms;
+  --duration-cinematic:  1000ms;
+  --duration-lazy:       1500ms;
 
   /* Easings */
   --ease-linear:   linear;
-  --ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1);
-  --ease-in:       cubic-bezier(0.4, 0.0, 1.0, 1);
-  --ease-in-out:   cubic-bezier(0.4, 0.0, 0.2, 1);
-  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:      cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in:       cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Transitions semánticas */
-  --transition-fast:      all var(--duration-fast)     var(--ease-out);
-  --transition-normal:    all var(--duration-normal)   var(--ease-out);
+  --transition-fast:      all var(--duration-fast)   var(--ease-out);
+  --transition-normal:    all var(--duration-normal) var(--ease-out);
   --transition-moderate:  all var(--duration-moderate) var(--ease-out);
-  --transition-spring:    all var(--duration-moderate) var(--ease-spring);
 }
 
 /* Reducir movimiento para accesibilidad */
@@ -311,10 +321,9 @@
 }
 
 html {
-  font-size: 16px; /* Base — NUNCA cambiar */
+  font-size: 16px;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* Previene FOUC en dark mode (ver script en layout.tsx) */
   color-scheme: light dark;
 }
 
@@ -327,18 +336,16 @@ body {
   background-color: var(--color-bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color var(--duration-normal) var(--ease-in-out),
-              color var(--duration-normal) var(--ease-in-out);
+  transition: background-color var(--duration-normal) var(--ease-out),
+              color var(--duration-normal) var(--ease-out);
 }
 
-/* Focus visible para accesibilidad — NUNCA usar outline:none sin reemplazo */
 :focus-visible {
   outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
   border-radius: var(--radius-md);
 }
 
-/* Imágenes responsive */
 img,
 video {
   max-width: 100%;
@@ -346,19 +353,16 @@ video {
   display: block;
 }
 
-/* Links base */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* Listas */
 ul,
 ol {
   list-style: none;
 }
 
-/* Botones base */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -366,15 +370,13 @@ button {
   background: none;
 }
 
-/* Inputs base */
 input,
 textarea,
 select {
   font-family: inherit;
-  font-size: var(--text-base); /* 16px — evita zoom en iOS */
+  font-size: var(--text-base);
 }
 
-/* Headings base */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-primary);
   font-weight: var(--font-weight-regular);
@@ -386,27 +388,25 @@ h1, h2, h3, h4, h5, h6 {
    UTILIDADES GLOBALES
    ============================================================================= */
 
-/* Contenedor de página */
 .container {
   width: 100%;
   max-width: var(--max-width-content);
   margin-inline: auto;
-  padding-inline: var(--space-4); /* 16px mobile */
+  padding-inline: var(--space-4);
 }
 
 @media (min-width: 768px) {
   .container {
-    padding-inline: var(--space-10); /* 40px tablet */
+    padding-inline: var(--space-10);
   }
 }
 
 @media (min-width: 1024px) {
   .container {
-    padding-inline: var(--space-16); /* 64px desktop */
+    padding-inline: var(--space-16);
   }
 }
 
-/* Visualmente oculto pero accesible para lectores de pantalla */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -419,7 +419,6 @@ h1, h2, h3, h4, h5, h6 {
   border-width: 0;
 }
 
-/* Skeleton animation */
 @keyframes skeleton-shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -440,14 +439,13 @@ h1, h2, h3, h4, h5, h6 {
 [data-theme="dark"] .skeleton {
   background: linear-gradient(
     90deg,
-    #2E2824 25%,
-    #3D3530 50%,
-    #2E2824 75%
+    #3D3026 25%,
+    #4D3D30 50%,
+    #3D3026 75%
   );
   background-size: 200% 100%;
 }
 
-/* Fade in para contenido que carga */
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -460,17 +458,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .animate-fade-up {
-  animation: fade-up var(--duration-deliberate) var(--ease-out) both;
+  animation: fade-up var(--duration-normal) var(--ease-out) both;
 }
 
-/* Price formatter (monospace para evitar layout shift) */
 .price {
   font-family: var(--font-secondary);
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
-/* Cupping score badge */
 .cupping-score {
   font-family: var(--font-mono);
   font-weight: var(--font-weight-bold);

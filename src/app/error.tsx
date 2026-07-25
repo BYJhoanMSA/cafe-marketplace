@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { Warning } from '@phosphor-icons/react'
 
 interface ErrorPageProps {
   error: Error & { digest?: string }
@@ -27,8 +28,8 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         gap: 'var(--space-6)',
       }}
     >
-      <span style={{ fontSize: '4rem', lineHeight: 1 }} role="img" aria-label="Advertencia">
-        ⚠️
+      <span style={{ lineHeight: 1 }} role="img" aria-label="Advertencia">
+        <Warning size={64} weight="bold" />
       </span>
       <h1
         style={{

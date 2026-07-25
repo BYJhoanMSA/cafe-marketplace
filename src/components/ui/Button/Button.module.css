@@ -1,123 +1,96 @@
-/* src/components/ui/Button/Button.module.css */
-/* ================================================================
-   BUTTON — 5 variantes × 3 tamaños
-   Principio: cada variante tiene un propósito semántico único.
-   Nunca usar más de una variante PRIMARY por vista.
-   ================================================================ */
-
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   font-family: var(--font-secondary);
-  font-weight: var(--font-weight-semibold);
-  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-pill);
   border: 1.5px solid transparent;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
   user-select: none;
-  transition:
-    background-color var(--duration-normal) var(--ease-out),
-    color var(--duration-normal) var(--ease-out),
-    border-color var(--duration-normal) var(--ease-out),
-    box-shadow var(--duration-normal) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out),
-    opacity var(--duration-normal) var(--ease-out);
+  transition: var(--transition-normal);
   position: relative;
   overflow: hidden;
 }
 
-/* Focus visible — ring dorado, accesible */
 .button:focus-visible {
   outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
 }
 
-/* Active — leve compresión táctil */
 .button:active:not(:disabled) {
   transform: scale(0.97);
 }
 
-/* Disabled */
 .button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-/* ----------------------------------------------------------------
-   TAMAÑOS
-   ---------------------------------------------------------------- */
 .sm {
-  height: 32px;
+  height: 36px;
   padding: var(--padding-button-sm);
   font-size: var(--text-sm);
   gap: var(--space-1);
 }
 
 .md {
-  height: 40px;
+  height: 44px;
   padding: var(--padding-button-md);
   font-size: var(--text-base);
 }
 
 .lg {
-  height: 48px;
+  height: 52px;
   padding: var(--padding-button-lg);
   font-size: var(--text-base);
 }
 
-/* Ancho completo (mobile CTAs) */
 .full {
   width: 100%;
-  height: 48px;
+  height: 52px;
   padding: var(--padding-button-lg);
   font-size: var(--text-base);
 }
 
-/* Solo ícono */
 .icon {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-circle);
 }
 
 .icon.sm {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
 }
 
 .icon.lg {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
 }
 
-/* ----------------------------------------------------------------
-   VARIANTE: Primary (Acción principal)
-   Oscuro sobre claro — máximo contraste sin negro puro
-   ---------------------------------------------------------------- */
 .primary {
-  background-color: var(--color-interactive);
-  color: var(--color-ink-inverted);
-  border-color: var(--color-interactive);
+  background-color: var(--color-accent-primary);
+  color: #FFFFFF;
+  border-color: var(--color-accent-primary);
 }
 
 .primary:hover:not(:disabled) {
-  background-color: var(--color-interactive-hover);
-  border-color: var(--color-interactive-hover);
+  background-color: var(--gold-700);
+  border-color: var(--gold-700);
+  transform: translateY(-1px);
 }
 
 .primary:active:not(:disabled) {
-  background-color: var(--color-interactive-active);
+  background-color: var(--gold-900);
+  transform: scale(0.97);
 }
 
-/* ----------------------------------------------------------------
-   VARIANTE: Secondary (Acción secundaria)
-   Borde visible, fondo transparente
-   ---------------------------------------------------------------- */
 .secondary {
   background-color: transparent;
   color: var(--color-ink-primary);
@@ -125,35 +98,27 @@
 }
 
 .secondary:hover:not(:disabled) {
-  background-color: var(--color-bg-elevated-2);
+  background-color: var(--neutral-100);
 }
 
 .secondary:active:not(:disabled) {
-  background-color: var(--color-border-default);
+  background-color: var(--neutral-200);
 }
 
-/* ----------------------------------------------------------------
-   VARIANTE: Ghost (Acción terciaria)
-   Sin borde, fondo casi invisible
-   ---------------------------------------------------------------- */
 .ghost {
   background-color: transparent;
-  color: var(--color-ink-secondary);
+  color: var(--color-ink-tertiary);
   border-color: transparent;
 }
 
 .ghost:hover:not(:disabled) {
-  background-color: var(--color-bg-elevated-2);
+  background-color: var(--neutral-100);
   color: var(--color-ink-primary);
 }
 
-/* ----------------------------------------------------------------
-   VARIANTE: Gold (Acción premium)
-   Solo para UNA acción de alto valor por vista (suscripción, etc.)
-   ---------------------------------------------------------------- */
 .gold {
   background-color: var(--gold-500);
-  color: var(--neutral-900);
+  color: #FFFFFF;
   border-color: var(--gold-500);
 }
 
@@ -166,10 +131,6 @@
   background-color: var(--gold-900);
 }
 
-/* ----------------------------------------------------------------
-   VARIANTE: Destructive (Acción peligrosa/irreversible)
-   Siempre acompañada de modal de confirmación
-   ---------------------------------------------------------------- */
 .destructive {
   background-color: var(--error-text);
   color: white;
@@ -177,14 +138,10 @@
 }
 
 .destructive:hover:not(:disabled) {
-  background-color: #a51c1c;
-  border-color: #a51c1c;
+  background-color: #7F1D1D;
+  border-color: #7F1D1D;
 }
 
-/* ----------------------------------------------------------------
-   ESTADO: Loading
-   Spinner reemplaza el contenido, el botón mantiene su ancho
-   ---------------------------------------------------------------- */
 .loading {
   cursor: wait;
   pointer-events: none;

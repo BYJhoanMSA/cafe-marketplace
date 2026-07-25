@@ -2,6 +2,7 @@
 
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
+import { MapPin } from '@phosphor-icons/react'
 
 interface OriginTerroirSectionProps {
   regionName: string
@@ -29,7 +30,7 @@ export function OriginTerroirSection({
       gap: 'var(--space-4)'
     }}>
       <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
-        📍 Ficha de Ubicación y Terruño (Origen Colombia)
+        <MapPin size={18} weight="fill" /> Ficha de Ubicación y Terruño (Origen Colombia)
       </h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>

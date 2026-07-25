@@ -1,46 +1,14 @@
-/* src/styles/globals.css */
-/* Importa los tokens base y aplica estilos globales */
 @import './tokens.css';
 
-/* ============================================================
-   Scrollbar personalizada (Chrome, Edge, Safari)
-   ============================================================ */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--neutral-300);
-  border-radius: var(--radius-pill);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--neutral-400);
-}
-
-/* ============================================================
-   Selección de texto
-   ============================================================ */
 ::selection {
   background-color: var(--gold-100);
   color: var(--neutral-900);
 }
 
-/* ============================================================
-   Rendering de texto
-   ============================================================ */
 body {
   text-rendering: optimizeLegibility;
 }
 
-/* ============================================================
-   Estilos base del tab bar mobile
-   ============================================================ */
 @media (max-width: 767px) {
   main {
     padding-bottom: 64px;
