@@ -39,7 +39,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   const touchStartY = useRef(0)
   const isDragging = useRef(false)
   const dragOffsetX = useRef(0)
-  const slideTrackRef = useRef<HTMLDivElement>(null)
+  const stripRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const counts = getSocialCounts(product.id)
@@ -51,12 +51,15 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     setActiveImageIndex(0)
   }, [product.id])
 
-  const updateTranslate = useCallback((offsetX: number, animated: boolean) => {
-    if (slideTrackRef.current) {
-      slideTrackRef.current.style.transition = animated ? 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none'
-      slideTrackRef.current.style.transform = `translateX(${offsetX}px)`
-    }
+  const goToIndex = useCallback((index: number, animated: boolean) => {
+    if (!stripRef.current) return
+    stripRef.current.style.transition = animated ? 'transform 0.35s cubic-bezier(0.15, 0.75, 0.25, 1)' : 'none'
+    stripRef.current.style.transform = `translateX(${-index * 100}vw)`
   }, [])
+
+  useEffect(() => {
+    goToIndex(activeImageIndex, true)
+  }, [activeImageIndex, goToIndex])
 
   function handleTouchStart(e: React.TouchEvent) {
     const touch = e.touches[0]
@@ -65,7 +68,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     touchStartY.current = touch.clientY
     isDragging.current = false
     dragOffsetX.current = 0
-    updateTranslate(0, false)
   }
 
   function handleTouchMove(e: React.TouchEvent) {
@@ -81,7 +83,10 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     if (isDragging.current) {
       e.preventDefault()
       dragOffsetX.current = dx
-      updateTranslate(dx, false)
+      if (stripRef.current) {
+        stripRef.current.style.transition = 'none'
+        stripRef.current.style.transform = `translateX(${(-activeImageIndex * 100) + (dx / window.innerWidth * 100)}vw)`
+      }
     }
   }
 
@@ -89,14 +94,17 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     if (!isDragging.current) return
 
     const dx = dragOffsetX.current
-    updateTranslate(0, true)
 
     if (Math.abs(dx) > SWIPE_THRESHOLD) {
       if (dx > 0 && activeImageIndex > 0) {
         setActiveImageIndex((prev) => prev - 1)
       } else if (dx < 0 && activeImageIndex < images.length - 1) {
         setActiveImageIndex((prev) => prev + 1)
+      } else {
+        goToIndex(activeImageIndex, true)
       }
+    } else {
+      goToIndex(activeImageIndex, true)
     }
 
     isDragging.current = false
@@ -168,8 +176,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     setIsAdding(false)
   }
 
-  const currentImage = images[activeImageIndex] || images[0] || product.imageUrl
-
   return (
     <div className={styles.slide}>
       <div
@@ -178,20 +184,22 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className={styles.slideTrack} ref={slideTrackRef}>
-          <div className={styles.slideTrackInner}>
-            <Image
-              src={currentImage}
-              alt={product.imageAlt}
-              fill
-              priority={isActive}
-              className={styles.image}
-              sizes="100vw"
-            />
-          </div>
+        <div className={styles.imageStrip} ref={stripRef}>
+          {images.map((img, idx) => (
+            <div key={idx} className={styles.imageStripItem}>
+              <Image
+                src={img}
+                alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
+                fill
+                priority={isActive && idx === 0}
+                className={styles.image}
+                sizes="100vw"
+              />
+            </div>
+          ))}
         </div>
 
-        {images.length > 1 && !isDragging.current && (
+        {images.length > 1 && (
           <>
             {activeImageIndex > 0 && (
               <button
