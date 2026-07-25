@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'cafe-marketplace',
-      script: 'server.js',
+      script: '.next/standalone/server.js',
       cwd: './',
       exec_mode: 'fork',
       instances: 1,

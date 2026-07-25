@@ -47,10 +47,14 @@ export function ImageUploader({
     formData.append('type', type)
 
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000)
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
       const data = await res.json()
 
       if (!res.ok || !data.success) {
@@ -106,11 +110,19 @@ export function ImageUploader({
     if (!img) return
     // Borrar del servidor si es un upload local
     if (img.url.startsWith('/uploads/')) {
-      await fetch('/api/upload', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: img.url }),
-      })
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
+        await fetch('/api/upload', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: img.url }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+      } catch {
+        // Silencioso: la imagen se quita del estado aunque el DELETE falle
+      }
     }
     const updated = images.filter((_, i) => i !== index).map((img, i) => ({ ...img, position: i }))
     onChange(updated)
