@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin } from 'lucide-react'
-import { formatPrice, getThumbUrl } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { useCart } from '@/context/CartContext'
@@ -25,7 +25,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [reviewsOpen, setReviewsOpen] = useState(false)
-  const [imgSrc, setImgSrc] = useState(getThumbUrl(product.imageUrl))
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
 
@@ -103,13 +102,12 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
       {/* IMAGEN DE FONDO */}
       <div className={styles.imageContainer}>
         <Image
-          src={imgSrc}
+          src={product.imageUrl}
           alt={product.imageAlt}
           fill
           priority={isActive}
           className={styles.image}
           sizes="100vw"
-          onError={() => setImgSrc(product.imageUrl)}
         />
         <div className={styles.overlayTop} />
         <div className={styles.overlayBottom} />
