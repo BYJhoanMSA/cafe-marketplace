@@ -13,7 +13,7 @@ const FOOTER_LINKS = [
       { href: '/catalogo', label: 'Catálogo de Cafés' },
       { href: '/origenes', label: 'Orígenes' },
       { href: '/envio', label: 'Estrategia de Envío' },
-      { href: '/pqr', label: 'PQR' },
+      { href: '/pqr', label: 'Centro de Ayuda' },
     ],
   },
   {

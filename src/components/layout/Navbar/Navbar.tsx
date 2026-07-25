@@ -72,7 +72,7 @@ function useTheme() {
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
   { href: '/envio', label: 'Envío' },
-  { href: '/pqr', label: 'PQR' },
+  { href: '/pqr', label: 'Centro de Ayuda' },
 ]
 
 // ================================================================
