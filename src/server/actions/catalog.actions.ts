@@ -297,45 +297,45 @@ export async function getHomepageOrigins() {
 export async function getAvailableCatalogFilters() {
   return withCache('catalog:filters', async () => {
     try {
-    // 1. Obtener orígenes que tengan productos activos
-    const origins = await prisma.origin.findMany({
-      where: {
-        products: {
-          some: {
+    // 1. Obtener orígenes y notas de sabor en paralelo
+    const [origins, flavorNotes] = await Promise.all([
+      prisma.origin.findMany({
+        where: {
+          products: {
+            some: {
+              status: 'active',
+              deletedAt: null,
+                variants: {
+                  some: {
+                    status: 'active',
+                  }
+                }
+            }
+          }
+        },
+        select: {
+          id: true,
+          region: true,
+          country: true,
+          slug: true
+        },
+        orderBy: {
+          region: 'asc'
+        }
+      }),
+      prisma.productFlavorNote.findMany({
+        where: {
+          product: {
             status: 'active',
             deletedAt: null,
-              variants: {
-                some: {
-                  status: 'active',
-                }
-              }
           }
-        }
-      },
-      select: {
-        id: true,
-        region: true,
-        country: true,
-        slug: true
-      },
-      orderBy: {
-        region: 'asc'
-      }
-    })
-
-    // 2. Obtener notas de sabor usadas en productos activos
-    const flavorNotes = await prisma.productFlavorNote.findMany({
-      where: {
-        product: {
-          status: 'active',
-          deletedAt: null,
-        }
-      },
-      select: {
-        note: true
-      },
-      distinct: ['note']
-    })
+        },
+        select: {
+          note: true
+        },
+        distinct: ['note']
+      })
+    ])
 
     return {
       success: true,

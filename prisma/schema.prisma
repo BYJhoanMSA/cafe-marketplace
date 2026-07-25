@@ -335,6 +335,7 @@ model Product {
   // Índice FULLTEXT para búsqueda MySQL
   @@fulltext([title, description, farmName, producerName])
   @@index([status, publishedAt])
+  @@index([status, createdAt])
   @@index([vendorId])
   @@index([categoryId])
   @@index([originId])
@@ -621,6 +622,7 @@ model LineItem {
 
   @@index([orderId])
   @@index([productId])
+  @@index([orderId, productId])
   @@map("line_items")
 }
 

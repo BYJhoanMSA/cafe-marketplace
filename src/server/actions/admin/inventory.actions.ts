@@ -89,6 +89,36 @@ export async function createVariant(data: any) {
   }
 }
 
+export async function createVariantsBulk(
+  items: Array<{
+    productId: string
+    sku: string
+    title: string
+    weightGrams: number | null
+    grindType: string
+    priceInCents: number
+    stockQuantity: number
+    status: string
+  }>
+) {
+  const session = await auth()
+  if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    const result = await prisma.variant.createMany({
+      data: items,
+      skipDuplicates: true,
+    })
+    revalidatePath('/admin/inventario')
+    return { success: true, count: result.count }
+  } catch (error: any) {
+    console.error('Error creating variants in bulk:', error)
+    return { success: false, error: error.message || 'Error al crear variantes' }
+  }
+}
+
 export async function updateVariant(id: string, data: any) {
   const session = await auth()
   if (!session || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {

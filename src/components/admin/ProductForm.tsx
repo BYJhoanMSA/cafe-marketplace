@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { ImageUploader, type UploadedImage } from '@/components/admin/ImageUploader'
 import { createProduct, updateProduct } from '@/server/actions/admin/product.actions'
-import { createVariant } from '@/server/actions/admin/inventory.actions'
+import { createVariantsBulk } from '@/server/actions/admin/inventory.actions'
 import { slugify } from '@/lib/utils'
 import type { VariantSizeOption, GrindTypeOption } from '@/server/actions/settings.actions'
 
@@ -126,33 +126,30 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           return
         }
 
-        // Crear variantes después del producto (combinaciones de tamaños × moliendas)
+        // Crear variantes en batch (una sola query)
         if (selectedSizes.length > 0 && selectedGrinds.length > 0 && result.product) {
-          const variantErrors: string[] = []
+          const items = []
           for (const sizeValue of selectedSizes) {
             const size = variantSizes.find(s => s.value === sizeValue)
             for (const grindValue of selectedGrinds) {
               const price = combinationPrices[`${sizeValue}|${grindValue}`] || '0'
               const grind = grindTypes.find(g => g.value === grindValue)
               const sku = `${result.product.slug}-${sizeValue}-${grindValue}`.toUpperCase()
-              const vResult = await createVariant({
+              items.push({
                 productId: result.product.id,
                 sku,
                 title: `${size?.label || sizeValue} - ${grind?.label || grindValue}`,
-                sizeValue,
-                weightGrams: size ? String(size.grams) : '',
+                weightGrams: size ? parseInt(size.grams as unknown as string) || null : null,
                 grindType: grindValue,
-                price,
-                stockQuantity: '0',
+                priceInCents: Math.round(parseFloat(price) * 100),
+                stockQuantity: 0,
                 status: 'active',
               })
-              if (!vResult.success) {
-                variantErrors.push(vResult.error || `Error creando variante ${sizeValue} - ${grindValue}`)
-              }
             }
           }
-          if (variantErrors.length > 0) {
-            setError('Producto creado, pero algunas variantes fallaron: ' + variantErrors.join(', '))
+          const vResult = await createVariantsBulk(items)
+          if (!vResult.success) {
+            setError('Producto creado, pero algunas variantes fallaron')
             setLoading(false)
             return
           }

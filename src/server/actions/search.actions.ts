@@ -35,10 +35,6 @@ export async function searchProducts(query: string) {
           { origin: { region: { contains: trimmed } } },
           { vendor: { storeName: { contains: trimmed } } },
           { flavorNotes: { some: { note: { contains: trimmed } } } },
-          { title: { contains: trimmed } },
-          { description: { contains: trimmed } },
-          { farmName: { contains: trimmed } },
-          { producerName: { contains: trimmed } },
         ],
         variants: {
           some: {

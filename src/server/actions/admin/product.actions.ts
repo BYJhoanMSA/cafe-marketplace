@@ -7,6 +7,7 @@ import { slugify } from '@/lib/utils'
 import { unlink } from 'fs/promises'
 import { join } from 'path'
 import { z } from 'zod'
+import { invalidateProductsCache } from '@/server/actions/catalog.actions'
 
 const ProductSchema = z.object({
   title: z.string().min(1).max(255),
@@ -150,6 +151,7 @@ export async function createProduct(data: Record<string, unknown>) {
     revalidatePath('/admin/productos')
     revalidatePath('/catalogo')
     revalidatePath('/')
+    invalidateProductsCache()
     return { success: true, product }
   } catch (error: any) {
     console.error('Error creating product:', error)
@@ -238,6 +240,7 @@ export async function updateProduct(id: string, data: any) {
     revalidatePath(`/admin/productos/${id}`)
     revalidatePath('/catalogo')
     revalidatePath('/')
+    invalidateProductsCache()
     return { success: true, product }
   } catch (error: any) {
     console.error('Error updating product:', error)
@@ -258,6 +261,7 @@ export async function archiveProduct(id: string) {
     })
     
     revalidatePath('/admin/productos')
+    invalidateProductsCache()
     return { success: true }
   } catch (error: any) {
     return { success: false, error: 'Error al archivar el producto' }
@@ -307,4 +311,5 @@ export async function deleteProduct(formData: FormData) {
   }
 
   revalidatePath('/admin/productos')
+  invalidateProductsCache()
 }
