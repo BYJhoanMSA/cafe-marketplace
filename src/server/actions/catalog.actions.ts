@@ -88,6 +88,7 @@ export async function getActiveProducts(filters?: CatalogFilters) {
         images: {
           where: { mediaType: 'image' },
           orderBy: { position: 'asc' },
+          take: 1
         },
         flavorNotes: { select: { note: true } }
       },
@@ -105,7 +106,6 @@ export async function getActiveProducts(filters?: CatalogFilters) {
       shortDescription: p.shortDescription,
       imageUrl: p.images[0]?.url || '/images/products/placeholder-1.jpg',
       imageAlt: p.images[0]?.alt || `${p.title} — bolsa de café`,
-      images: p.images.map(img => img.url),
       origin: { country: p.origin.country, region: p.origin.region },
       vendor: { name: p.vendor.storeName },
       price: p.variants[0]?.priceInCents || 0,

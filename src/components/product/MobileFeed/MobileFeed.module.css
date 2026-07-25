@@ -35,19 +35,6 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
-}
-
-.slideTrack {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.slideTrackInner {
-  width: 100%;
-  height: 100%;
-  position: relative;
 }
 
 .image {
@@ -288,67 +275,26 @@
   transform: scale(0.95);
 }
 
-/* Navegación horizontal para imágenes */
-.imageDots {
+/* Navegación horizontal para variantes */
+.variantsIndicator {
   position: absolute;
-  top: calc(env(safe-area-inset-top, 16px) + 40px);
+  bottom: var(--space-2);
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   z-index: 2;
-  pointer-events: none;
 }
 
-.imageDot {
+.variantDot {
   width: 6px;
   height: 6px;
   border-radius: var(--radius-circle);
-  background-color: rgba(255,255,255,0.4);
-  border: none;
-  cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-spring);
-  pointer-events: auto;
-  padding: 0;
+  background-color: rgba(255,255,255,0.3);
 }
 
-.imageDotActive {
+.variantDot.active {
   background-color: white;
-  transform: scale(1.3);
-  width: 18px;
-  border-radius: 3px;
-}
-
-/* Flechas de navegación */
-.navArrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-circle);
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-out);
-  pointer-events: auto;
-}
-
-.navArrow:active {
-  background: rgba(0,0,0,0.5);
-}
-
-.navArrowLeft {
-  left: var(--space-2);
-}
-
-.navArrowRight {
-  right: var(--space-2);
+  transform: scale(1.2);
 }

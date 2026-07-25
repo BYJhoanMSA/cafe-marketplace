@@ -26,7 +26,6 @@ export interface ProductCardData {
   shortDescription?: string | null
   imageUrl: string
   imageAlt: string
-  images: string[]
   origin: {
     country: string
     region?: string | null
