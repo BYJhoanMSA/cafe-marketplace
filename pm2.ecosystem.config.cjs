@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'cafe-marketplace',
-      script: '.next/standalone/server.js',
+      script: 'start.js',
       cwd: './',
       exec_mode: 'fork',
       instances: 1,
@@ -10,9 +10,6 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
-        CLOUDINARY_CLOUD_NAME: 'dcrsncau',
-        CLOUDINARY_API_KEY: '524894921641117',
-        CLOUDINARY_API_SECRET: 'jwrdDMXOujUMdCQpEIZNHPMenK8',
       },
       error_file: './logs/pm2-error.log',
       out_file: './logs/pm2-out.log',
