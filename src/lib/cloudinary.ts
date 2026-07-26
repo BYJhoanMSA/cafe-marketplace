@@ -1,8 +1,15 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-const cloudName = process.env.CLOUDINARY_CLOUD_NAME
-const apiKey = process.env.CLOUDINARY_API_KEY
-const apiSecret = process.env.CLOUDINARY_API_SECRET
+const secretsRaw = {
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+  DATABASE_URL: process.env.DATABASE_URL?.slice(0, 30),
+}
+
+const cloudName = secretsRaw.CLOUDINARY_CLOUD_NAME
+const apiKey = secretsRaw.CLOUDINARY_API_KEY
+const apiSecret = secretsRaw.CLOUDINARY_API_SECRET
 
 export const cloudinaryConfigured = !!(
   cloudName &&
@@ -12,6 +19,8 @@ export const cloudinaryConfigured = !!(
   !apiSecret.startsWith('poner_aqui') &&
   !apiSecret.startsWith('tu_')
 )
+
+export const cloudinaryDebugInfo = secretsRaw
 
 if (cloudinaryConfigured) {
   cloudinary.config({

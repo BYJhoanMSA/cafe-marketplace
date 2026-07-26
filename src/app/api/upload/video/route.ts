@@ -4,6 +4,7 @@ import {
   uploadVideoToCloudinary,
   deleteFromCloudinary,
   cloudinaryConfigured,
+  cloudinaryDebugInfo,
 } from '@/lib/cloudinary'
 
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024
@@ -25,7 +26,10 @@ export async function POST(req: NextRequest) {
   try {
     if (!cloudinaryConfigured) {
       return NextResponse.json(
-        { error: 'Cloudinary no configurado. Se requiere para videos.' },
+        {
+          error: 'Cloudinary no configurado. Se requiere para videos.',
+          debug: cloudinaryDebugInfo,
+        },
         { status: 500 },
       )
     }
