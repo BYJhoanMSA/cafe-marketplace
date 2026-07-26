@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import clsx from 'clsx'
 import { usePillBar } from './PillBarContext'
 import { PillSelector } from './PillSelector'
 import type { PillItem } from './PillSelector.types'
@@ -25,7 +26,7 @@ export function PillBarWrapper({ items, activeId }: { items: PillItem[]; activeI
   }
 
   return (
-    <div className={`${styles.bar}${!isOpen ? ` ${styles.hidden}` : ''}`}>
+    <div className={clsx(styles.bar, !isOpen && styles.hidden)}>
       <div className={styles.searchRow}>
         <input
           type="text"

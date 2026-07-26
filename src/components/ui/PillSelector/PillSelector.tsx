@@ -1,10 +1,11 @@
 'use client'
 
-import type { PillSelectorProps } from './PillSelector.types'
+import clsx from 'clsx'
+import type { PillItem, PillSelectorProps } from './PillSelector.types'
 import styles from './PillSelector.module.css'
 
 export function PillSelector({ items, activeId, onSelect, className }: PillSelectorProps) {
-  const handleClick = (item: PillSelectorProps['items'][number]) => {
+  const handleClick = (item: PillItem) => {
     if (onSelect) {
       onSelect(item)
     } else if (item.href) {
@@ -13,13 +14,13 @@ export function PillSelector({ items, activeId, onSelect, className }: PillSelec
   }
 
   return (
-    <div className={`${styles.container}${className ? ` ${className}` : ''}`} role="group" aria-label="Seleccionar">
+    <div className={clsx(styles.container, className)} role="group" aria-label="Seleccionar">
       {items.map((item) => {
         const isActive = item.id === activeId
         return (
           <button
             key={item.id}
-            className={`${styles.pill}${isActive ? ` ${styles.active}` : ''}`}
+            className={clsx(styles.pill, isActive && styles.active)}
             onClick={() => handleClick(item)}
             aria-label={item.label}
             aria-pressed={isActive}

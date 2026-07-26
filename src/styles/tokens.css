@@ -290,36 +290,16 @@
 }
 
 /* =============================================================================
-   COFFEE GLASS — Pill Selector y componentes glass oscuro
+   PILL SELECTOR
    ============================================================================= */
 :root {
-  --coffee-bg:          rgba(32, 26, 21, 0.28);
-  --coffee-bg-hover:    rgba(50, 42, 36, 0.34);
-  --coffee-border:      rgba(255, 255, 255, 0.14);
-  --coffee-border-hover: rgba(255, 255, 255, 0.22);
-  --coffee-border-active: rgba(112, 160, 86, 0.65);
-  --coffee-highlight:   rgba(255, 255, 255, 0.18);
-  --coffee-shadow:      0 10px 30px rgba(0, 0, 0, 0.28);
-  --coffee-shadow-active: 0 0 0 1px rgba(95, 125, 77, 0.25), 0 10px 35px rgba(0, 0, 0, 0.35);
-  --coffee-green:       #5F7D4D;
-  --coffee-glow:        rgba(95, 125, 77, 0.35);
-  --coffee-icon:        #F5E8D2;
-  /* Desktop */
   --pill-width:  64px;
   --pill-height: 96px;
   --pill-icon-size: 50px;
-
-  /* Mobile */
   --pill-width-mobile:  42px;
   --pill-height-mobile: 64px;
   --pill-icon-size-mobile: 24px;
-
-  --coffee-pill-width:  60px;
-  --coffee-pill-height: 82px;
-  --coffee-icon-size:   30px;
   --coffee-gap:         14px;
-  --coffee-blur:        18px;
-  --coffee-radius-fallback: 48% 48% 46% 46% / 35% 35% 65% 65%;
 }
 
 /* =============================================================================
