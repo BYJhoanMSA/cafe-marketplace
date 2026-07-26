@@ -60,6 +60,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
     initialData?.images?.find((img: any) => img.mediaType === 'video')?.url || null,
   )
   const [uploadingVideo, setUploadingVideo] = useState(false)
+  const [videoError, setVideoError] = useState('')
   const videoInputRef = useRef<HTMLInputElement>(null)
   
   const [formData, setFormData] = useState({
@@ -113,7 +114,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
     if (!file) return
 
     setUploadingVideo(true)
-    setError('')
+    setVideoError('')
 
     const formData = new FormData()
     formData.append('file', file)
@@ -124,10 +125,10 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
       if (res.ok && data.success) {
         setVideoUrl(data.url)
       } else {
-        setError(data.error || 'Error al subir video')
+        setVideoError(data.error || 'Error al subir video')
       }
     } catch {
-      setError('Error al subir video')
+      setVideoError('Error de conexion al subir video')
     } finally {
       setUploadingVideo(false)
       if (videoInputRef.current) videoInputRef.current.value = ''
@@ -303,6 +304,9 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         </p>
         {videoUrl ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', alignItems: 'flex-start' }}>
+            <div style={{ color: 'green', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)' }}>
+              ✓ Video subido correctamente
+            </div>
             <video
               src={videoUrl}
               muted
@@ -315,7 +319,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
             </Button>
           </div>
         ) : (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <input
               ref={videoInputRef}
               type="file"
@@ -331,6 +335,11 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
             >
               {uploadingVideo ? 'Subiendo...' : 'Subir video'}
             </Button>
+            {videoError && (
+              <div style={{ color: 'var(--terra-500)', fontSize: 'var(--text-sm)' }}>
+                {videoError}
+              </div>
+            )}
           </div>
         )}
       </div>
