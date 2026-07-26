@@ -4,7 +4,14 @@ const cloudName = process.env.CLOUDINARY_CLOUD_NAME
 const apiKey = process.env.CLOUDINARY_API_KEY
 const apiSecret = process.env.CLOUDINARY_API_SECRET
 
-export const cloudinaryConfigured = !!(cloudName && apiKey && apiSecret && apiSecret !== 'pendiente')
+export const cloudinaryConfigured = !!(
+  cloudName &&
+  apiKey &&
+  apiSecret &&
+  apiSecret !== 'pendiente' &&
+  !apiSecret.startsWith('poner_aqui') &&
+  !apiSecret.startsWith('tu_')
+)
 
 if (cloudinaryConfigured) {
   cloudinary.config({
