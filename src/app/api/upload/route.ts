@@ -38,9 +38,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No se envio ningun archivo' }, { status: 400 })
     }
 
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-    if (!allowedMimeTypes.includes(file.type)) {
-      return NextResponse.json({ error: 'Tipo de archivo no permitido. Use JPG, PNG o WebP.' }, { status: 400 })
+    if (!file.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'Solo se permiten imagenes.' }, { status: 400 })
     }
 
     if (file.size > 10 * 1024 * 1024) {

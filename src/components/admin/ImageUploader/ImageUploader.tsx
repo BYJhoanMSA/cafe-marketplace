@@ -159,7 +159,7 @@ export function ImageUploader({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/jpg,image/png,image/webp"
+            accept="image/*"
             multiple
             className={styles.hiddenInput}
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
