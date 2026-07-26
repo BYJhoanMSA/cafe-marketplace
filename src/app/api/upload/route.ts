@@ -3,12 +3,19 @@ import { writeFile, mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
+import { uploadToCloudinary, deleteFromCloudinary, cloudinaryConfigured } from '@/lib/cloudinary'
 
 const IMAGE_CONFIGS: Record<string, { width: number; height: number; quality: number }> = {
   product: { width: 1080, height: 1080, quality: 80 },
   hero: { width: 1920, height: 1080, quality: 75 },
   thumbnail: { width: 400, height: 400, quality: 70 },
   feature: { width: 800, height: 600, quality: 75 },
+}
+
+function generatePublicId(type: string): string {
+  const timestamp = Date.now()
+  const randomSuffix = Math.random().toString(36).substring(2, 8)
+  return `cafe/${type}/${timestamp}-${randomSuffix}`
 }
 
 export async function POST(req: NextRequest) {
@@ -59,30 +66,49 @@ export async function POST(req: NextRequest) {
       .webp({ quality: 70 })
       .toBuffer()
 
-    const timestamp = Date.now()
-    const randomSuffix = Math.random().toString(36).substring(2, 8)
-    const fileName = `${type}-${timestamp}-${randomSuffix}.webp`
-    const thumbFileName = `${type}-${timestamp}-${randomSuffix}-thumb.webp`
+    let url: string
+    let thumbUrl: string
+    let width: number
+    let height: number
 
-    const uploadDir = join(process.cwd(), 'public', 'uploads', type)
-    await mkdir(uploadDir, { recursive: true })
-    await writeFile(join(uploadDir, fileName), optimizedBuffer)
-    await writeFile(join(uploadDir, thumbFileName), thumbBuffer)
+    if (cloudinaryConfigured) {
+      const publicId = generatePublicId(type)
+      const thumbPublicId = `${publicId}-thumb`
 
-    const url = `/uploads/${type}/${fileName}`
-    const thumbUrl = `/uploads/${type}/${thumbFileName}`
+      const [mainResult, thumbResult] = await Promise.all([
+        uploadToCloudinary(optimizedBuffer, publicId),
+        uploadToCloudinary(thumbBuffer, thumbPublicId),
+      ])
 
-    const metadata = await sharp(optimizedBuffer).metadata()
+      url = mainResult.url.replace('/upload/', '/upload/f_auto,q_auto/')
+      thumbUrl = thumbResult.url.replace('/upload/', '/upload/f_auto,q_auto/')
+      width = mainResult.width
+      height = mainResult.height
+    } else {
+      const timestamp = Date.now()
+      const randomSuffix = Math.random().toString(36).substring(2, 8)
+      const fileName = `${type}-${timestamp}-${randomSuffix}.webp`
+      const thumbFileName = `${type}-${timestamp}-${randomSuffix}-thumb.webp`
+
+      const uploadDir = join(process.cwd(), 'public', 'uploads', type)
+      await mkdir(uploadDir, { recursive: true })
+      await writeFile(join(uploadDir, fileName), optimizedBuffer)
+      await writeFile(join(uploadDir, thumbFileName), thumbBuffer)
+
+      url = `/uploads/${type}/${fileName}`
+      thumbUrl = `/uploads/${type}/${thumbFileName}`
+
+      const metadata = await sharp(optimizedBuffer).metadata()
+      width = metadata.width || 0
+      height = metadata.height || 0
+    }
 
     return NextResponse.json({
       success: true,
       url,
       thumbUrl,
-      width: metadata.width,
-      height: metadata.height,
-      size: optimizedBuffer.length,
-      originalSize: buffer.length,
-      savings: Math.round((1 - optimizedBuffer.length / buffer.length) * 100),
+      width,
+      height,
     })
   } catch (error: any) {
     console.error('[UPLOAD] Error:', error)
@@ -102,15 +128,25 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
     }
 
-    const normalized = url.replace(/\\/g, '/')
-    if (!normalized.startsWith('/uploads/') || normalized.includes('..') || normalized.includes('~')) {
-      return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
+    if (cloudinaryConfigured) {
+      const publicIdMatch = url.match(/\/cafe\/(.+?)(?:-thumb)?\.(?:jpg|jpeg|png|webp|gif)$/)
+      if (publicIdMatch) {
+        const base = `cafe/${publicIdMatch[1]}`
+        await Promise.all([
+          deleteFromCloudinary(base),
+          deleteFromCloudinary(`${base}-thumb`),
+        ])
+      }
+    } else {
+      const normalized = url.replace(/\\/g, '/')
+      if (!normalized.startsWith('/uploads/') || normalized.includes('..') || normalized.includes('~')) {
+        return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
+      }
+      const filePath = join(process.cwd(), 'public', normalized)
+      try { await unlink(filePath) } catch {}
+      const thumbPath = filePath.replace('.webp', '-thumb.webp')
+      try { await unlink(thumbPath) } catch {}
     }
-
-    const filePath = join(process.cwd(), 'public', normalized)
-    try { await unlink(filePath) } catch {}
-    const thumbPath = filePath.replace('.webp', '-thumb.webp')
-    try { await unlink(thumbPath) } catch {}
 
     return NextResponse.json({ success: true })
   } catch (error) {
