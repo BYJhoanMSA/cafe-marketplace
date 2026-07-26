@@ -112,10 +112,7 @@ export async function POST(req: NextRequest) {
     })
   } catch (error: any) {
     console.error('[UPLOAD] Error:', error)
-    return NextResponse.json({
-      error: 'Error al procesar la imagen',
-      detail: error?.message || error?.toString() || 'unknown',
-    }, { status: 500 })
+    return NextResponse.json({ error: 'Error al procesar la imagen' }, { status: 500 })
   }
 }
 
