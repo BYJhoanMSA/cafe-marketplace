@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 128 128"
+     fill="none">
+
+  <g stroke="#F5E8D2"
+     stroke-width="5"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+
+    <!-- Centro -->
+    <circle cx="64" cy="64" r="20"/>
+
+    <!-- Rayos -->
+    <path d="M64 20V34"/>
+    <path d="M64 94V108"/>
+
+    <path d="M20 64H34"/>
+    <path d="M94 64H108"/>
+
+    <path d="M34 34L44 44"/>
+    <path d="M84 84L94 94"/>
+
+    <path d="M94 34L84 44"/>
+    <path d="M44 84L34 94"/>
+
+  </g>
+
+</svg>

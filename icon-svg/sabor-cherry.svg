@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 128 128"
+     fill="none">
+
+  <g stroke="currentColor"
+     stroke-width="5"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+
+    <!-- Tallo -->
+    <path d="M64 38
+             C58 28 46 24 36 30"/>
+
+    <path d="M64 38
+             C70 28 82 24 92 30"/>
+
+    <!-- Unión -->
+    <path d="M64 38
+             C64 46 64 50 64 54"/>
+
+    <!-- Cereza izquierda -->
+    <circle cx="46" cy="76" r="16"/>
+
+    <!-- Cereza derecha -->
+    <circle cx="82" cy="76" r="16"/>
+
+    <!-- Hoja -->
+    <path d="
+      M64 36
+      C72 22 88 22 92 34
+      C82 36 72 42 64 36 Z"/>
+
+  </g>
+
+</svg>
