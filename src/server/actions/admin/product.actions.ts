@@ -6,6 +6,7 @@ import { requireRole } from '@/server/middleware/auth.middleware'
 import { slugify } from '@/lib/utils'
 import { unlink } from 'fs/promises'
 import { join } from 'path'
+import { deleteFromCloudinary, cloudinaryConfigured } from '@/lib/cloudinary'
 import { z } from 'zod'
 import { invalidateProductsCache } from '@/server/actions/catalog.actions'
 
@@ -276,6 +277,18 @@ export async function deleteProduct(formData: FormData) {
 
   for (const image of product.images) {
     const normalized = image.url.replace(/\\/g, '/')
+
+    if (cloudinaryConfigured && normalized.includes('res.cloudinary.com')) {
+      const publicIdMatch = normalized.match(/\/cafe\/(.+?)(?:-thumb)?\.(?:jpg|jpeg|png|webp|gif)(?:\?.*)?$/)
+      if (publicIdMatch) {
+        const base = `cafe/${publicIdMatch[1]}`
+        await Promise.all([
+          deleteFromCloudinary(base),
+          deleteFromCloudinary(`${base}-thumb`),
+        ])
+      }
+    }
+
     if (normalized.startsWith('/uploads/') && !normalized.includes('..') && !normalized.includes('~')) {
       const filePath = join(process.cwd(), 'public', normalized)
       try { await unlink(filePath) } catch { }

@@ -84,6 +84,14 @@
   max-width: 640px;
 }
 
+.welcomeTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+  color: var(--color-ink-primary);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-4);
+}
+
 .sectionHeaderCentered {
   margin-bottom: var(--space-10);
   text-align: center;
@@ -790,6 +798,14 @@
   color: var(--gold-300);
   margin-bottom: var(--space-4);
   animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.promiseTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+  color: var(--neutral-0);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-6);
 }
 
 .promiseContent h2 {

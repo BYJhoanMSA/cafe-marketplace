@@ -108,21 +108,18 @@ export function ImageUploader({
   const handleRemove = useCallback(async (index: number) => {
     const img = images[index]
     if (!img) return
-    // Borrar del servidor si es un upload local
-    if (img.url.startsWith('/uploads/')) {
-      try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000)
-        await fetch('/api/upload', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: img.url }),
-          signal: controller.signal,
-        })
-        clearTimeout(timeoutId)
-      } catch {
-        // Silencioso: la imagen se quita del estado aunque el DELETE falle
-      }
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+      await fetch('/api/upload', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: img.url }),
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+    } catch {
+      // Silencioso: la imagen se quita del estado aunque el DELETE falle
     }
     const updated = images.filter((_, i) => i !== index).map((img, i) => ({ ...img, position: i }))
     onChange(updated)

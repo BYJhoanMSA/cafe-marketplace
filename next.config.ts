@@ -8,9 +8,9 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        // Hostinger (dominio actual de produccion)
+        // Dominio de produccion (configurar via NEXT_PUBLIC_CDN_URL si es necesario)
         protocol: 'https',
-        hostname: 'peachpuff-goose-681416.hostingersite.com',
+        hostname: process.env.NEXT_PUBLIC_CDN_HOSTNAME || 'tudominio.com',
       },
       {
         // Assets locales en desarrollo

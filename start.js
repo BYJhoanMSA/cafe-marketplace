@@ -21,9 +21,23 @@ function loadEnvFile(filePath, override = true) {
   }
 }
 
+process.on('SIGINT', () => process.exit(0))
+process.on('SIGTERM', () => process.exit(0))
+
 const root = __dirname
 
 loadEnvFile(path.join(root, '.env.production'), false)
 loadEnvFile(path.join(root, '.env.production.local'), true)
+
+// Validar que los secrets críticos no sean placeholders
+const REQUIRED_SECRETS = ['AUTH_SECRET', 'DATABASE_URL']
+for (const key of REQUIRED_SECRETS) {
+  const val = process.env[key]
+  if (!val || val.includes('openssl-rand') || val.includes('placeholder') || val.includes('usuario:password')) {
+    console.error(`[start] ERROR: ${key} no está configurado correctamente (placeholder detectado)`)
+    console.error(`[start] Asegúrate de que .env.production.local exista y tenga los valores reales`)
+    process.exit(1)
+  }
+}
 
 require('./.next/standalone/server.js')

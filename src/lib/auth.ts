@@ -145,6 +145,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // ============================================================
   // Seguridad
   // ============================================================
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   trustHost: true,
 })
