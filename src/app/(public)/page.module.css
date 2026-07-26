@@ -191,18 +191,6 @@
 /* ================================================================
    FLAVOR NOTES BAR — wrap de categorías
    ================================================================ */
-.filterBar {
-  background:
-    radial-gradient(
-      circle at top,
-      #2b241d,
-      #14110f 60%,
-      #0d0b09
-    );
-  border-bottom: 1px solid var(--color-border-default);
-  margin-top: var(--space-4);
-}
-
 /* ================================================================
    SECCIONES GENERALES
    ================================================================ */

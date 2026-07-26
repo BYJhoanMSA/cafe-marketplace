@@ -85,8 +85,8 @@ export default function SearchPage() {
           {!isSearching && results.length === 0 ? (
             <div className={styles.emptyState}>
               <Coffee size={48} className={styles.emptyIcon} />
-              <h2 className={styles.emptyTitle}>No encontramos resultados</h2>
-              <p>Intenta con otros términos o busca por origen.</p>
+              <h2 className={styles.emptyTitle}>Lo sentimos, ese café aún no está listo</h2>
+              <p>Prueba con otra experiencia o explora nuestros orígenes.</p>
             </div>
           ) : (
             <div className={styles.grid}>

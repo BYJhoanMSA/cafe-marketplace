@@ -10,7 +10,7 @@ import { OriginCard } from '@/components/home/OriginCard'
 import { Suspense } from 'react'
 import { getHomepageSettings } from '@/server/actions/settings.actions'
 import { getActiveProducts } from '@/server/actions/catalog.actions'
-import { PillSelector } from '@/components/ui/PillSelector/PillSelector'
+import { PillBarWrapper } from '@/components/ui/PillSelector/PillBarWrapper'
 import { FLAVOR_ITEMS } from '@/components/ui/PillSelector/PillSelector.data'
 import { HomepageOrigins, HomepageValues } from './HomepageLazy'
 import styles from './page.module.css'
@@ -98,14 +98,12 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================================
-          2. FILTROS RÁPIDOS — PillSelector
+          2. FILTROS RÁPIDOS — PillSelector (flotante en mobile)
           ============================================================ */}
-      <div className={styles.filterBar}>
-        <PillSelector
-          items={FLAVOR_ITEMS}
-          activeId="coffee"
-        />
-      </div>
+      <PillBarWrapper
+        items={FLAVOR_ITEMS}
+        activeId="coffee"
+      />
 
       {/* ============================================================
           3. PRODUCTOS DESTACADOS

@@ -5,6 +5,7 @@
 import type { ReactNode } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { PublicLayoutClient } from './PublicLayoutClient'
 import { auth } from '@/lib/auth'
 
 export default async function PublicLayout({ children }: { children: ReactNode }) {
@@ -12,7 +13,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
   const session = await auth()
 
   return (
-    <>
+    <PublicLayoutClient>
       <Navbar
         userName={session?.user?.name ?? null}
       />
@@ -20,6 +21,6 @@ export default async function PublicLayout({ children }: { children: ReactNode }
         {children}
       </main>
       <Footer />
-    </>
+    </PublicLayoutClient>
   )
 }

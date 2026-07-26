@@ -310,9 +310,9 @@
   --pill-icon-size: 50px;
 
   /* Mobile */
-  --pill-width-mobile:  48px;
-  --pill-height-mobile: 72px;
-  --pill-icon-size-mobile: 30px;
+  --pill-width-mobile:  42px;
+  --pill-height-mobile: 64px;
+  --pill-icon-size-mobile: 24px;
 
   --coffee-pill-width:  60px;
   --coffee-pill-height: 82px;

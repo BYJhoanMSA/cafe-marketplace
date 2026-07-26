@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
+import { usePillBar } from '@/components/ui/PillSelector/PillBarContext'
 import styles from './Navbar.module.css'
 
 // ================================================================
@@ -110,6 +111,16 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
     if (href === '/') return pathname === '/'
     return pathname.startsWith(href)
   }
+
+  const { isOpen: pillBarOpen, toggle: togglePillBar } = usePillBar()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768)
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   return (
     <>
@@ -234,19 +245,35 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             <span className={styles.tabLabel}>Inicio</span>
           </Link>
 
-          {/* Buscar */}
-          <Link
-            href="/buscar"
-            className={`${styles.tabItem} ${isActive('/buscar') ? styles.active : ''}`}
-            aria-label="Buscar productos"
-            aria-current={isActive('/buscar') ? 'page' : undefined}
-          >
-            <span className={styles.tabIcon}>
-              <Search size={22} />
-              <span className={styles.tabActiveIndicator} aria-hidden="true" />
-            </span>
-            <span className={styles.tabLabel}>Buscar</span>
-          </Link>
+          {/* Buscar — en mobile abre el selector de sabores */}
+          {isMobile ? (
+            <button
+              type="button"
+              className={`${styles.tabItem} ${pillBarOpen ? styles.active : ''}`}
+              onClick={togglePillBar}
+              aria-label="Buscar productos"
+              aria-pressed={pillBarOpen}
+            >
+              <span className={styles.tabIcon}>
+                <Search size={22} />
+                <span className={styles.tabActiveIndicator} aria-hidden="true" />
+              </span>
+              <span className={styles.tabLabel}>Buscar</span>
+            </button>
+          ) : (
+            <Link
+              href="/buscar"
+              className={`${styles.tabItem} ${isActive('/buscar') ? styles.active : ''}`}
+              aria-label="Buscar productos"
+              aria-current={isActive('/buscar') ? 'page' : undefined}
+            >
+              <span className={styles.tabIcon}>
+                <Search size={22} />
+                <span className={styles.tabActiveIndicator} aria-hidden="true" />
+              </span>
+              <span className={styles.tabLabel}>Buscar</span>
+            </Link>
+          )}
 
           {/* CENTRO — Catálogo (prominente) */}
           <Link
