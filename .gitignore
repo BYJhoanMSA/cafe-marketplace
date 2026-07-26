@@ -46,3 +46,4 @@ coverage/
 .eslintcache
 .prettiercache
 *.tsbuildinfo
+.eslintrc.json
