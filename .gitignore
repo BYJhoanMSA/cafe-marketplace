@@ -14,6 +14,7 @@ dist/
 .env.local
 .env.development.local
 .env.test.local
+.env.production
 .env.production.local
 
 # Prisma
@@ -39,7 +40,7 @@ desktop.ini
 # Tests
 coverage/
 
-# Uploads locales (se respaldan en deploy via scripts/deploy.sh)
+# Uploads locales (solo desarrollo; produccion usa Cloudinary)
 /public/uploads/
 
 # Cache
