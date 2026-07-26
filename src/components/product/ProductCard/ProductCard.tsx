@@ -27,7 +27,6 @@ export interface ProductCardData {
   imageUrl: string
   imageAlt: string
   images: string[]
-  videoUrl?: string | null
   origin: {
     country: string
     region?: string | null

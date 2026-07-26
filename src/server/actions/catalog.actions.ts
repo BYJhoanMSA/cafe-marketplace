@@ -116,6 +116,7 @@ export async function getProductBySlug(slug: string) {
             orderBy: { position: 'asc' }
           },
           images: {
+            where: { mediaType: 'image' },
             orderBy: { position: 'asc' }
           },
           flavorNotes: { select: { note: true } }

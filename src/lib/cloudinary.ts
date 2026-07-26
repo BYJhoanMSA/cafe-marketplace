@@ -1,27 +1,10 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-const secretsRaw = {
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET
-    ? `${process.env.CLOUDINARY_API_SECRET.slice(0, 3)}...(${process.env.CLOUDINARY_API_SECRET.length} chars)`
-    : '(empty)',
-}
+const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+const apiKey = process.env.CLOUDINARY_API_KEY
+const apiSecret = process.env.CLOUDINARY_API_SECRET
 
-const cloudName = secretsRaw.CLOUDINARY_CLOUD_NAME
-const apiKey = secretsRaw.CLOUDINARY_API_KEY
-const apiSecret = secretsRaw.CLOUDINARY_API_SECRET
-
-export const cloudinaryConfigured = !!(
-  cloudName &&
-  apiKey &&
-  apiSecret &&
-  apiSecret !== 'pendiente' &&
-  !apiSecret.startsWith('poner_aqui') &&
-  !apiSecret.startsWith('tu_')
-)
-
-export const cloudinaryDebugInfo = secretsRaw
+export const cloudinaryConfigured = !!(cloudName && apiKey && apiSecret && apiSecret !== 'pendiente')
 
 if (cloudinaryConfigured) {
   cloudinary.config({
@@ -31,27 +14,24 @@ if (cloudinaryConfigured) {
   })
 }
 
-type CloudinaryUploadResult = { url: string; width?: number; height?: number }
-
-async function cloudinaryUpload(
+export async function uploadToCloudinary(
   buffer: Buffer,
   publicId: string,
-  resourceType: 'image' | 'video',
-): Promise<CloudinaryUploadResult> {
+): Promise<{ url: string; width: number; height: number }> {
   if (!cloudinaryConfigured) {
-    throw new Error('Cloudinary no configurado')
+    throw new Error('Cloudinary no configurado. Complete CLOUDINARY_API_SECRET en .env.production')
   }
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         public_id: publicId,
-        resource_type: resourceType,
+        resource_type: 'image',
         overwrite: true,
       },
       (error, result) => {
         if (error || !result) {
-          reject(error || new Error(`Error subiendo a Cloudinary: ${resourceType}`))
+          reject(error || new Error('Error subiendo a Cloudinary'))
           return
         }
         resolve({
@@ -66,26 +46,10 @@ async function cloudinaryUpload(
   })
 }
 
-export async function uploadToCloudinary(
-  buffer: Buffer,
-  publicId: string,
-): Promise<{ url: string; width: number; height: number }> {
-  const result = await cloudinaryUpload(buffer, publicId, 'image')
-  return { url: result.url, width: result.width ?? 0, height: result.height ?? 0 }
-}
-
-export async function uploadVideoToCloudinary(
-  buffer: Buffer,
-  publicId: string,
-): Promise<{ url: string }> {
-  const result = await cloudinaryUpload(buffer, publicId, 'video')
-  return { url: result.url }
-}
-
-export async function deleteFromCloudinary(publicId: string, resourceType: 'image' | 'video' = 'image'): Promise<void> {
+export async function deleteFromCloudinary(publicId: string): Promise<void> {
   if (!cloudinaryConfigured) return
 
-  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType })
+  await cloudinary.uploader.destroy(publicId)
 }
 
 export function getCloudinaryUrl(

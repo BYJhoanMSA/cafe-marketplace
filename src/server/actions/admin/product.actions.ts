@@ -147,20 +147,6 @@ export async function createProduct(data: Record<string, unknown>) {
       }
     })
 
-    // Guardar video si se proporcionó
-    if (d.videoUrl) {
-      await prisma.productImage.create({
-        data: {
-          productId: product.id,
-          url: d.videoUrl,
-          alt: `Video - ${d.title}`,
-          position: 0,
-          type: 'product',
-          mediaType: 'video',
-        }
-      })
-    }
-
     revalidatePath('/admin/productos')
     revalidatePath('/catalogo')
     revalidatePath('/')
@@ -207,19 +193,6 @@ export async function updateProduct(id: string, data: any) {
             height: img.height || null,
             type: 'product',
           }))
-        })
-      }
-      // Guardar video si se proporcionó
-      if (data.videoUrl) {
-        await prisma.productImage.create({
-          data: {
-            productId: id,
-            url: data.videoUrl,
-            alt: `Video - ${data.title || ''}`,
-            position: 0,
-            type: 'product',
-            mediaType: 'video',
-          }
         })
       }
     }

@@ -31,12 +31,9 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
 
   const isFavorited = isFavorite(product.id)
 
-const imageUrls: string[] = product.images?.length ? product.images : [product.imageUrl]
-const allMedia = product.videoUrl
-  ? [{ type: 'video' as const, url: product.videoUrl }, ...imageUrls.map(u => ({ type: 'image' as const, url: u }))]
-  : imageUrls.map(u => ({ type: 'image' as const, url: u }))
+  const images: string[] = product.images?.length ? product.images : [product.imageUrl]
 
-const [activeMediaIndex, setActiveMediaIndex] = useState(0)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
 
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
@@ -51,18 +48,8 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
   }, [product.id])
 
   useEffect(() => {
-    setActiveMediaIndex(0)
-  }, [product.id, product.videoUrl])
-
-  const videoRef = useRef<HTMLVideoElement>(null)
-  useEffect(() => {
-    if (!videoRef.current || !product.videoUrl) return
-    if (isActive && activeMediaIndex === 0) {
-      videoRef.current.play().catch(() => {})
-    } else {
-      videoRef.current.pause()
-    }
-  }, [isActive, activeMediaIndex, product.videoUrl])
+    setActiveImageIndex(0)
+  }, [product.id])
 
   const optimizedImage = isActive
     ? getImageUrl(product.imageUrl, { width: 500, quality: 80 })
@@ -75,8 +62,8 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
   }, [])
 
   useEffect(() => {
-    goToIndex(activeMediaIndex, true)
-  }, [activeMediaIndex, goToIndex])
+    goToIndex(activeImageIndex, true)
+  }, [activeImageIndex, goToIndex])
 
   function handleTouchStart(e: React.TouchEvent) {
     const touch = e.touches[0]
@@ -102,7 +89,7 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
       dragOffsetX.current = dx
       if (stripRef.current) {
         stripRef.current.style.transition = 'none'
-        stripRef.current.style.transform = `translateX(${(-activeMediaIndex * 100) + (dx / window.innerWidth * 100)}vw)`
+        stripRef.current.style.transform = `translateX(${(-activeImageIndex * 100) + (dx / window.innerWidth * 100)}vw)`
       }
     }
   }
@@ -113,15 +100,15 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
     const dx = dragOffsetX.current
 
     if (Math.abs(dx) > SWIPE_THRESHOLD) {
-      if (dx > 0 && activeMediaIndex > 0) {
-        setActiveMediaIndex((prev) => prev - 1)
-      } else if (dx < 0 && activeMediaIndex < allMedia.length - 1) {
-        setActiveMediaIndex((prev) => prev + 1)
+      if (dx > 0 && activeImageIndex > 0) {
+        setActiveImageIndex((prev) => prev - 1)
+      } else if (dx < 0 && activeImageIndex < images.length - 1) {
+        setActiveImageIndex((prev) => prev + 1)
       } else {
-        goToIndex(activeMediaIndex, true)
+        goToIndex(activeImageIndex, true)
       }
     } else {
-      goToIndex(activeMediaIndex, true)
+      goToIndex(activeImageIndex, true)
     }
 
     isDragging.current = false
@@ -130,13 +117,13 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
 
   const handlePrevImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    if (activeMediaIndex > 0) setActiveMediaIndex((prev) => prev - 1)
-  }, [activeMediaIndex])
+    if (activeImageIndex > 0) setActiveImageIndex((prev) => prev - 1)
+  }, [activeImageIndex])
 
   const handleNextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    if (activeMediaIndex < allMedia.length - 1) setActiveMediaIndex((prev) => prev + 1)
-  }, [activeMediaIndex, allMedia.length])
+    if (activeImageIndex < images.length - 1) setActiveImageIndex((prev) => prev + 1)
+  }, [activeImageIndex, images.length])
 
   function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation()
@@ -202,48 +189,36 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
         onTouchEnd={handleTouchEnd}
       >
         <div className={styles.imageStrip} ref={stripRef}>
-          {allMedia.map((media, idx) => (
+          {images.map((img, idx) => (
             <div key={idx} className={styles.imageStripItem}>
-              {media.type === 'video' ? (
-                <video
-                  ref={videoRef}
-                  src={media.url}
-                  muted
-                  loop
-                  playsInline
-                  className={styles.image}
-                  style={{ objectFit: 'cover' }}
-                />
-              ) : (
-                <Image
-                  src={getImageUrl(media.url, { width: 500, quality: 80 })}
-                  alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
-                  fill
-                  priority={isActive && idx === 0}
-                  className={styles.image}
-                  sizes="100vw"
-                />
-              )}
+              <Image
+                src={getImageUrl(img, { width: 500, quality: 80 })}
+                alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
+                fill
+                priority={isActive && idx === 0}
+                className={styles.image}
+                sizes="100vw"
+              />
             </div>
           ))}
         </div>
 
-        {allMedia.length > 1 && (
+        {images.length > 1 && (
           <>
-            {activeMediaIndex > 0 && (
+            {activeImageIndex > 0 && (
               <button
                 className={`${styles.navArrow} ${styles.navArrowLeft}`}
                 onClick={handlePrevImage}
-                aria-label="Anterior"
+                aria-label="Imagen anterior"
               >
                 <ChevronLeft size={20} />
               </button>
             )}
-            {activeMediaIndex < allMedia.length - 1 && (
+            {activeImageIndex < images.length - 1 && (
               <button
                 className={`${styles.navArrow} ${styles.navArrowRight}`}
                 onClick={handleNextImage}
-                aria-label="Siguiente"
+                aria-label="Siguiente imagen"
               >
                 <ChevronRight size={20} />
               </button>
@@ -254,14 +229,14 @@ const [activeMediaIndex, setActiveMediaIndex] = useState(0)
         <div className={styles.overlayBottom} />
       </div>
 
-      {allMedia.length > 1 && (
+      {images.length > 1 && (
         <div className={styles.imageDots}>
-          {allMedia.map((_, idx) => (
+          {images.map((_, idx) => (
             <button
               key={idx}
-              className={`${styles.imageDot} ${idx === activeMediaIndex ? styles.imageDotActive : ''}`}
-              onClick={(e) => { e.stopPropagation(); setActiveMediaIndex(idx) }}
-              aria-label={`Media ${idx + 1} de ${allMedia.length}`}
+              className={`${styles.imageDot} ${idx === activeImageIndex ? styles.imageDotActive : ''}`}
+              onClick={(e) => { e.stopPropagation(); setActiveImageIndex(idx) }}
+              aria-label={`Imagen ${idx + 1} de ${images.length}`}
             />
           ))}
         </div>
