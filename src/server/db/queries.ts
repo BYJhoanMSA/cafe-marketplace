@@ -9,7 +9,6 @@ export const productCardInclude = {
     orderBy: { priceInCents: 'asc' as const }
   },
   images: {
-    where: { mediaType: 'image' },
     orderBy: { position: 'asc' as const },
   },
   flavorNotes: { select: { note: true } }
@@ -25,6 +24,7 @@ export interface ProductCard {
   imageUrl: string
   imageAlt: string
   images: string[]
+  videoUrl: string | null
   origin: { country: string; region: string | null }
   vendor: { name: string }
   price: number
@@ -42,14 +42,18 @@ export interface ProductCard {
 }
 
 export function mapToProductCard(p: ProductCardRaw): ProductCard {
+  const productImages = p.images.filter(img => img.mediaType === 'image')
+  const productVideo = p.images.find(img => img.mediaType === 'video')
+
   return {
     id: p.id,
     slug: p.slug,
     title: p.title,
     shortDescription: p.shortDescription,
-    imageUrl: p.images[0]?.url || '/images/products/placeholder-1.jpg',
-    imageAlt: p.images[0]?.alt || `${p.title} — bolsa de café`,
-    images: p.images.map(img => img.url),
+    imageUrl: productImages[0]?.url || '/images/products/placeholder-1.jpg',
+    imageAlt: productImages[0]?.alt || `${p.title} — bolsa de café`,
+    images: productImages.map(img => img.url),
+    videoUrl: productVideo?.url || null,
     origin: { country: p.origin.country, region: p.origin.region },
     vendor: { name: p.vendor.storeName },
     price: p.variants[0]?.priceInCents || 0,

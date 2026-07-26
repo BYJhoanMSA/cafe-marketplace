@@ -14,24 +14,27 @@ if (cloudinaryConfigured) {
   })
 }
 
-export async function uploadToCloudinary(
+type CloudinaryUploadResult = { url: string; width?: number; height?: number }
+
+async function cloudinaryUpload(
   buffer: Buffer,
   publicId: string,
-): Promise<{ url: string; width: number; height: number }> {
+  resourceType: 'image' | 'video',
+): Promise<CloudinaryUploadResult> {
   if (!cloudinaryConfigured) {
-    throw new Error('Cloudinary no configurado. Complete CLOUDINARY_API_SECRET en .env.production')
+    throw new Error('Cloudinary no configurado')
   }
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         public_id: publicId,
-        resource_type: 'image',
+        resource_type: resourceType,
         overwrite: true,
       },
       (error, result) => {
         if (error || !result) {
-          reject(error || new Error('Error subiendo a Cloudinary'))
+          reject(error || new Error(`Error subiendo a Cloudinary: ${resourceType}`))
           return
         }
         resolve({
@@ -46,10 +49,26 @@ export async function uploadToCloudinary(
   })
 }
 
-export async function deleteFromCloudinary(publicId: string): Promise<void> {
+export async function uploadToCloudinary(
+  buffer: Buffer,
+  publicId: string,
+): Promise<{ url: string; width: number; height: number }> {
+  const result = await cloudinaryUpload(buffer, publicId, 'image')
+  return { url: result.url, width: result.width ?? 0, height: result.height ?? 0 }
+}
+
+export async function uploadVideoToCloudinary(
+  buffer: Buffer,
+  publicId: string,
+): Promise<{ url: string }> {
+  const result = await cloudinaryUpload(buffer, publicId, 'video')
+  return { url: result.url }
+}
+
+export async function deleteFromCloudinary(publicId: string, resourceType: 'image' | 'video' = 'image'): Promise<void> {
   if (!cloudinaryConfigured) return
 
-  await cloudinary.uploader.destroy(publicId)
+  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType })
 }
 
 export function getCloudinaryUrl(

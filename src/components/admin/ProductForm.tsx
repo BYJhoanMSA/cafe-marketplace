@@ -1,7 +1,7 @@
 'use client'
 
 // src/components/admin/ProductForm.tsx
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -45,14 +45,22 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
   const [selectedGrinds, setSelectedGrinds] = useState<string[]>([])
   const [combinationPrices, setCombinationPrices] = useState<Record<string, string>>({})
   const [images, setImages] = useState<UploadedImage[]>(
-    initialData?.images?.map((img: any, i: number) => ({
-      url: img.url,
-      alt: img.alt || '',
-      width: img.width,
-      height: img.height,
-      position: i,
-    })) || []
+    initialData?.images
+      ?.filter((img: any) => img.mediaType !== 'video')
+      ?.map((img: any, i: number) => ({
+        url: img.url,
+        alt: img.alt || '',
+        width: img.width,
+        height: img.height,
+        position: i,
+      })) || []
   )
+
+  const [videoUrl, setVideoUrl] = useState<string | null>(
+    initialData?.images?.find((img: any) => img.mediaType === 'video')?.url || null,
+  )
+  const [uploadingVideo, setUploadingVideo] = useState(false)
+  const videoInputRef = useRef<HTMLInputElement>(null)
   
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
@@ -100,6 +108,44 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
     })
   }
 
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingVideo(true)
+    setError('')
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const res = await fetch('/api/upload/video', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setVideoUrl(data.url)
+      } else {
+        setError(data.error || 'Error al subir video')
+      }
+    } catch {
+      setError('Error al subir video')
+    } finally {
+      setUploadingVideo(false)
+      if (videoInputRef.current) videoInputRef.current.value = ''
+    }
+  }
+
+  const handleRemoveVideo = async () => {
+    if (!videoUrl) return
+    try {
+      await fetch('/api/upload/video', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: videoUrl }),
+      })
+    } catch {}
+    setVideoUrl(null)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -107,7 +153,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
 
     try {
       if (isEditing) {
-          const result = await updateProduct(initialData.id, { ...formData, images, vendorId: selectedVendorId, categoryId: selectedCategoryId, isFeatured: false })
+          const result = await updateProduct(initialData.id, { ...formData, images, videoUrl, vendorId: selectedVendorId, categoryId: selectedCategoryId, isFeatured: false })
         if (result.success) {
           router.push('/admin/productos')
           router.refresh()
@@ -116,7 +162,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           setError(result.error || 'Error al actualizar el producto')
         }
       } else {
-        const result = await createProduct({ ...formData, images, vendorId: selectedVendorId, categoryId: selectedCategoryId })
+        const result = await createProduct({ ...formData, images, videoUrl, vendorId: selectedVendorId, categoryId: selectedCategoryId })
         if (!result.success) {
           setError(result.error || 'Error al guardar el producto')
           setLoading(false)
@@ -240,6 +286,53 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           maxImages={8}
           label="📸 Imágenes del producto"
         />
+      </div>
+
+      {/* SECCIÓN: VIDEO DEL PRODUCTO (solo catálogo móvil) */}
+      <div style={{
+        padding: 'var(--space-5)',
+        backgroundColor: 'var(--color-bg-secondary)',
+        borderRadius: 'var(--radius-xl)',
+        border: '1px solid var(--color-border-default)',
+      }}>
+        <h3 style={{ margin: '0 0 var(--space-3)', fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
+          🎬 Video del producto (catálogo móvil)
+        </h3>
+        <p style={{ margin: '0 0 var(--space-3)', fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
+          Video vertical, máximo 30 segundos. Se muestra en el catálogo móvil estilo TikTok. Si no hay video, se usa la imagen principal.
+        </p>
+        {videoUrl ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', alignItems: 'flex-start' }}>
+            <video
+              src={videoUrl}
+              muted
+              loop
+              playsInline
+              style={{ width: '200px', height: '350px', objectFit: 'cover', borderRadius: 'var(--radius-md)', background: '#000' }}
+            />
+            <Button type="button" variant="secondary" onClick={handleRemoveVideo}>
+              Eliminar video
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <input
+              ref={videoInputRef}
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime"
+              style={{ display: 'none' }}
+              onChange={handleVideoUpload}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              isLoading={uploadingVideo}
+              onClick={() => videoInputRef.current?.click()}
+            >
+              {uploadingVideo ? 'Subiendo...' : 'Subir video'}
+            </Button>
+          </div>
+        )}
       </div>
 
       <FlavorNotePicker

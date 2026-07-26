@@ -31,9 +31,12 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
 
   const isFavorited = isFavorite(product.id)
 
-  const images: string[] = product.images?.length ? product.images : [product.imageUrl]
+const imageUrls: string[] = product.images?.length ? product.images : [product.imageUrl]
+const allMedia = product.videoUrl
+  ? [{ type: 'video' as const, url: product.videoUrl }, ...imageUrls.map(u => ({ type: 'image' as const, url: u }))]
+  : imageUrls.map(u => ({ type: 'image' as const, url: u }))
 
-  const [activeImageIndex, setActiveImageIndex] = useState(0)
+const [activeMediaIndex, setActiveMediaIndex] = useState(0)
 
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
@@ -48,8 +51,18 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   }, [product.id])
 
   useEffect(() => {
-    setActiveImageIndex(0)
-  }, [product.id])
+    setActiveMediaIndex(0)
+  }, [product.id, product.videoUrl])
+
+  const videoRef = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    if (!videoRef.current || !product.videoUrl) return
+    if (isActive && activeMediaIndex === 0) {
+      videoRef.current.play().catch(() => {})
+    } else {
+      videoRef.current.pause()
+    }
+  }, [isActive, activeMediaIndex, product.videoUrl])
 
   const optimizedImage = isActive
     ? getImageUrl(product.imageUrl, { width: 500, quality: 80 })
@@ -62,8 +75,8 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   }, [])
 
   useEffect(() => {
-    goToIndex(activeImageIndex, true)
-  }, [activeImageIndex, goToIndex])
+    goToIndex(activeMediaIndex, true)
+  }, [activeMediaIndex, goToIndex])
 
   function handleTouchStart(e: React.TouchEvent) {
     const touch = e.touches[0]
@@ -89,7 +102,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
       dragOffsetX.current = dx
       if (stripRef.current) {
         stripRef.current.style.transition = 'none'
-        stripRef.current.style.transform = `translateX(${(-activeImageIndex * 100) + (dx / window.innerWidth * 100)}vw)`
+        stripRef.current.style.transform = `translateX(${(-activeMediaIndex * 100) + (dx / window.innerWidth * 100)}vw)`
       }
     }
   }
@@ -100,15 +113,15 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
     const dx = dragOffsetX.current
 
     if (Math.abs(dx) > SWIPE_THRESHOLD) {
-      if (dx > 0 && activeImageIndex > 0) {
-        setActiveImageIndex((prev) => prev - 1)
-      } else if (dx < 0 && activeImageIndex < images.length - 1) {
-        setActiveImageIndex((prev) => prev + 1)
+      if (dx > 0 && activeMediaIndex > 0) {
+        setActiveMediaIndex((prev) => prev - 1)
+      } else if (dx < 0 && activeMediaIndex < allMedia.length - 1) {
+        setActiveMediaIndex((prev) => prev + 1)
       } else {
-        goToIndex(activeImageIndex, true)
+        goToIndex(activeMediaIndex, true)
       }
     } else {
-      goToIndex(activeImageIndex, true)
+      goToIndex(activeMediaIndex, true)
     }
 
     isDragging.current = false
@@ -117,13 +130,13 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
 
   const handlePrevImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    if (activeImageIndex > 0) setActiveImageIndex((prev) => prev - 1)
-  }, [activeImageIndex])
+    if (activeMediaIndex > 0) setActiveMediaIndex((prev) => prev - 1)
+  }, [activeMediaIndex])
 
   const handleNextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    if (activeImageIndex < images.length - 1) setActiveImageIndex((prev) => prev + 1)
-  }, [activeImageIndex, images.length])
+    if (activeMediaIndex < allMedia.length - 1) setActiveMediaIndex((prev) => prev + 1)
+  }, [activeMediaIndex, allMedia.length])
 
   function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation()
@@ -189,36 +202,48 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         onTouchEnd={handleTouchEnd}
       >
         <div className={styles.imageStrip} ref={stripRef}>
-          {images.map((img, idx) => (
+          {allMedia.map((media, idx) => (
             <div key={idx} className={styles.imageStripItem}>
-              <Image
-                src={getImageUrl(img, { width: 500, quality: 80 })}
-                alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
-                fill
-                priority={isActive && idx === 0}
-                className={styles.image}
-                sizes="100vw"
-              />
+              {media.type === 'video' ? (
+                <video
+                  ref={videoRef}
+                  src={media.url}
+                  muted
+                  loop
+                  playsInline
+                  className={styles.image}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <Image
+                  src={getImageUrl(media.url, { width: 500, quality: 80 })}
+                  alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
+                  fill
+                  priority={isActive && idx === 0}
+                  className={styles.image}
+                  sizes="100vw"
+                />
+              )}
             </div>
           ))}
         </div>
 
-        {images.length > 1 && (
+        {allMedia.length > 1 && (
           <>
-            {activeImageIndex > 0 && (
+            {activeMediaIndex > 0 && (
               <button
                 className={`${styles.navArrow} ${styles.navArrowLeft}`}
                 onClick={handlePrevImage}
-                aria-label="Imagen anterior"
+                aria-label="Anterior"
               >
                 <ChevronLeft size={20} />
               </button>
             )}
-            {activeImageIndex < images.length - 1 && (
+            {activeMediaIndex < allMedia.length - 1 && (
               <button
                 className={`${styles.navArrow} ${styles.navArrowRight}`}
                 onClick={handleNextImage}
-                aria-label="Siguiente imagen"
+                aria-label="Siguiente"
               >
                 <ChevronRight size={20} />
               </button>
@@ -229,14 +254,14 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         <div className={styles.overlayBottom} />
       </div>
 
-      {images.length > 1 && (
+      {allMedia.length > 1 && (
         <div className={styles.imageDots}>
-          {images.map((_, idx) => (
+          {allMedia.map((_, idx) => (
             <button
               key={idx}
-              className={`${styles.imageDot} ${idx === activeImageIndex ? styles.imageDotActive : ''}`}
-              onClick={(e) => { e.stopPropagation(); setActiveImageIndex(idx) }}
-              aria-label={`Imagen ${idx + 1} de ${images.length}`}
+              className={`${styles.imageDot} ${idx === activeMediaIndex ? styles.imageDotActive : ''}`}
+              onClick={(e) => { e.stopPropagation(); setActiveMediaIndex(idx) }}
+              aria-label={`Media ${idx + 1} de ${allMedia.length}`}
             />
           ))}
         </div>
