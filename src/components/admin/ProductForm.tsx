@@ -125,7 +125,8 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
       if (res.ok && data.success) {
         setVideoUrl(data.url)
       } else {
-        setVideoError(data.error || 'Error al subir video')
+        const debug = data.debug ? ' | Envs: ' + JSON.stringify(data.debug) : ''
+        setVideoError((data.error || 'Error al subir video') + debug)
       }
     } catch {
       setVideoError('Error de conexion al subir video')

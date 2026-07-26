@@ -3,8 +3,9 @@ import { v2 as cloudinary } from 'cloudinary'
 const secretsRaw = {
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-  DATABASE_URL: process.env.DATABASE_URL?.slice(0, 30),
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET
+    ? `${process.env.CLOUDINARY_API_SECRET.slice(0, 3)}...(${process.env.CLOUDINARY_API_SECRET.length} chars)`
+    : '(empty)',
 }
 
 const cloudName = secretsRaw.CLOUDINARY_CLOUD_NAME
