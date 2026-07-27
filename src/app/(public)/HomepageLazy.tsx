@@ -42,7 +42,7 @@ export async function HomepageValues() {
       {config.features.map((value) => (
         <div key={value.title} className={styles.valueCard}>
           <span className={styles.valueIcon} aria-hidden="true">
-            {value.icon}
+            <ValueIcon icon={value.icon} />
           </span>
           <h3 className={styles.valueTitle}>{value.title}</h3>
           <p className={styles.valueDesc}>{value.desc}</p>
