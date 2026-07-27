@@ -29,6 +29,10 @@ export async function uploadToCloudinary(
   }
 
   return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('Cloudinary upload timed out after 30s'))
+    }, 30000)
+
     const stream = cloudinary.uploader.upload_stream(
       {
         public_id: publicId,
@@ -36,6 +40,7 @@ export async function uploadToCloudinary(
         overwrite: true,
       },
       (error, result) => {
+        clearTimeout(timeout)
         if (error || !result) {
           reject(error || new Error('Error subiendo a Cloudinary'))
           return
@@ -55,7 +60,12 @@ export async function uploadToCloudinary(
 export async function deleteFromCloudinary(publicId: string): Promise<void> {
   if (!cloudinaryConfigured) return
 
-  await cloudinary.uploader.destroy(publicId)
+  await Promise.race([
+    cloudinary.uploader.destroy(publicId),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Cloudinary delete timed out after 15s')), 15000),
+    ),
+  ])
 }
 
 export function getCloudinaryUrl(
