@@ -13,6 +13,7 @@ export interface CartItem {
   priceInCents: number
   currency: string
   quantity: number
+  deleted?: boolean  // true si el producto fue eliminado
 }
 
 interface CartContextType {

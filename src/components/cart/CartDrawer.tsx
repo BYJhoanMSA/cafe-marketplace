@@ -54,22 +54,32 @@ export function CartDrawer() {
                   )}
 
                   <div className={styles.itemDetails}>
-                    <span className={styles.itemTitle}>{item.title}</span>
-                    {item.variantTitle && (
-                      <span className={styles.itemVariant}>{item.variantTitle}</span>
-                    )}
-                    <span className={styles.itemPrice}>
-                      {formatPrice(item.priceInCents * item.quantity, item.currency)}
+                    <span className={item.deleted ? styles.itemTitleDeleted : styles.itemTitle}>
+                      {item.deleted ? 'Producto eliminado' : item.title}
                     </span>
+                    {item.deleted ? (
+                      <span className={styles.itemVariantDeleted}>Este producto ya no está disponible</span>
+                    ) : (
+                      <>
+                        {item.variantTitle && (
+                          <span className={styles.itemVariant}>{item.variantTitle}</span>
+                        )}
+                        <span className={styles.itemPrice}>
+                          {formatPrice(item.priceInCents * item.quantity, item.currency)}
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   <div className={styles.itemActions}>
-                    <QuantitySelector
-                      value={item.quantity}
-                      onChange={(qty) => updateQuantity(item.id, qty)}
-                      min={1}
-                      max={99}
-                    />
+                    {!item.deleted && (
+                      <QuantitySelector
+                        value={item.quantity}
+                        onChange={(qty) => updateQuantity(item.id, qty)}
+                        min={1}
+                        max={99}
+                      />
+                    )}
                     <button
                       className={styles.removeBtn}
                       onClick={() => removeFromCart(item.id)}

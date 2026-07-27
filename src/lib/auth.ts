@@ -73,9 +73,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     // 2. Google OAuth
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-      allowDangerousEmailAccountLinking: true,
+      clientId: process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
 
     // 3. Magic Link via Resend
@@ -146,5 +145,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Seguridad
   // ============================================================
   secret: process.env.AUTH_SECRET,
-  trustHost: true,
 })

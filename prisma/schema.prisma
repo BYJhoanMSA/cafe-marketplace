@@ -455,6 +455,7 @@ model Review {
   @@unique([productId, userId]) // 1 review por usuario por producto
   @@index([productId, status])
   @@index([userId])
+  @@index([orderId])
   @@map("reviews")
 }
 
@@ -512,15 +513,16 @@ model Cart {
 model CartItem {
   id           String   @id @default(uuid()) @db.VarChar(36)
   cartId       String   @db.VarChar(36)
-  variantId    String   @db.VarChar(36)
+  variantId    String?  @db.VarChar(36)  // null → el producto fue eliminado
   quantity     Int      @default(1)
   // Precio al momento de agregar (snapshot por si cambia)
   unitPriceInCents Int
+  isDeleted    Boolean  @default(false)  // true si el producto fue eliminado
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  variant Variant @relation(fields: [variantId], references: [id])
+  cart    Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant Variant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   @@unique([cartId, variantId])
   @@index([cartId])
@@ -592,6 +594,8 @@ model Order {
   shippingAddressId String? @db.VarChar(36)
 
   @@index([userId])
+  @@index([vendorId])
+  @@index([shippingAddressId])
   @@index([status])
   @@index([paymentStatus])
   @@index([stripePaymentIntentId])
@@ -622,6 +626,8 @@ model LineItem {
 
   @@index([orderId])
   @@index([productId])
+  @@index([variantId])
+  @@index([vendorId])
   @@index([orderId, productId])
   @@map("line_items")
 }

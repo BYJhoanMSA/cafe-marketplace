@@ -295,6 +295,20 @@ export async function deleteProduct(formData: FormData) {
     }
   }
 
+  // Obtener variantes del producto para limpiar carritos
+  const variants = await prisma.variant.findMany({
+    where: { productId: id },
+    select: { id: true }
+  })
+  const variantIds = variants.map(v => v.id)
+
+  if (variantIds.length > 0) {
+    await prisma.cartItem.updateMany({
+      where: { variantId: { in: variantIds } },
+      data: { isDeleted: true, variantId: null }
+    })
+  }
+
   const hasOrders = product.lineItems.length > 0
 
   if (hasOrders) {

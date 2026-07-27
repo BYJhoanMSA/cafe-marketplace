@@ -30,10 +30,19 @@ loadEnvFile(path.join(root, '.env.production'), false)
 loadEnvFile(path.join(root, '.env.production.local'), true)
 
 // Validar que los secrets críticos no sean placeholders
-const REQUIRED_SECRETS = ['AUTH_SECRET', 'DATABASE_URL']
+const REQUIRED_SECRETS = [
+  'AUTH_SECRET',
+  'DATABASE_URL',
+  'STRIPE_SECRET_KEY',
+  'STRIPE_WEBHOOK_SECRET',
+  'CLOUDINARY_API_SECRET',
+  'RESEND_API_KEY',
+  'CRON_SECRET',
+]
+const PLACEHOLDER_PATTERNS = ['openssl-rand', 'placeholder', 'pendiente', 'tu-', 'usuario:password']
 for (const key of REQUIRED_SECRETS) {
   const val = process.env[key]
-  if (!val || val.includes('openssl-rand') || val.includes('placeholder') || val.includes('usuario:password')) {
+  if (!val || PLACEHOLDER_PATTERNS.some(p => val.includes(p))) {
     console.error(`[start] ERROR: ${key} no está configurado correctamente (placeholder detectado)`)
     console.error(`[start] Asegúrate de que .env.production.local exista y tenga los valores reales`)
     process.exit(1)
