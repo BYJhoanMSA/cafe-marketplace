@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     fill="none">
+
+  <g
+    stroke="#F5E8D2"
+    stroke-width="1.9"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <!-- Cabeza (forma ligeramente de grano de café) -->
+    <path d="
+      M12 4.5
+      C9.8 4.5 8.3 6.2 8.3 8.4
+      C8.3 10.8 9.9 12.5 12 12.5
+      C14.1 12.5 15.7 10.8 15.7 8.4
+      C15.7 6.2 14.2 4.5 12 4.5Z"/>
+
+    <!-- Hendidura del grano -->
+    <path d="
+      M12 5.8
+      C11.3 7
+        12.6 8
+        12 11"/>
+
+    <!-- Hombros -->
+    <path d="
+      M5.8 19
+      C6.2 16
+        8.7 14.3
+        12 14.3
+      C15.3 14.3
+        17.8 16
+        18.2 19"/>
+
+  </g>
+
+</svg>

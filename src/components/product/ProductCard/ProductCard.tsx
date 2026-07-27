@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Heart, ShoppingBag, Star, Share2 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
+import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice, truncate, getThumbUrl, getImageUrl } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
@@ -226,7 +227,7 @@ export function ProductCard({
         {/* Cupping score */}
         {product.cuppingScore && (
           <div className={styles.cuppingScore} aria-label={`Cupping score: ${product.cuppingScore} puntos`}>
-            ☕ {product.cuppingScore}
+            <LogoCafeIcon size={28} strokeWidth={1} /> {product.cuppingScore}
           </div>
         )}
       </div>

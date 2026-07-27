@@ -3,6 +3,7 @@
 // src/components/layout/Footer/Footer.tsx
 import Link from 'next/link'
 import { useState } from 'react'
+import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './Footer.module.css'
 
 const FOOTER_LINKS = [
@@ -49,7 +50,7 @@ export function Footer() {
           {/* Brand */}
           <div className={styles.brand}>
             <Link href="/" className={styles.logo} aria-label="Cafe Seleccion — Inicio">
-              <span className={styles.logoIcon} aria-hidden="true">☕</span>
+              <span className={styles.logoIcon} aria-hidden="true"><LogoCafeIcon size={40} strokeWidth={1} /></span>
               <span className={styles.logoText}>Cafe Seleccion</span>
             </Link>
             <p className={styles.tagline}>

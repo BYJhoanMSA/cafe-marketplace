@@ -7,6 +7,7 @@ import { useState, useEffect, use } from 'react'
 import { Star, Heart, Share2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
@@ -241,7 +242,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           
           <div className={styles.meta}>
             {product.cuppingScore && (
-              <Badge variant="gold" icon="☕">
+              <Badge variant="gold" icon={<LogoCafeIcon size={28} strokeWidth={1} />}>
                 SCA {product.cuppingScore}
               </Badge>
             )}
@@ -277,7 +278,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               color: product.category === 'Café Orgánico' ? 'var(--forest-600)' : 'var(--color-ink-secondary)',
               display: 'flex', alignItems: 'center', gap: '6px',
             }}>
-              <span>{product.category === 'Café Orgánico' ? '🌱' : '☕'}</span>
+              <span>{product.category === 'Café Orgánico' ? '🌱' : <LogoCafeIcon size={32} strokeWidth={1} />}</span>
               {product.category}
             </div>
           )}

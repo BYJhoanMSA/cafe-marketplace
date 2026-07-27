@@ -6,21 +6,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import {
-  ShoppingBag,
-  Heart,
-  User,
-  Search,
-  Home,
-  Grid3x3,
-  Menu,
-  X,
-  Moon,
-  Sun,
-} from 'lucide-react'
+import { X, Moon, Sun } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { usePillBar } from '@/components/ui/PillSelector/PillBarContext'
+import { LogoCafeIcon, SearchIcon, HeartIcon, CartIcon, UserIcon, HomeIcon, CatalogIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './Navbar.module.css'
 
 // ================================================================
@@ -74,16 +64,6 @@ const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
   { href: '/envio', label: 'Envío' },
   { href: '/pqr', label: 'Centro de Ayuda' },
-]
-
-// ================================================================
-// Items del Tab Bar (mobile)
-// ================================================================
-const TAB_ITEMS = [
-  { href: '/', icon: Home, label: 'Inicio' },
-  { href: '/catalogo', icon: Grid3x3, label: 'Catálogo' },
-  { href: '/buscar', icon: Search, label: 'Buscar' },
-  { href: '/favoritos', icon: Heart, label: 'Favoritos' },
 ]
 
 // ================================================================
@@ -151,7 +131,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
 
           {/* Logo centrado */}
           <Link href="/" className={styles.logo} aria-label="Cafe Seleccion — Inicio">
-            <span className={styles.logoIcon} aria-hidden="true">☕</span>
+            <span className={styles.logoIcon} aria-hidden="true"><LogoCafeIcon size={40} strokeWidth={1} /></span>
             <span className={styles.logoText}>Cafe Seleccion</span>
           </Link>
 
@@ -165,7 +145,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
                 aria-label={searchOpen ? 'Cerrar búsqueda' : 'Buscar productos'}
                 aria-expanded={searchOpen}
               >
-                {searchOpen ? <X size={20} /> : <Search size={20} />}
+                {searchOpen ? <X size={20} /> : <SearchIcon size={20} />}
               </button>
             </div>
 
@@ -184,7 +164,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               className={styles.actionButton}
               aria-label={`Mis favoritos, ${favoriteCount} cafés`}
             >
-              <Heart size={20} />
+              <HeartIcon size={20} />
               {favoriteCount > 0 && (
                 <span className={styles.cartBadge} aria-hidden="true" style={{ backgroundColor: 'var(--terra-500)' }}>
                   {favoriteCount > 99 ? '99+' : favoriteCount}
@@ -199,7 +179,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               onClick={openCart}
               aria-label={`Carrito de compras, ${cartItemCount} ${cartItemCount === 1 ? 'producto' : 'productos'}`}
             >
-              <ShoppingBag size={20} />
+              <CartIcon size={20} />
               {cartItemCount > 0 && (
                 <span className={styles.cartBadge} aria-hidden="true">
                   {cartItemCount > 99 ? '99+' : cartItemCount}
@@ -213,7 +193,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               className={styles.actionButton}
               aria-label={userName ? `Mi cuenta: ${userName}` : 'Iniciar sesión'}
             >
-              <User size={20} />
+              <UserIcon size={20} />
             </Link>
           </div>
         </div>
@@ -239,7 +219,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-current={isActive('/') ? 'page' : undefined}
           >
             <span className={styles.tabIcon}>
-              <Home size={22} />
+              <HomeIcon size={24} />
               <span className={styles.tabActiveIndicator} aria-hidden="true" />
             </span>
             <span className={styles.tabLabel}>Inicio</span>
@@ -255,7 +235,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               aria-pressed={pillBarOpen}
             >
               <span className={styles.tabIcon}>
-                <Search size={22} />
+                <SearchIcon size={24} />
                 <span className={styles.tabActiveIndicator} aria-hidden="true" />
               </span>
               <span className={styles.tabLabel}>Buscar</span>
@@ -268,7 +248,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               aria-current={isActive('/buscar') ? 'page' : undefined}
             >
               <span className={styles.tabIcon}>
-                <Search size={22} />
+                <SearchIcon size={24} />
                 <span className={styles.tabActiveIndicator} aria-hidden="true" />
               </span>
               <span className={styles.tabLabel}>Buscar</span>
@@ -282,7 +262,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-label="Ver catálogo"
           >
             <span className={styles.tabCenterIcon}>
-              <Grid3x3 size={22} />
+              <CatalogIcon size={36} strokeWidth={2} />
             </span>
             <span className={styles.tabCenterLabel}>Catálogo</span>
           </Link>
@@ -295,7 +275,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-current={isActive('/favoritos') ? 'page' : undefined}
           >
             <span className={styles.tabIcon}>
-              <Heart size={22} />
+              <HeartIcon size={24} />
               <span className={styles.tabActiveIndicator} aria-hidden="true" />
             </span>
             <span className={styles.tabLabel}>Favoritos</span>
@@ -309,7 +289,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             aria-label="Abrir Carrito"
           >
             <span className={styles.tabIcon} style={{ position: 'relative' }}>
-              <ShoppingBag size={22} />
+              <CartIcon size={24} />
               {cartItemCount > 0 && (
                 <span className={styles.cartBadge} aria-hidden="true">
                   {cartItemCount > 9 ? '9+' : cartItemCount}

@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext'
 import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 import { formatPrice } from '@/lib/utils'
 import { Trash2, ShoppingBag } from 'lucide-react'
+import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './CartDrawer.module.css'
 
 export function CartDrawer() {
@@ -28,7 +29,7 @@ export function CartDrawer() {
       <div className={styles.container}>
         {items.length === 0 ? (
           <div className={styles.emptyState}>
-            <span className={styles.emptyIcon}>☕</span>
+            <span className={styles.emptyIcon}><LogoCafeIcon size={112} strokeWidth={1} /></span>
             <h3 className={styles.emptyTitle}>Tu carrito está vacío</h3>
             <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
               Explora nuestra selección de granos de especialidad y añade tus favoritos.

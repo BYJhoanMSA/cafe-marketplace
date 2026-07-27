@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 
 export const metadata: Metadata = {
   title: 'Página no encontrada',
@@ -23,7 +24,7 @@ export default function NotFound() {
       }}
     >
       <span style={{ fontSize: '4rem', lineHeight: 1 }} role="img" aria-label="Taza de café">
-        ☕
+        <LogoCafeIcon size={128} strokeWidth={1} />
       </span>
       <h1
         style={{

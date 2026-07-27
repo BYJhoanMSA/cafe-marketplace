@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     fill="none">
+
+  <g
+    stroke="#F5E8D2"
+    stroke-width="1.9"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <!-- Asa -->
+    <path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h8.4a1 1 0 0 0 .98-.76L19 7H8"/>
+
+    <!-- Grano de café -->
+    <ellipse cx="12.2" cy="10.8" rx="2.1" ry="3"/>
+
+    <!-- Hendidura del grano -->
+    <path d="M12.2 8.2
+             C11.4 9.2
+               13.1 10.3
+               12.1 13.4"/>
+
+    <!-- Ruedas -->
+    <circle cx="9.2" cy="19" r="1.2"/>
+    <circle cx="17.2" cy="19" r="1.2"/>
+
+  </g>
+
+</svg>

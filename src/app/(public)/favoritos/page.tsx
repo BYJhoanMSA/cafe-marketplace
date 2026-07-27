@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useCart } from '@/context/CartContext'
 import { formatPrice } from '@/lib/utils'
-import { Heart, ShoppingBag, Trash2, ArrowLeft } from 'lucide-react'
+import { ShoppingBag, Trash2, ArrowLeft } from 'lucide-react'
+import { HeartIcon, LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './page.module.css'
 
 export default function FavoritosPage() {
@@ -32,7 +33,7 @@ export default function FavoritosPage() {
           Volver al catálogo
         </Link>
         <h1 style={{ fontSize: 'var(--text-3xl)', fontFamily: 'var(--font-primary)', color: 'var(--color-ink-primary)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-          <Heart fill="var(--terra-500)" color="var(--terra-500)" size={28} />
+          <HeartIcon size={28} stroke="var(--terra-500)" strokeWidth={2} />
           Mis Favoritos ({favorites.length})
         </h1>
         <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-base)' }}>
@@ -52,7 +53,7 @@ export default function FavoritosPage() {
           alignItems: 'center',
           gap: 'var(--space-4)'
         }}>
-          <span style={{ fontSize: '3.5rem' }}>☕</span>
+          <LogoCafeIcon size={112} strokeWidth={1} stroke="var(--color-ink-secondary)" />
           <h2 style={{ fontFamily: 'var(--font-primary)', fontSize: 'var(--text-xl)' }}>Aún no tienes favoritos guardados</h2>
           <p style={{ color: 'var(--color-ink-secondary)', maxWidth: '400px', margin: 0 }}>
             Explora nuestro catálogo de origen y presiona el corazón en los cafés que quieras guardar.
