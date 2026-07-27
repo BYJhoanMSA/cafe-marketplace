@@ -28,7 +28,6 @@ if (fs$env.existsSync(envLocalPath)) {
   }
 }
 // ================================================================
-
 `
 
 let content = fs.readFileSync(serverPath, 'utf-8')
