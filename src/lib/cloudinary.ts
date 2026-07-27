@@ -4,7 +4,13 @@ const cloudName = process.env.CLOUDINARY_CLOUD_NAME
 const apiKey = process.env.CLOUDINARY_API_KEY
 const apiSecret = process.env.CLOUDINARY_API_SECRET
 
-export const cloudinaryConfigured = !!(cloudName && apiKey && apiSecret && apiSecret !== 'pendiente')
+function isPlaceholder(val: string | undefined): boolean {
+  if (!val) return true
+  const placeholders = ['pendiente', 'tu-', 'poner-', 'your-', 'placeholder']
+  return placeholders.some(p => val.toLowerCase().includes(p))
+}
+
+export const cloudinaryConfigured = !isPlaceholder(cloudName) && !isPlaceholder(apiKey) && !isPlaceholder(apiSecret)
 
 if (cloudinaryConfigured) {
   cloudinary.config({
@@ -19,7 +25,7 @@ export async function uploadToCloudinary(
   publicId: string,
 ): Promise<{ url: string; width: number; height: number }> {
   if (!cloudinaryConfigured) {
-    throw new Error('Cloudinary no configurado. Complete CLOUDINARY_API_SECRET en .env.production')
+    throw new Error('Cloudinary no configurado. Verifica credenciales en .env.production.local')
   }
 
   return new Promise((resolve, reject) => {
