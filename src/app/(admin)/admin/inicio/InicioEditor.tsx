@@ -12,10 +12,14 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
   const [saveMsg, setSaveMsg] = useState('')
   const [config, setConfig] = useState<HomepageConfig>(initialConfig)
 
-  // Estado local para la imagen del hero (compatible con ImageUploader)
   const [heroImages, setHeroImages] = useState<UploadedImage[]>(
     initialConfig.heroImageUrl
       ? [{ url: initialConfig.heroImageUrl, alt: 'Hero imagen principal', position: 0 }]
+      : []
+  )
+  const [heroMobileImages, setHeroMobileImages] = useState<UploadedImage[]>(
+    initialConfig.heroImageUrlMobile
+      ? [{ url: initialConfig.heroImageUrlMobile, alt: 'Hero imagen móvil', position: 0 }]
       : []
   )
 
@@ -26,6 +30,7 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
       const finalConfig: HomepageConfig = {
         ...config,
         heroImageUrl: heroImages[0]?.url || config.heroImageUrl,
+        heroImageUrlMobile: heroMobileImages[0]?.url || config.heroImageUrlMobile || config.heroImageUrl,
       }
       const res = await updateHomepageSettings(finalConfig)
       if (res.success) {
@@ -92,7 +97,15 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
           onChange={setHeroImages}
           type="hero"
           maxImages={1}
-          label="Imagen de fondo del Hero (se optimizará a 1920×1080 WebP)"
+          label="Imagen de fondo del Hero — Escritorio (1920×1080)"
+        />
+
+        <ImageUploader
+          images={heroMobileImages}
+          onChange={setHeroMobileImages}
+          type="hero"
+          maxImages={1}
+          label="Imagen de fondo del Hero — Móvil (640×960)"
         />
 
         {heroImages[0] && (

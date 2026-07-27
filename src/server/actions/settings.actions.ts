@@ -14,13 +14,15 @@ export type HomepageConfig = {
   heroTitle: string
   heroSubtitle: string
   heroImageUrl: string
+  heroImageUrlMobile: string
   features: HomepageFeature[]
 }
 
 const DEFAULT_HOMEPAGE_CONFIG: HomepageConfig = {
   heroTitle: 'Del origen a tu taza,\nsin compromisos',
   heroSubtitle: 'Más de 200 cafés con puntuación SCA verificada, de tostadores artesanales en Colombia, Etiopía, Guatemala y más.',
-  heroImageUrl: '/images/hero-coffee-farm.jpg',
+  heroImageUrl: 'https://res.cloudinary.com/dcrsncau/image/upload/v1785135217/IMG_20210818_173210_buf4ch.jpg',
+  heroImageUrlMobile: 'https://res.cloudinary.com/dcrsncau/image/upload/v1785135116/IMG_20210819_173755_pbtlxp.jpg',
   features: [
     {
       icon: 'directo-tostador',

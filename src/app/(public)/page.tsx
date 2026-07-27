@@ -46,14 +46,18 @@ export default async function HomePage() {
       <section className={styles.hero} aria-label="Bienvenida">
         {/* Imagen de fondo */}
         <div className={styles.heroBackground}>
-          <Image
-            src={config.heroImageUrl}
-            alt="Finca cafetera al amanecer con montañas en el fondo"
-            fill
-            priority
-            className={styles.heroImage}
-            sizes="100vw"
-          />
+          <picture>
+            <source media="(min-width: 768px)" srcSet={config.heroImageUrl} />
+            <source media="(max-width: 767px)" srcSet={config.heroImageUrlMobile || config.heroImageUrl} />
+            <Image
+              src={config.heroImageUrl}
+              alt="Finca cafetera al amanecer con montañas en el fondo"
+              fill
+              priority
+              className={styles.heroImage}
+              sizes="100vw"
+            />
+          </picture>
         </div>
         <div className={styles.heroOverlay} aria-hidden="true" />
 
