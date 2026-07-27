@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { prisma } from '@/server/db/client'
 import { requireRole } from '@/server/middleware/auth.middleware'
 import { slugify } from '@/lib/utils'
@@ -266,14 +267,18 @@ export async function deleteProduct(formData: FormData) {
   await requireRole(['admin', 'vendor'])
 
   const id = formData.get('productId') as string
-  if (!id) return
+  if (!id) throw new Error('ID de producto no válido')
 
   const product = await prisma.product.findUnique({
     where: { id },
-    include: { images: true, lineItems: { take: 1 } }
+    include: {
+      images: true,
+      lineItems: { take: 1 },
+      variants: { include: { cartItems: { take: 1 } } },
+    }
   })
 
-  if (!product) return
+  if (!product) throw new Error('Producto no encontrado')
 
   for (const image of product.images) {
     const normalized = image.url.replace(/\\/g, '/')
@@ -283,8 +288,8 @@ export async function deleteProduct(formData: FormData) {
       if (publicIdMatch) {
         const base = `cafe/${publicIdMatch[1]}`
         await Promise.all([
-          deleteFromCloudinary(base),
-          deleteFromCloudinary(`${base}-thumb`),
+          deleteFromCloudinary(base).catch(() => {}),
+          deleteFromCloudinary(`${base}-thumb`).catch(() => {}),
         ])
       }
     }
@@ -295,9 +300,10 @@ export async function deleteProduct(formData: FormData) {
     }
   }
 
+  const hasCarts = product.variants.some(v => v.cartItems.length > 0)
   const hasOrders = product.lineItems.length > 0
 
-  if (hasOrders) {
+  if (hasOrders || hasCarts) {
     await prisma.$transaction([
       prisma.productImage.deleteMany({ where: { productId: id } }),
       prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
@@ -315,4 +321,5 @@ export async function deleteProduct(formData: FormData) {
 
   revalidatePath('/admin/productos')
   invalidateProductsCache()
+  redirect('/admin/productos')
 }
