@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
   ),
   title: {
-    default: 'Cafe Seleccion — Café de Especialidad Premium',
+    default: 'Cafe Seleccion — Café Artesanal Premium',
     template: '%s | Cafe Seleccion',
   },
   description:
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_CO',
     siteName: 'Cafe Seleccion',
-    title: 'Cafe Seleccion — Café de Especialidad Premium',
+    title: 'Cafe Seleccion — Café Artesanal Premium',
     description:
       'Descubre los mejores cafés de especialidad del mundo. Compra directamente a tostadores premium.',
   },

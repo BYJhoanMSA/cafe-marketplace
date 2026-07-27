@@ -19,7 +19,7 @@ import styles from './page.module.css'
 // SEO
 // ================================================================
 export const metadata: Metadata = {
-  title: 'Café de Especialidad Premium — Directo al Tostador',
+  title: 'Café Artesanal Premium — Directo al Tostador',
   description:
     'Descubre más de 200 cafés de especialidad de Colombia, Etiopía, Guatemala y más. Compra directamente a tostadores verificados con envío a domicilio.',
 }
