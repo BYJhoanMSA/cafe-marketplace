@@ -288,12 +288,12 @@ async function hardDeleteProduct(id: string) {
     const normalized = image.url.replace(/\\/g, '/')
 
     if (cloudinaryConfigured && normalized.includes('res.cloudinary.com')) {
-      const publicIdMatch = normalized.match(/\/cafe\/(.+?)(?:-thumb)?(?:\?.*)?$/)
+      const publicIdMatch = normalized.match(/\/cafe\/(.+?)(?:-thumb)?\.(?:jpg|jpeg|png|webp|gif)(?:\?.*)?$/)
       if (publicIdMatch) {
         const base = `cafe/${publicIdMatch[1]}`
-        await Promise.allSettled([
-          deleteFromCloudinary(base),
-          deleteFromCloudinary(`${base}-thumb`),
+        await Promise.all([
+          deleteFromCloudinary(base).catch(() => {}),
+          deleteFromCloudinary(`${base}-thumb`).catch(() => {}),
         ])
       }
     }

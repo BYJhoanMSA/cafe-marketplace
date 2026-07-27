@@ -129,10 +129,10 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (cloudinaryConfigured) {
-      const publicIdMatch = url.match(/\/cafe\/(.+?)(?:-thumb)?(?:\?.*)?$/)
+      const publicIdMatch = url.match(/\/cafe\/(.+?)(?:-thumb)?\.(?:jpg|jpeg|png|webp|gif)$/)
       if (publicIdMatch) {
         const base = `cafe/${publicIdMatch[1]}`
-        await Promise.allSettled([
+        await Promise.all([
           deleteFromCloudinary(base),
           deleteFromCloudinary(`${base}-thumb`),
         ])
