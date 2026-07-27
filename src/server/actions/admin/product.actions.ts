@@ -269,13 +269,17 @@ export async function deleteProduct(formData: FormData) {
   const id = formData.get('productId') as string
   if (!id) throw new Error('ID de producto no válido')
 
+  await hardDeleteProduct(id)
+
+  revalidatePath('/admin/productos')
+  invalidateProductsCache()
+  redirect('/admin/productos')
+}
+
+async function hardDeleteProduct(id: string) {
   const product = await prisma.product.findUnique({
     where: { id },
-    include: {
-      images: true,
-      lineItems: { take: 1 },
-      variants: { include: { cartItems: { take: 1 } } },
-    }
+    include: { images: true, variants: { select: { id: true } } },
   })
 
   if (!product) throw new Error('Producto no encontrado')
@@ -300,23 +304,30 @@ export async function deleteProduct(formData: FormData) {
     }
   }
 
-  const hasCarts = product.variants.some(v => v.cartItems.length > 0)
-  const hasOrders = product.lineItems.length > 0
+  const variantIds = product.variants.map(v => v.id)
 
-  if (hasOrders || hasCarts) {
-    await prisma.$transaction([
-      prisma.productImage.deleteMany({ where: { productId: id } }),
-      prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
-      prisma.productCertification.deleteMany({ where: { productId: id } }),
-      prisma.favorite.deleteMany({ where: { productId: id } }),
-      prisma.review.deleteMany({ where: { productId: id } }),
-      prisma.product.update({
-        where: { id },
-        data: { deletedAt: new Date() }
-      }),
-    ])
-  } else {
-    await prisma.product.delete({ where: { id } })
+  await prisma.$transaction([
+    prisma.cartItem.deleteMany({ where: { variantId: { in: variantIds } } }),
+    prisma.productImage.deleteMany({ where: { productId: id } }),
+    prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
+    prisma.productCertification.deleteMany({ where: { productId: id } }),
+    prisma.favorite.deleteMany({ where: { productId: id } }),
+    prisma.review.deleteMany({ where: { productId: id } }),
+    prisma.lineItem.deleteMany({ where: { variantId: { in: variantIds } } }),
+    prisma.product.delete({ where: { id } }),
+  ])
+}
+
+export async function deleteAllProducts() {
+  await requireRole(['admin'])
+
+  const products = await prisma.product.findMany({
+    select: { id: true },
+  })
+
+  const ids = products.map(p => p.id)
+  for (const id of ids) {
+    await hardDeleteProduct(id)
   }
 
   revalidatePath('/admin/productos')

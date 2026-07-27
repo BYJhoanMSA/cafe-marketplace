@@ -150,3 +150,17 @@
 .whatsappBtn:hover {
   background-color: #1ebd56;
 }
+
+.unavailable {
+  opacity: 0.55;
+}
+
+.unavailableBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  color: var(--terra-500);
+  margin-left: 4px;
+}
