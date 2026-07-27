@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     fill="none">
+
+  <g
+    stroke="#F5E8D2"
+    stroke-width="1.9"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <!-- Grano superior -->
+    <g transform="translate(12 5)">
+      <ellipse cx="0" cy="0" rx="1.9" ry="2.9"/>
+      <path d="M0 -2 C-.6 -1 .7 -.2 0 2"/>
+    </g>
+
+    <!-- Grano inferior izquierdo -->
+    <g transform="translate(7.2 15) rotate(-18)">
+      <ellipse cx="0" cy="0" rx="1.9" ry="2.9"/>
+      <path d="M0 -2 C-.6 -1 .7 -.2 0 2"/>
+    </g>
+
+    <!-- Grano inferior derecho -->
+    <g transform="translate(16.8 15) rotate(18)">
+      <ellipse cx="0" cy="0" rx="1.9" ry="2.9"/>
+      <path d="M0 -2 C-.6 -1 .7 -.2 0 2"/>
+    </g>
+
+    <!-- Flecha 1 -->
+    <path d="M14.2 7.5
+             C15.8 8.5 16.8 10 17 11.5"/>
+
+    <path d="M16.2 10.5
+             L17 11.5
+             L15.8 11.6"/>
+
+    <!-- Flecha 2 -->
+    <path d="M15.5 16.5
+             C13.8 17.8 10.2 17.8 8.5 16.5"/>
+
+    <path d="M10 17.4
+             L8.5 16.5
+             L9.3 15.2"/>
+
+    <!-- Flecha 3 -->
+    <path d="M7 11.5
+             C7.2 10 8.2 8.5 9.8 7.5"/>
+
+    <path d="M8.2 11.6
+             L7 11.5
+             L7.8 10.5"/>
+
+  </g>
+
+</svg>

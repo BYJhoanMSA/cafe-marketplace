@@ -117,3 +117,67 @@ export function UserIcon({ size = 20, strokeWidth = 2, stroke = 'currentColor' }
     </svg>
   )
 }
+
+// -------------------------------------------
+// Directo al Tostador (icon-svg/directo-tostador.svg)
+// -------------------------------------------
+export function DirectoTostadorIcon({ size = 48, strokeWidth = 1.9, stroke = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20V8"/>
+      <path d="M12 11 C10 10 7.8 10.8 6.5 13 C8.5 13.5 10.7 13 12 11Z"/>
+      <path d="M12 11L8.2 12.6"/>
+      <path d="M12 9 C14 8 16.2 8.8 17.5 11 C15.5 11.5 13.3 11 12 9Z"/>
+      <path d="M12 9L15.8 10.6"/>
+      <path d="M12 8 C11.2 6.8 10.2 6.3 9.5 6.7 C10.2 7.8 11 8.2 12 8Z"/>
+      <path d="M12 8 C12.8 6.8 13.8 6.3 14.5 6.7 C13.8 7.8 13 8.2 12 8Z"/>
+    </svg>
+  )
+}
+
+// -------------------------------------------
+// Especialidad Verificada (icon-svg/especialidad.svg)
+// -------------------------------------------
+export function EspecialidadIcon({ size = 48, strokeWidth = 1.8, stroke = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="6.5"/>
+      <path d="M12 3.8v1.2"/><path d="M12 19v1.2"/><path d="M3.8 12H5"/><path d="M19 12h1.2"/>
+      <path d="M6.2 6.2l.9.9"/><path d="M16.9 16.9l.9.9"/>
+      <path d="M17.8 6.2l-.9.9"/><path d="M7.1 16.9l-.9.9"/>
+      <ellipse cx="12" cy="12" rx="2" ry="3"/>
+      <path d="M12 9.8 C11.3 10.8 12.7 11.8 12 14.2"/>
+    </svg>
+  )
+}
+
+// -------------------------------------------
+// Frescura Certificada (icon-svg/frescura.svg)
+// -------------------------------------------
+export function FrescuraIcon({ size = 48, strokeWidth = 1.6, stroke = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 3.8 C7.3 4.8 8.5 5.9 8 7 C7.6 7.9 7.8 8.7 8.4 9.3"/>
+      <path d="M12 2.8 C11.2 4.1 12.6 5.5 12 6.9 C11.5 8 11.8 9 12.6 9.8"/>
+      <path d="M16 3.8 C15.3 4.8 16.5 5.9 16 7 C15.6 7.9 15.8 8.7 16.4 9.3"/>
+      <ellipse cx="12" cy="16.2" rx="4" ry="5.4"/>
+      <path d="M12 11.3 C10.9 13.1 13.2 14.7 12 21"/>
+    </svg>
+  )
+}
+
+// -------------------------------------------
+// Comercio Sostenible (icon-svg/sostenible.svg)
+// -------------------------------------------
+export function SostenibleIcon({ size = 48, strokeWidth = 1.9, stroke = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <g transform="translate(12 5)"><ellipse cx="0" cy="0" rx="1.9" ry="2.9"/><path d="M0 -2 C-.6 -1 .7 -.2 0 2"/></g>
+      <g transform="translate(7.2 15) rotate(-18)"><ellipse cx="0" cy="0" rx="1.9" ry="2.9"/><path d="M0 -2 C-.6 -1 .7 -.2 0 2"/></g>
+      <g transform="translate(16.8 15) rotate(18)"><ellipse cx="0" cy="0" rx="1.9" ry="2.9"/><path d="M0 -2 C-.6 -1 .7 -.2 0 2"/></g>
+      <path d="M14.2 7.5 C15.8 8.5 16.8 10 17 11.5"/><path d="M16.2 10.5 L17 11.5 L15.8 11.6"/>
+      <path d="M15.5 16.5 C13.8 17.8 10.2 17.8 8.5 16.5"/><path d="M10 17.4 L8.5 16.5 L9.3 15.2"/>
+      <path d="M7 11.5 C7.2 10 8.2 8.5 9.8 7.5"/><path d="M8.2 11.6 L7 11.5 L7.8 10.5"/>
+    </svg>
+  )
+}

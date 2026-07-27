@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     fill="none">
+
+  <g
+    stroke="#F5E8D2"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <!-- Sello -->
+    <circle cx="12" cy="12" r="6.5"/>
+
+    <!-- Pequeños picos -->
+    <path d="M12 3.8v1.2"/>
+    <path d="M12 19v1.2"/>
+    <path d="M3.8 12H5"/>
+    <path d="M19 12h1.2"/>
+
+    <path d="M6.2 6.2l.9.9"/>
+    <path d="M16.9 16.9l.9.9"/>
+
+    <path d="M17.8 6.2l-.9.9"/>
+    <path d="M7.1 16.9l-.9.9"/>
+
+    <!-- Grano -->
+    <ellipse cx="12" cy="12"
+             rx="2"
+             ry="3"/>
+
+    <path d="
+        M12 9.8
+        C11.3 10.8
+          12.7 11.8
+          12 14.2"/>
+
+  </g>
+
+</svg>

@@ -23,22 +23,22 @@ const DEFAULT_HOMEPAGE_CONFIG: HomepageConfig = {
   heroImageUrl: '/images/hero-coffee-farm.jpg',
   features: [
     {
-      icon: '🌱',
+      icon: 'directo-tostador',
       title: 'Directo al tostador',
       desc: 'Sin intermediarios. Cada compra apoya directamente al productor y al tostador artesanal.'
     },
     {
-      icon: '🔬',
+      icon: 'especialidad',
       title: 'Especialidad verificada',
       desc: 'Solo cafés con cupping score SCA ≥ 80 puntos. Calidad garantizada por expertos certificados.'
     },
     {
-      icon: '✈️',
+      icon: 'frescura',
       title: 'Frescura certificada',
       desc: 'Tostado máximo 7 días antes del envío. Recibe el café en su punto óptimo de degustación.'
     },
     {
-      icon: '♻️',
+      icon: 'sostenible',
       title: 'Comercio sostenible',
       desc: 'Empaque eco-friendly, compensación de carbono y precios justos para los productores.'
     }

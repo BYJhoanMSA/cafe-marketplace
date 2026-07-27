@@ -3,6 +3,7 @@
 
 import Link from 'next/link'
 import { OriginCard } from '@/components/home/OriginCard'
+import { ValueIcon } from '@/components/home/ValueIcon'
 import { getHomepageOrigins } from '@/server/actions/catalog.actions'
 import { getHomepageSettings } from '@/server/actions/settings.actions'
 import styles from './page.module.css'
