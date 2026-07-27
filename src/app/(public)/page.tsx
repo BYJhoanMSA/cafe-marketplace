@@ -65,7 +65,7 @@ export default async function HomePage() {
         <div className={styles.heroContent}>
           <div className={styles.heroEyebrow} aria-hidden="true">
             <span className={styles.heroEyebrowLine} />
-            Café de Especialidad
+            Café Artesanal
           </div>
 
           <h1 className={styles.heroTitle} style={{ whiteSpace: 'pre-line' }}>
