@@ -33,10 +33,7 @@ loadEnvFile(path.join(root, '.env.production.local'), true)
 const REQUIRED_SECRETS = [
   'AUTH_SECRET',
   'DATABASE_URL',
-  'STRIPE_SECRET_KEY',
-  'STRIPE_WEBHOOK_SECRET',
   'CLOUDINARY_API_SECRET',
-  'RESEND_API_KEY',
   'CRON_SECRET',
 ]
 const PLACEHOLDER_PATTERNS = ['openssl-rand', 'placeholder', 'pendiente', 'tu-', 'usuario:password']
