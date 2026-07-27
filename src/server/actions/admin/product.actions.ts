@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { prisma } from '@/server/db/client'
 import { requireRole } from '@/server/middleware/auth.middleware'
 import { slugify } from '@/lib/utils'
@@ -267,22 +266,14 @@ export async function deleteProduct(formData: FormData) {
   await requireRole(['admin', 'vendor'])
 
   const id = formData.get('productId') as string
-  if (!id) throw new Error('ID de producto no válido')
+  if (!id) return
 
-  await hardDeleteProduct(id)
-
-  revalidatePath('/admin/productos')
-  invalidateProductsCache()
-  redirect('/admin/productos')
-}
-
-async function hardDeleteProduct(id: string) {
   const product = await prisma.product.findUnique({
     where: { id },
-    include: { images: true, variants: { select: { id: true } } },
+    include: { images: true, lineItems: { take: 1 } }
   })
 
-  if (!product) throw new Error('Producto no encontrado')
+  if (!product) return
 
   for (const image of product.images) {
     const normalized = image.url.replace(/\\/g, '/')
@@ -292,8 +283,8 @@ async function hardDeleteProduct(id: string) {
       if (publicIdMatch) {
         const base = `cafe/${publicIdMatch[1]}`
         await Promise.all([
-          deleteFromCloudinary(base).catch(() => {}),
-          deleteFromCloudinary(`${base}-thumb`).catch(() => {}),
+          deleteFromCloudinary(base),
+          deleteFromCloudinary(`${base}-thumb`),
         ])
       }
     }
@@ -304,33 +295,24 @@ async function hardDeleteProduct(id: string) {
     }
   }
 
-  const variantIds = product.variants.map(v => v.id)
+  const hasOrders = product.lineItems.length > 0
 
-  await prisma.$transaction([
-    prisma.cartItem.deleteMany({ where: { variantId: { in: variantIds } } }),
-    prisma.productImage.deleteMany({ where: { productId: id } }),
-    prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
-    prisma.productCertification.deleteMany({ where: { productId: id } }),
-    prisma.favorite.deleteMany({ where: { productId: id } }),
-    prisma.review.deleteMany({ where: { productId: id } }),
-    prisma.lineItem.deleteMany({ where: { variantId: { in: variantIds } } }),
-    prisma.product.delete({ where: { id } }),
-  ])
-}
-
-export async function deleteAllProducts() {
-  await requireRole(['admin'])
-
-  const products = await prisma.product.findMany({
-    select: { id: true },
-  })
-
-  const ids = products.map(p => p.id)
-  for (const id of ids) {
-    await hardDeleteProduct(id)
+  if (hasOrders) {
+    await prisma.$transaction([
+      prisma.productImage.deleteMany({ where: { productId: id } }),
+      prisma.productFlavorNote.deleteMany({ where: { productId: id } }),
+      prisma.productCertification.deleteMany({ where: { productId: id } }),
+      prisma.favorite.deleteMany({ where: { productId: id } }),
+      prisma.review.deleteMany({ where: { productId: id } }),
+      prisma.product.update({
+        where: { id },
+        data: { deletedAt: new Date() }
+      }),
+    ])
+  } else {
+    await prisma.product.delete({ where: { id } })
   }
 
   revalidatePath('/admin/productos')
   invalidateProductsCache()
-  redirect('/admin/productos')
 }

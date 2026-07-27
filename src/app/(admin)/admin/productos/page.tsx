@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAdminProducts } from '@/server/actions/admin/product.actions'
 import { Badge } from '@/components/ui/Badge'
 import { Plus, Edit2, Trash2 } from 'lucide-react'
-import { deleteProduct, deleteAllProducts } from '@/server/actions/admin/product.actions'
+import { deleteProduct } from '@/server/actions/admin/product.actions'
 
 export const metadata = {
   title: 'Productos | Panel Admin',
@@ -16,44 +16,24 @@ export default async function AdminProductsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-weight-bold)' }}>Productos</h1>
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          <form action={deleteAllProducts}>
-            <button type="submit" style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)',
-              backgroundColor: 'var(--terra-500)',
-              color: 'white',
-              padding: 'var(--space-2) var(--space-4)',
-              borderRadius: 'var(--radius-md)',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: 'var(--font-weight-medium)',
-              fontSize: 'var(--text-sm)',
-            }}>
-              <Trash2 size={16} />
-              Eliminar Todo
-            </button>
-          </form>
-          <Link 
-            href="/admin/productos/nuevo" 
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)',
-              backgroundColor: 'var(--color-interactive)',
-              color: 'var(--color-ink-inverted)',
-              padding: 'var(--space-2) var(--space-4)',
-              borderRadius: 'var(--radius-md)',
-              textDecoration: 'none',
-              fontWeight: 'var(--font-weight-medium)',
-              fontSize: 'var(--text-sm)',
-            }}
-          >
-            <Plus size={16} />
-            Nuevo Producto
-          </Link>
-        </div>
+        <Link 
+          href="/admin/productos/nuevo" 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-2)',
+            backgroundColor: 'var(--color-interactive)',
+            color: 'var(--color-ink-inverted)',
+            padding: 'var(--space-2) var(--space-4)',
+            borderRadius: 'var(--radius-md)',
+            textDecoration: 'none',
+            fontWeight: 'var(--font-weight-medium)',
+            fontSize: 'var(--text-sm)',
+          }}
+        >
+          <Plus size={16} />
+          Nuevo Producto
+        </Link>
       </div>
 
       <div style={{ 

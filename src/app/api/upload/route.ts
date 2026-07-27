@@ -66,48 +66,50 @@ export async function POST(req: NextRequest) {
       .webp({ quality: 70 })
       .toBuffer()
 
-    let result: { url: string; thumbUrl: string; width: number; height: number }
+    let url: string
+    let thumbUrl: string
+    let width: number
+    let height: number
 
-    async function saveLocally() {
+    if (cloudinaryConfigured) {
+      const publicId = generatePublicId(type)
+      const thumbPublicId = `${publicId}-thumb`
+
+      const [mainResult, thumbResult] = await Promise.all([
+        uploadToCloudinary(optimizedBuffer, publicId),
+        uploadToCloudinary(thumbBuffer, thumbPublicId),
+      ])
+
+      url = mainResult.url.replace('/upload/', '/upload/f_auto,q_auto/')
+      thumbUrl = thumbResult.url.replace('/upload/', '/upload/f_auto,q_auto/')
+      width = mainResult.width
+      height = mainResult.height
+    } else {
       const timestamp = Date.now()
       const randomSuffix = Math.random().toString(36).substring(2, 8)
       const fileName = `${type}-${timestamp}-${randomSuffix}.webp`
       const thumbFileName = `${type}-${timestamp}-${randomSuffix}-thumb.webp`
+
       const uploadDir = join(process.cwd(), 'public', 'uploads', type)
       await mkdir(uploadDir, { recursive: true })
       await writeFile(join(uploadDir, fileName), optimizedBuffer)
       await writeFile(join(uploadDir, thumbFileName), thumbBuffer)
+
+      url = `/uploads/${type}/${fileName}`
+      thumbUrl = `/uploads/${type}/${thumbFileName}`
+
       const metadata = await sharp(optimizedBuffer).metadata()
-      return {
-        url: `/uploads/${type}/${fileName}`,
-        thumbUrl: `/uploads/${type}/${thumbFileName}`,
-        width: metadata.width || 0,
-        height: metadata.height || 0,
-      }
+      width = metadata.width || 0
+      height = metadata.height || 0
     }
 
-    if (cloudinaryConfigured) {
-      try {
-        const publicId = generatePublicId(type)
-        const thumbPublicId = `${publicId}-thumb`
-        const [mainResult, thumbResult] = await Promise.all([
-          uploadToCloudinary(optimizedBuffer, publicId),
-          uploadToCloudinary(thumbBuffer, thumbPublicId),
-        ])
-        result = {
-          url: mainResult.url.replace('/upload/', '/upload/f_auto,q_auto/'),
-          thumbUrl: thumbResult.url.replace('/upload/', '/upload/f_auto,q_auto/'),
-          width: mainResult.width,
-          height: mainResult.height,
-        }
-      } catch {
-        result = await saveLocally()
-      }
-    } else {
-      result = await saveLocally()
-    }
-
-    return NextResponse.json({ success: true, ...result })
+    return NextResponse.json({
+      success: true,
+      url,
+      thumbUrl,
+      width,
+      height,
+    })
   } catch (error: any) {
     console.error('[UPLOAD] Error:', error)
     return NextResponse.json({ error: 'Error al procesar la imagen' }, { status: 500 })
