@@ -9,7 +9,7 @@ export const metadata = {
 }
 
 export default async function AdminVendorsPage() {
-  const vendors = await getAdminVendors()
+  const { vendors } = await getAdminVendors()
 
   return (
     <div>

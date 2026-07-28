@@ -10,7 +10,7 @@ export const metadata = {
 }
 
 export default async function AdminInventoryPage() {
-  const variants = await getVariants()
+  const { variants } = await getVariants()
 
   return (
     <div>

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { OriginCard } from '@/components/home/OriginCard'
 import { ValueIcon } from '@/components/home/ValueIcon'
 import { getHomepageOrigins } from '@/server/actions/catalog.actions'
-import { getHomepageSettings } from '@/server/actions/settings.actions'
+import type { HomepageFeature } from '@/server/actions/settings.actions'
 import styles from './page.module.css'
 
 export async function HomepageOrigins() {
@@ -34,12 +34,10 @@ export async function HomepageOrigins() {
   )
 }
 
-export async function HomepageValues() {
-  const config = await getHomepageSettings()
-
+export async function HomepageValues({ features }: { features: HomepageFeature[] }) {
   return (
     <div className={styles.valueGrid}>
-      {config.features.map((value) => (
+      {features.map((value) => (
         <div key={value.title} className={styles.valueCard}>
           <span className={styles.valueIcon} aria-hidden="true">
             <ValueIcon icon={value.icon} />

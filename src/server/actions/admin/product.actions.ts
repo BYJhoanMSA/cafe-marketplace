@@ -8,7 +8,7 @@ import { unlink } from 'fs/promises'
 import { join } from 'path'
 import { deleteFromCloudinary, cloudinaryConfigured } from '@/lib/cloudinary'
 import { z } from 'zod'
-import { invalidateProductsCache } from '@/server/actions/catalog.actions'
+import { invalidateProductsCache, invalidateProductCache } from '@/server/actions/catalog.actions'
 
 const ProductSchema = z.object({
   title: z.string().min(1).max(255),
@@ -238,6 +238,7 @@ export async function updateProduct(id: string, data: any) {
     revalidatePath('/catalogo')
     revalidatePath('/')
     invalidateProductsCache()
+    if (product.slug) invalidateProductCache(product.slug)
     return { success: true, product }
   } catch (error: any) {
     console.error('Error updating product:', error)

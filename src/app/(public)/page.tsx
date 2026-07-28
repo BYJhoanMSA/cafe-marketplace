@@ -31,21 +31,27 @@ export const revalidate = 3600
 // ================================================================
 // Página
 // ================================================================
-async function getProductCount(where: Record<string, unknown>): Promise<number | null> {
+async function getProductCounts(): Promise<{ total: number | null; organic: number | null }> {
   try {
-    return await prisma.product.count({ where: where as any })
+    const [total, organic] = await Promise.all([
+      prisma.product.count({ where: { status: 'active', deletedAt: null } }),
+      prisma.product.count({ where: { status: 'active', deletedAt: null, isOrganic: true } }),
+    ])
+    return { total, organic }
   } catch {
-    return null
+    return { total: null, organic: null }
   }
 }
 
 export default async function HomePage() {
-  const [config, allProducts, totalProducts, organicProducts] = await Promise.all([
+  const [config, allProducts, counts] = await Promise.all([
     getHomepageSettings(),
     getActiveProducts(),
-    getProductCount({ status: 'active', deletedAt: null }),
-    getProductCount({ status: 'active', deletedAt: null, isOrganic: true }),
+    getProductCounts(),
   ])
+
+  const { total: totalProducts, organic: organicProducts } = counts
+  const features = config.features
 
   const featuredProducts = allProducts.slice(0, 4)
 
@@ -225,7 +231,7 @@ export default async function HomePage() {
               ))}
             </div>
           }>
-            <HomepageValues />
+            <HomepageValues features={features} />
           </Suspense>
         </div>
       </section>

@@ -4,22 +4,25 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
 import { requireRole } from '@/server/middleware/auth.middleware'
 
-export async function getAdminOrders() {
+export async function getAdminOrders(page = 1, limit = 50) {
   await requireRole(['admin', 'vendor'])
 
-  const orders = await prisma.order.findMany({
-    orderBy: {
-      createdAt: 'desc'
-    },
-    include: {
-      user: {
-        select: { email: true, firstName: true, lastName: true }
-      },
-      lineItems: true
-    }
-  })
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        user: {
+          select: { email: true, firstName: true, lastName: true }
+        },
+        lineItems: true
+      }
+    }),
+    prisma.order.count()
+  ])
 
-  return orders
+  return { orders, total, page, limit }
 }
 
 export async function getAdminOrderById(id: string) {

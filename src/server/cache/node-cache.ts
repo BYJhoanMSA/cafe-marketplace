@@ -15,7 +15,8 @@
 import NodeCache from 'node-cache'
 
 // TTL por defecto: 5 minutos. checkperiod: limpia keys expiradas cada 120s
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 120 })
+// maxKeys: evita fugas de memoria con búsquedas únicas infinitas
+const cache = new NodeCache({ stdTTL: 300, checkperiod: 120, maxKeys: 500 })
 
 export type CacheTTL = 60 | 300 | 600 | 1800 | 3600
 

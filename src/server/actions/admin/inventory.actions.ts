@@ -4,28 +4,31 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
 import { requireRole } from '@/server/middleware/auth.middleware'
 
-export async function getVariants() {
+export async function getVariants(page = 1, limit = 50) {
   await requireRole(['admin', 'vendor'])
 
-  const variants = await prisma.variant.findMany({
-    include: {
-      product: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          vendor: {
-            select: { storeName: true }
+  const [variants, total] = await Promise.all([
+    prisma.variant.findMany({
+      include: {
+        product: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            vendor: {
+              select: { storeName: true }
+            }
           }
         }
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.variant.count()
+  ])
 
-  return variants
+  return { variants, total, page, limit }
 }
 
 export async function getProductsForSelect() {

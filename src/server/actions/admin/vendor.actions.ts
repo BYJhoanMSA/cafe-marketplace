@@ -16,24 +16,25 @@ const VendorSchema = z.object({
   status: z.string().max(20).default('active'),
 })
 
-export async function getAdminVendors() {
+export async function getAdminVendors(page = 1, limit = 50) {
   await requireRole(['admin', 'vendor'])
 
-  const vendors = await prisma.vendor.findMany({
-    where: {
-      deletedAt: null,
-    },
-    orderBy: {
-      createdAt: 'desc'
-    },
-    include: {
-      user: {
-        select: { email: true, firstName: true, lastName: true }
+  const [vendors, total] = await Promise.all([
+    prisma.vendor.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        user: {
+          select: { email: true, firstName: true, lastName: true }
+        }
       }
-    }
-  })
+    }),
+    prisma.vendor.count({ where: { deletedAt: null } })
+  ])
 
-  return vendors
+  return { vendors, total, page, limit }
 }
 
 export async function createVendor(data: z.infer<typeof VendorSchema>) {

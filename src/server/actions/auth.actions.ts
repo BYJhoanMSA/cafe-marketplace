@@ -1,6 +1,5 @@
 'use server'
 
-import { AuthError } from 'next-auth'
 import bcrypt from 'bcryptjs'
 import { signIn } from '@/lib/auth'
 import { prisma } from '@/server/db/client'
