@@ -31,9 +31,9 @@ export const revalidate = 3600
 // ================================================================
 // Página
 // ================================================================
-async function getProductCount(where: Parameters<typeof prisma.product.count>[0]['where']): Promise<number | null> {
+async function getProductCount(where: Record<string, unknown>): Promise<number | null> {
   try {
-    return await prisma.product.count({ where })
+    return await prisma.product.count({ where: where as any })
   } catch {
     return null
   }
