@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { ProductCard, ProductCardSkeleton } from '@/components/product/ProductCard'
 import { OriginCard } from '@/components/home/OriginCard'
 import { Suspense } from 'react'
+import { prisma } from '@/server/db/client'
 import { getHomepageSettings } from '@/server/actions/settings.actions'
 import { getActiveProducts } from '@/server/actions/catalog.actions'
 import { PillBarWrapper } from '@/components/ui/PillSelector/PillBarWrapper'
@@ -30,10 +31,20 @@ export const revalidate = 3600
 // ================================================================
 // Página
 // ================================================================
+async function getProductCount(where: Parameters<typeof prisma.product.count>[0]['where']): Promise<number | null> {
+  try {
+    return await prisma.product.count({ where })
+  } catch {
+    return null
+  }
+}
+
 export default async function HomePage() {
-  const [config, allProducts] = await Promise.all([
+  const [config, allProducts, totalProducts, organicProducts] = await Promise.all([
     getHomepageSettings(),
     getActiveProducts(),
+    getProductCount({ status: 'active', deletedAt: null }),
+    getProductCount({ status: 'active', deletedAt: null, isOrganic: true }),
   ])
 
   const featuredProducts = allProducts.slice(0, 4)
@@ -77,26 +88,24 @@ export default async function HomePage() {
           </p>
 
           <div className={styles.heroActions}>
-            <Link href="/catalogo" className={styles.heroCTA}>
+            <Link href="/catalogo" className={styles.heroCTASecondary}>
               Explorar catálogo →
             </Link>
-            <Link href="/catalogo" className={styles.heroCTASecondary}>
-              Ver selecciones →
+            <Link href="/nosotros" className={styles.heroCTASecondary}>
+              Nosotros →
             </Link>
           </div>
 
           {/* Stats */}
           <div className={styles.heroStats} role="list" aria-label="Estadísticas">
-            {[
-              { number: '200+', label: 'Orígenes' },
-              { number: '40+', label: 'Tostadores' },
-              { number: '80+', label: 'Score SCA mín.' },
-            ].map((stat) => (
-              <div key={stat.label} className={styles.heroStat} role="listitem">
-                <span className={styles.heroStatNumber}>{stat.number}</span>
-                <span className={styles.heroStatLabel}>{stat.label}</span>
-              </div>
-            ))}
+            <div className={styles.heroStat} role="listitem">
+              <span className={styles.heroStatNumber}>{totalProducts ?? '--'}</span>
+              <span className={styles.heroStatLabel}>Cafés disponibles</span>
+            </div>
+            <div className={styles.heroStat} role="listitem">
+              <span className={styles.heroStatNumber}>{organicProducts ?? '--'}</span>
+              <span className={styles.heroStatLabel}>Orgánicos certificados</span>
+            </div>
           </div>
         </div>
       </section>

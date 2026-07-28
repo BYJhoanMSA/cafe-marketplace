@@ -19,8 +19,8 @@ export type HomepageConfig = {
 }
 
 const DEFAULT_HOMEPAGE_CONFIG: HomepageConfig = {
-  heroTitle: 'Del origen a tu taza,\nsin compromisos',
-  heroSubtitle: 'Más de 200 cafés con puntuación SCA verificada, de tostadores artesanales en Colombia, Etiopía, Guatemala y más.',
+  heroTitle: 'El café que merece ser descubierto',
+  heroSubtitle: 'Cafés de especialidad seleccionados por su origen, proceso y carácter. Cada lote cuenta una historia; cada taza revela el trabajo de quienes la hicieron posible.',
   heroImageUrl: 'https://res.cloudinary.com/dcrsncau/image/upload/v1785135217/IMG_20210818_173210_buf4ch.jpg',
   heroImageUrlMobile: 'https://res.cloudinary.com/dcrsncau/image/upload/v1785135116/IMG_20210819_173755_pbtlxp.jpg',
   features: [

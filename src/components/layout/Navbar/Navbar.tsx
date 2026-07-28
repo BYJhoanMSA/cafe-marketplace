@@ -63,6 +63,7 @@ function useTheme() {
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
   { href: '/envio', label: 'Envío' },
+  { href: '/nosotros', label: 'Nosotros' },
   { href: '/pqr', label: 'Centro de Ayuda' },
 ]
 
