@@ -12,31 +12,43 @@ interface MobileFeedProps {
   onAddToCart?: (productId: string) => void
 }
 
+/** Tiempo sin scroll para considerar que el usuario se detuvo en un producto */
+const SETTLE_DELAY_MS = 400
+
 export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [settled, setSettled] = useState(true)
+  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Scroll handler — calcula el slide activo por posición (sin IntersectionObserver)
+  // Scroll handler — calcula el slide activo y marca cuándo el usuario se detiene
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    const updateActiveIndex = () => {
+    const handleScroll = () => {
       const step = container.clientHeight
       if (step <= 0) return
       const index = Math.round(container.scrollTop / step)
       setActiveIndex(Math.min(Math.max(index, 0), products.length - 1))
+
+      setSettled(false)
+      if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
+      settleTimerRef.current = setTimeout(() => setSettled(true), SETTLE_DELAY_MS)
     }
 
-    updateActiveIndex()
-    container.addEventListener('scroll', updateActiveIndex, { passive: true })
-    return () => container.removeEventListener('scroll', updateActiveIndex)
+    handleScroll()
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+      if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
+    }
   }, [products.length])
 
-  // Precargar la portada de los slides vecinos para transiciones instantáneas
+  // Precargar la portada a alta calidad de los slides vecinos para el upgrade instantáneo
   useEffect(() => {
     const preload = (product: ProductCardData) => {
-      const src = getImageUrl(product.imageUrl, { width: 500 })
+      const src = getImageUrl(product.imageUrl, { width: 1000 })
       const img = new Image()
       img.src = src
     }
@@ -62,6 +74,7 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
             <MobileFeedSlide 
               product={product} 
               isActive={realIndex === activeIndex}
+              settled={settled}
               onAddToCart={onAddToCart}
             />
           </div>

@@ -16,12 +16,13 @@ import styles from './MobileFeed.module.css'
 interface MobileFeedSlideProps {
   product: ProductCardData
   isActive: boolean
+  settled: boolean
   onAddToCart?: (productId: string) => void
 }
 
 const SWIPE_THRESHOLD = 60
 
-export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSlideProps) {
+export function MobileFeedSlide({ product, isActive, settled, onAddToCart }: MobileFeedSlideProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
@@ -32,6 +33,8 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   const isFavorited = isFavorite(product.id)
 
   const images: string[] = product.images?.length ? product.images : [product.imageUrl]
+
+  const showHighQuality = isActive && settled
 
   const [activeImageIndex, setActiveImageIndex] = useState(0)
 
@@ -184,12 +187,12 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {isActive ? (
+        {showHighQuality ? (
           <div className={styles.imageStrip} ref={stripRef}>
             {images.map((img, idx) => (
               <div key={idx} className={styles.imageStripItem}>
                 <Image
-                  src={getImageUrl(img, { width: 500 })}
+                  src={getImageUrl(img, { width: 1000 })}
                   alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
                   fill
                   priority={idx === 0}
@@ -203,7 +206,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
           </div>
         ) : (
           <Image
-            src={getImageUrl(product.imageUrl, { width: 300 })}
+            src={getImageUrl(product.imageUrl, { width: 200 })}
             alt={product.imageAlt}
             fill
             className={styles.image}
@@ -213,7 +216,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
           />
         )}
 
-        {isActive && images.length > 1 && (
+        {showHighQuality && images.length > 1 && (
           <>
             {activeImageIndex > 0 && (
               <button
@@ -239,7 +242,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         <div className={styles.overlayBottom} />
       </div>
 
-      {isActive && images.length > 1 && (
+      {showHighQuality && images.length > 1 && (
         <div className={styles.imageDots}>
           {images.map((_, idx) => (
             <button
