@@ -4,8 +4,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
-import { Star, Heart, Share2, ArrowLeft, ShoppingCart } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Star, Heart, Share2, ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice } from '@/lib/utils'
@@ -14,7 +13,7 @@ import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
-import { EscudoDatos } from '@/components/product/EscudoDatos'
+import { EscudoDatos, CartaTostador, EscudoCompra } from '@/components/product/EscudoDatos'
 import styles from './page.module.css'
 
 const FALLBACK_PRODUCT = {
@@ -292,14 +291,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
 
-        <p className={styles.description}>{product.description}</p>
-        
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {product.flavorNotes.map((note: string) => (
-            <Badge key={note} variant="default">{note}</Badge>
-          ))}
-        </div>
-
         {/* ============================================================
             ESCUDO DE DATOS — VERSIÓN PREVIEW (reversible)
             Replica de styledk/producto.html. Para revertir: eliminar
@@ -331,84 +322,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           ]}
         />
 
-        {/* SECCIÓN DE COMPRA */}
+        {/* CARTA DEL TOSTADOR — VERSIÓN PREVIEW (reversible) */}
+        <CartaTostador text={product.description} roaster={product.vendor.name} />
+
+        {/* SECCIÓN DE COMPRA — VERSIÓN PREVIEW (reversible) */}
         {selectedVariant && selectedGrind && (
-        <div className={styles.buySection}>
-          {/* Tamaño */}
-          <div className={styles.variantGroup}>
-            <span className={styles.variantLabel}>Tamaño</span>
-            <div className={styles.variantOptions}>
-              {product.sizeOptions.map((s: any) => (
-                <button
-                  key={s.value}
-                  className={`${styles.variantOption} ${String(selectedVariant.weightGrams ?? '0') === s.value ? styles.active : ''}`}
-                  onClick={() => handleSelectSize(s.value)}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Molienda */}
-          <div className={styles.variantGroup}>
-            <span className={styles.variantLabel}>Tipo de molienda</span>
-            <div className={styles.variantOptions}>
-              {product.grindOptions.map((g: any) => (
-                <button
-                  key={g.id}
-                  className={`${styles.variantOption} ${selectedGrind.id === g.id ? styles.active : ''}`}
-                  onClick={() => handleSelectGrind(g.id)}
-                >
-                  {g.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Acciones */}
-          <div className={styles.actions}>
-            <div className={styles.quantitySelector}>
-              <button 
-                className={styles.quantityBtn} 
-                onClick={() => handleQuantityChange(-1)}
-                disabled={quantity <= 1}
-                aria-label="Disminuir cantidad"
-              >
-                -
-              </button>
-              <input 
-                type="number" 
-                value={quantity} 
-                readOnly 
-                className={styles.quantityInput} 
-                aria-label="Cantidad"
-              />
-              <button 
-                className={styles.quantityBtn} 
-                onClick={() => handleQuantityChange(1)}
-                disabled={quantity >= 10}
-                aria-label="Aumentar cantidad"
-              >
-                +
-              </button>
-            </div>
-            
-            <Button size="full" style={{ flex: 1 }} onClick={handleAddToCart}>
-              <ShoppingCart size={18} className={styles.cartIcon} aria-hidden="true" />
-              <span className={styles.cartLabel}>Agregar al carrito</span>
-            </Button>
-            
-            <Button 
-              variant="secondary" 
-              size="icon" 
-              onClick={handleToggleFavorite}
-              aria-label={isFavorited ? "Quitar de favoritos" : "Añadir a favoritos"}
-            >
-              <Heart fill={isFavorited ? 'var(--terra-500)' : 'none'} color={isFavorited ? 'var(--terra-500)' : 'currentColor'} />
-            </Button>
-          </div>
-        </div>
+          <EscudoCompra
+            sizes={product.sizeOptions}
+            grinds={product.grindOptions}
+            selectedSizeValue={selectedVariant?.sizeValue}
+            selectedGrindId={selectedGrind?.id}
+            quantity={quantity}
+            isFavorited={isFavorited}
+            onSelectSize={handleSelectSize}
+            onSelectGrind={handleSelectGrind}
+            onQuantityChange={handleQuantityChange}
+            onAddToCart={handleAddToCart}
+            onToggleFavorite={handleToggleFavorite}
+          />
         )}
 
         {/* CARACTERÍSTICAS */}

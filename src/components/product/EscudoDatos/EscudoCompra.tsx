@@ -1,0 +1,167 @@
+'use client'
+
+// src/components/product/EscudoDatos/EscudoCompra.tsx
+// VERSIÓN PREVIEW (reversible) — Escudo de compra replicado de styledk/producto.html:
+// tondos de cata para tamaños y moliendas + reserva (cantidad y botón dorado).
+
+import { Heart } from 'lucide-react'
+import styles from './EscudoDatos.module.css'
+
+export interface EscudoSizeOption {
+  value: string
+  label: string
+  weightGrams: number | null
+  price: number
+}
+
+export interface EscudoGrindOption {
+  id: string
+  label: string
+}
+
+interface EscudoCompraProps {
+  sizes: EscudoSizeOption[]
+  grinds: EscudoGrindOption[]
+  selectedSizeValue?: string
+  selectedGrindId?: string
+  quantity: number
+  isFavorited?: boolean
+  onSelectSize: (value: string) => void
+  onSelectGrind: (id: string) => void
+  onQuantityChange: (delta: number) => void
+  onAddToCart: () => void
+  onToggleFavorite?: () => void
+}
+
+function BeanGlyph({ double = false, size = 26 }: { double?: boolean; size?: number }) {
+  return double ? (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 56 34"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      strokeLinecap="round"
+      className={styles.tondoGlyph}
+      aria-hidden="true"
+    >
+      <ellipse cx="14" cy="17" rx="10" ry="13" />
+      <path d="M14 5 Q9 16 14 29" />
+      <ellipse cx="42" cy="17" rx="10" ry="13" />
+      <path d="M42 5 Q37 16 42 29" />
+    </svg>
+  ) : (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 28 34"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      className={styles.tondoGlyph}
+      aria-hidden="true"
+    >
+      <ellipse cx="14" cy="17" rx="10" ry="13" />
+      <path d="M14 5 Q9 16 14 29" />
+    </svg>
+  )
+}
+
+export function EscudoCompra({
+  sizes,
+  grinds,
+  selectedSizeValue,
+  selectedGrindId,
+  quantity,
+  isFavorited,
+  onSelectSize,
+  onSelectGrind,
+  onQuantityChange,
+  onAddToCart,
+  onToggleFavorite,
+}: EscudoCompraProps) {
+  return (
+    <div className={styles.escudoCompra}>
+      {/* Fila 1 — Tamaños */}
+      <div className={styles.tondosRow}>
+        {sizes.map((s) => (
+          <button
+            key={s.value}
+            type="button"
+            className={`${styles.tondo} ${selectedSizeValue === s.value ? styles.tondoActive : ''}`}
+            onClick={() => onSelectSize(s.value)}
+            aria-pressed={selectedSizeValue === s.value}
+          >
+            <BeanGlyph />
+            <strong>{s.label}</strong>
+            <span>{s.weightGrams ? `${s.weightGrams} g` : ''}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Fila 2 — Moliendas */}
+      <div className={styles.tondosRow}>
+        {grinds.map((g) => (
+          <button
+            key={g.id}
+            type="button"
+            className={`${styles.tondo} ${selectedGrindId === g.id ? styles.tondoActive : ''}`}
+            onClick={() => onSelectGrind(g.id)}
+            aria-pressed={selectedGrindId === g.id}
+          >
+            <BeanGlyph double />
+            <strong>{g.label}</strong>
+          </button>
+        ))}
+      </div>
+
+      {/* Reserva — cantidad + botón */}
+      <div className={styles.reserva}>
+        <div className={styles.reservaField}>
+          <label htmlFor="cantidad-obra">Cantidad</label>
+          <div className={styles.reservaCantidad} id="cantidad-obra">
+            <button
+              type="button"
+              onClick={() => onQuantityChange(-1)}
+              disabled={quantity <= 1}
+              aria-label="Disminuir cantidad"
+            >
+              −
+            </button>
+            <span>{quantity}</span>
+            <button
+              type="button"
+              onClick={() => onQuantityChange(1)}
+              disabled={quantity >= 10}
+              aria-label="Aumentar cantidad"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <button type="button" className={styles.reservaBtn} onClick={onAddToCart}>
+          Agregar al carrito
+        </button>
+
+        {onToggleFavorite && (
+          <button
+            type="button"
+            className={styles.favoriteBtn}
+            onClick={onToggleFavorite}
+            aria-label={isFavorited ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            aria-pressed={isFavorited}
+          >
+            <Heart
+              size={18}
+              fill={isFavorited ? 'var(--terra-500)' : 'none'}
+              color={isFavorited ? 'var(--terra-500)' : 'currentColor'}
+            />
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}

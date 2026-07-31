@@ -1,24 +1,34 @@
 /* =====================================================================
    ESCUDO DE DATOS — replicado de styledk/producto.html (Casa del Cafeto)
-   Placa heráldica de pergamino con los datos del café.
-   Paleta y tipografía idénticas a la maqueta original.
+   Placa heráldica con los datos del café.
+   Tipografía de la maqueta (Cinzel / EB Garamond), colores del proyecto.
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+.escudoDatos,
+.escudoCompra {
+  margin-top: 1.6rem;
+  padding: 1.6rem 1.8rem;
+  background: linear-gradient(
+    115deg,
+    var(--neutral-0),
+    var(--neutral-50) 45%,
+    var(--neutral-100) 55%,
+    var(--neutral-200)
+  );
+  border: 1px solid var(--color-border-default);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--neutral-0) 70%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-0) 28%, transparent),
+    inset 0 0 0 5px color-mix(in srgb, var(--gold-700) 35%, transparent),
+    var(--shadow-lg);
+}
 
 .escudoDatos {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 2.4rem;
-  margin-top: 1.6rem;
-  padding: 1.6rem 1.8rem;
-  background: linear-gradient(115deg, #f3ecdc, #e6dcc6 45%, #f6f0e2 55%, #e3d9c2);
-  border: 1px solid rgba(36, 31, 24, 0.22);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
-    inset 0 0 0 4px rgba(255, 255, 255, 0.28),
-    inset 0 0 0 5px rgba(138, 103, 39, 0.35),
-    0 22px 44px -24px rgba(30, 24, 16, 0.3);
 }
 
 .escudoDatos dt {
@@ -26,7 +36,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: #8a6727;
+  color: var(--gold-900);
   padding-bottom: 0.45rem;
 }
 
@@ -34,8 +44,8 @@
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 1rem;
   line-height: 1.5;
-  color: #3a2a1e;
-  border-bottom: 1px solid rgba(138, 103, 39, 0.18);
+  color: var(--neutral-800);
+  border-bottom: 1px solid color-mix(in srgb, var(--gold-700) 18%, transparent);
   padding-bottom: 0.9rem;
   margin-bottom: 0.9rem;
 }
@@ -49,5 +59,235 @@
 @media (max-width: 640px) {
   .escudoDatos {
     grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================================
+   CARTA DEL TOSTADOR — replicada de styledk/producto.html (Casa del Cafeto)
+   Placa de bronce/pergamino que presenta la descripción del café.
+   Tipografía de la maqueta (Libre Baskerville / Cinzel), colores del proyecto.
+   ===================================================================== */
+
+.carta {
+  position: relative;
+  margin-top: 1.9rem;
+  padding: 1.6rem 1.9rem 1.4rem;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  line-height: 1.85;
+  color: var(--neutral-800);
+  background: linear-gradient(180deg, var(--neutral-100), var(--neutral-200));
+  border: 1px solid var(--color-border-default);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--neutral-0) 55%, transparent),
+    inset 0 0 0 5px color-mix(in srgb, var(--neutral-0) 18%, transparent),
+    inset 0 0 0 6px color-mix(in srgb, var(--gold-700) 40%, transparent),
+    var(--shadow-lg);
+}
+
+.carta p {
+  margin: 0;
+}
+
+.carta footer {
+  margin-top: 1rem;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-style: normal;
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold-900);
+}
+
+/* =====================================================================
+   ESCUDO DE COMPRA — tondos de cata + reserva (styledk/producto.html)
+   Fila 1: tamaños · Fila 2: moliendas · Reserva: cantidad + botón.
+   Tipografía de la maqueta, colores del proyecto.
+   ===================================================================== */
+
+.escudoCompra {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.tondosRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: clamp(0.9rem, 2vw, 1.2rem);
+}
+
+.tondo {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 50%;
+  border: 3px double var(--gold-700);
+  background: radial-gradient(circle at 32% 26%, var(--neutral-0), var(--neutral-200));
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
+    0 14px 26px -16px var(--shadow-lg);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.tondo:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
+    0 20px 34px -18px var(--shadow-xl);
+}
+
+.tondoActive,
+.tondo:focus-visible {
+  border-color: var(--gold-500);
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
+    0 0 0 2px var(--gold-500),
+    0 14px 26px -16px var(--shadow-lg);
+}
+
+.tondoGlyph {
+  color: var(--gold-700);
+}
+
+.tondo strong {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--neutral-800);
+}
+
+.tondo span {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.74rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--gold-900);
+}
+
+/* --- Reserva: cantidad + botón dorado --- */
+.reserva {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.1rem;
+  margin-top: 0.6rem;
+}
+
+.reservaField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.reservaField label {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold-900);
+}
+
+.reservaCantidad {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 150px;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  color: var(--neutral-0);
+  background: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
+  border: 1px solid color-mix(in srgb, var(--gold-700) 50%, transparent);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.reservaCantidad button {
+  background: none;
+  border: none;
+  color: var(--gold-300);
+  font-size: 1.2rem;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+}
+
+.reservaCantidad button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.reservaCantidad span {
+  flex: 1;
+  text-align: center;
+}
+
+.reservaBtn {
+  display: inline-block;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--neutral-0);
+  padding: 1rem 2.3rem 0.9rem;
+  background: linear-gradient(180deg, var(--gold-500) 0%, var(--gold-700) 100%);
+  border: 1px solid rgba(36, 31, 24, 0.6);
+  border-radius: 2px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 3px 0 var(--gold-900),
+    0 16px 30px -10px rgba(24, 18, 11, 0.45);
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+
+.reservaBtn:hover {
+  transform: translateY(2px);
+  filter: brightness(1.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 1px 0 var(--gold-900),
+    0 22px 38px -12px rgba(24, 18, 11, 0.45);
+}
+
+.favoriteBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.1rem;
+  color: var(--terra-500);
+  background: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
+  border: 1px solid color-mix(in srgb, var(--gold-700) 50%, transparent);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 0 rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .reserva {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reservaBtn {
+    text-align: center;
   }
 }
