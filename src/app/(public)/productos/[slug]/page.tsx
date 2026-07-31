@@ -14,6 +14,7 @@ import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
+import { EscudoDatos } from '@/components/product/EscudoDatos'
 import styles from './page.module.css'
 
 const FALLBACK_PRODUCT = {
@@ -298,6 +299,37 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             <Badge key={note} variant="default">{note}</Badge>
           ))}
         </div>
+
+        {/* ============================================================
+            ESCUDO DE DATOS — VERSIÓN PREVIEW (reversible)
+            Replica de styledk/producto.html. Para revertir: eliminar
+            este bloque y borrar src/components/product/EscudoDatos.
+            ============================================================ */}
+        <EscudoDatos
+          data={[
+            {
+              label: 'Origen',
+              value: `${product.origin.country}${product.origin.region ? `, ${product.origin.region}` : ''}`,
+            },
+            ...(product.origin.farm ? [{ label: 'Finca', value: product.origin.farm }] : []),
+            { label: 'Variedad', value: product.variety },
+            { label: 'Elevación', value: product.elevation },
+            { label: 'Proceso', value: product.process },
+            {
+              label: 'Tueste',
+              value:
+                product.roastLevel === 'light'
+                  ? 'Ligero'
+                  : product.roastLevel === 'medium'
+                    ? 'Medio'
+                    : 'Oscuro',
+            },
+            ...(product.cuppingScore
+              ? [{ label: 'Puntuación', value: `${product.cuppingScore} puntos SCA` }]
+              : []),
+            { label: 'Notas', value: product.flavorNotes.join(', ') },
+          ]}
+        />
 
         {/* SECCIÓN DE COMPRA */}
         {selectedVariant && selectedGrind && (

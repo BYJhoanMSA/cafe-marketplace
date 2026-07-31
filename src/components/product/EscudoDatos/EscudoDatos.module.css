@@ -1,0 +1,53 @@
+/* =====================================================================
+   ESCUDO DE DATOS — replicado de styledk/producto.html (Casa del Cafeto)
+   Placa heráldica de pergamino con los datos del café.
+   Paleta y tipografía idénticas a la maqueta original.
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+
+.escudoDatos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2.4rem;
+  margin-top: 1.6rem;
+  padding: 1.6rem 1.8rem;
+  background: linear-gradient(115deg, #f3ecdc, #e6dcc6 45%, #f6f0e2 55%, #e3d9c2);
+  border: 1px solid rgba(36, 31, 24, 0.22);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.28),
+    inset 0 0 0 5px rgba(138, 103, 39, 0.35),
+    0 22px 44px -24px rgba(30, 24, 16, 0.3);
+}
+
+.escudoDatos dt {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #8a6727;
+  padding-bottom: 0.45rem;
+}
+
+.escudoDatos dd {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #3a2a1e;
+  border-bottom: 1px solid rgba(138, 103, 39, 0.18);
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.escudoDatos div:last-child dd {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .escudoDatos {
+    grid-template-columns: 1fr;
+  }
+}
