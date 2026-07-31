@@ -6,7 +6,7 @@ module.exports = {
       cwd: './',
       exec_mode: 'fork',
       instances: 1,
-      max_memory_restart: '400M',
+      max_memory_restart: '800M',
       env: {
         NODE_ENV: 'production',
         PORT: 3000,

@@ -1,19 +1,16 @@
 // src/app/(public)/page.tsx
 // Homepage — Server Component
-// Estructura: Hero → Filtros → Destacados → Orígenes → Valores → Perfil de Sabor
+// El shell (nav, headers y secciones estáticas) se renderiza al instante.
+// Las secciones que consultan la BD viven en Suspense y llegan por streaming,
+// evitando la pantalla blanca cuando la BD tarda o falla.
 
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
-import { ProductCard, ProductCardSkeleton } from '@/components/product/ProductCard'
-import { OriginCard } from '@/components/home/OriginCard'
+import { ProductCardSkeleton } from '@/components/product/ProductCard'
 import { Suspense } from 'react'
-import { prisma } from '@/server/db/client'
-import { getHomepageSettings } from '@/server/actions/settings.actions'
-import { getActiveProducts } from '@/server/actions/catalog.actions'
 import { PillBarWrapper } from '@/components/ui/PillSelector/PillBarWrapper'
 import { FLAVOR_ITEMS } from '@/components/ui/PillSelector/PillSelector.data'
-import { HomepageOrigins, HomepageValues } from './HomepageLazy'
+import { HomeHero, FeaturedProducts, HomepageOrigins, HomepageValues } from './HomepageLazy'
 import styles from './page.module.css'
 
 // ================================================================
@@ -29,92 +26,66 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 // ================================================================
-// Página
+// Fallbacks (skeletons) — mismo layout que el contenido real para evitar CLS
 // ================================================================
-async function getProductCounts(): Promise<{ total: number | null; organic: number | null }> {
-  try {
-    const [total, organic] = await Promise.all([
-      prisma.product.count({ where: { status: 'active', deletedAt: null } }),
-      prisma.product.count({ where: { status: 'active', deletedAt: null, isOrganic: true } }),
-    ])
-    return { total, organic }
-  } catch {
-    return { total: null, organic: null }
-  }
+function HomeHeroFallback() {
+  return (
+    <section className={styles.hero} aria-label="Cargando bienvenida" aria-busy="true">
+      <div className={styles.heroBackground} style={{ backgroundColor: 'var(--neutral-800)' }} />
+      <div className={styles.heroOverlay} aria-hidden="true" />
+      <div className={styles.heroContent}>
+        <div className="skeleton" style={{ height: 12, width: 180 }} />
+        <div className="skeleton" style={{ height: 56, width: 'min(85%, 640px)' }} />
+        <div className="skeleton" style={{ height: 40, width: 'min(75%, 560px)' }} />
+        <div className="skeleton" style={{ height: 40, width: 'min(90%, 700px)' }} />
+        <div className="skeleton" style={{ height: 16, width: 320, marginTop: 'var(--space-4)' }} />
+      </div>
+    </section>
+  )
 }
 
-export default async function HomePage() {
-  const [config, allProducts, counts] = await Promise.all([
-    getHomepageSettings(),
-    getActiveProducts(),
-    getProductCounts(),
-  ])
+function FeaturedFallback() {
+  return (
+    <div className={styles.productGrid}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
 
-  const { total: totalProducts, organic: organicProducts } = counts
-  const features = config.features
+function OriginsFallback() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} style={{ height: 200, background: 'var(--neutral-800)', borderRadius: 'var(--radius-xl)' }} />
+      ))}
+    </div>
+  )
+}
 
-  const featuredProducts = allProducts.slice(0, 4)
+function ValuesFallback() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} style={{ height: 160, background: 'var(--neutral-100)', borderRadius: 'var(--radius-xl)' }} />
+      ))}
+    </div>
+  )
+}
 
+// ================================================================
+// Página
+// ================================================================
+export default function HomePage() {
   return (
     <>
       {/* ============================================================
           1. HERO
           ============================================================ */}
-      <section className={styles.hero} aria-label="Bienvenida">
-        {/* Imagen de fondo */}
-        <div className={styles.heroBackground}>
-          <picture>
-            <source media="(min-width: 768px)" srcSet={config.heroImageUrl} />
-            <source media="(max-width: 767px)" srcSet={config.heroImageUrlMobile || config.heroImageUrl} />
-            <Image
-              src={config.heroImageUrl}
-              alt="Finca cafetera al amanecer con montañas en el fondo"
-              fill
-              priority
-              className={styles.heroImage}
-              sizes="100vw"
-            />
-          </picture>
-        </div>
-        <div className={styles.heroOverlay} aria-hidden="true" />
-
-        {/* Contenido */}
-        <div className={styles.heroContent}>
-          <div className={styles.heroEyebrow} aria-hidden="true">
-            <span className={styles.heroEyebrowLine} />
-            Café Artesanal
-          </div>
-
-          <h1 className={styles.heroTitle} style={{ whiteSpace: 'pre-line' }}>
-            {config.heroTitle}
-          </h1>
-
-          <p className={styles.heroSubtitle}>
-            {config.heroSubtitle}
-          </p>
-
-          <div className={styles.heroActions}>
-            <Link href="/catalogo" className={styles.heroCTASecondary}>
-              Explorar catálogo →
-            </Link>
-            <Link href="/nosotros" className={styles.heroCTASecondary}>
-              Nosotros →
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <div className={styles.heroStats} role="list" aria-label="Estadísticas">
-            <div className={styles.heroStat} role="listitem">
-              <span className={styles.heroStatNumber}>{totalProducts ?? '--'}</span>
-              <span className={styles.heroStatLabel}>Cafés disponibles</span>
-            </div>
-            <div className={styles.heroStat} role="listitem">
-              <span className={styles.heroStatNumber}>{organicProducts ?? '--'}</span>
-              <span className={styles.heroStatLabel}>Orgánicos certificados</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Suspense fallback={<HomeHeroFallback />}>
+        <HomeHero />
+      </Suspense>
 
       {/* ============================================================
           2. FILTROS RÁPIDOS — PillSelector (flotante en mobile)
@@ -141,30 +112,8 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <Suspense
-            fallback={
-              <div className={styles.productGrid}>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))}
-              </div>
-            }
-          >
-            <div className={styles.productGrid}>
-              {featuredProducts.length > 0 ? (
-                featuredProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    priority={index < 2}
-                  />
-                ))
-              ) : (
-                <p className={styles.emptyProducts}>
-                  Pronto tendremos cafés disponibles.
-                </p>
-              )}
-            </div>
+          <Suspense fallback={<FeaturedFallback />}>
+            <FeaturedProducts />
           </Suspense>
         </div>
       </section>
@@ -197,15 +146,9 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.originGrid}>
-            <Suspense fallback={
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} style={{ height: 200, background: 'var(--neutral-800)', borderRadius: 'var(--radius-xl)' }} />
-              ))}
-            </div>
-          }>
-            <HomepageOrigins />
-          </Suspense>
+            <Suspense fallback={<OriginsFallback />}>
+              <HomepageOrigins />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -224,14 +167,8 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <Suspense fallback={
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} style={{ height: 160, background: 'var(--neutral-100)', borderRadius: 'var(--radius-xl)' }} />
-              ))}
-            </div>
-          }>
-            <HomepageValues features={features} />
+          <Suspense fallback={<ValuesFallback />}>
+            <HomepageValues />
           </Suspense>
         </div>
       </section>
