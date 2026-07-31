@@ -3,6 +3,7 @@
 // src/components/product/MobileFeed/MobileFeed.tsx
 import { useEffect, useRef, useState } from 'react'
 import { MobileFeedSlide } from './MobileFeedSlide'
+import { getImageUrl } from '@/lib/utils'
 import type { ProductCardData } from '../ProductCard'
 import styles from './MobileFeed.module.css'
 
@@ -31,6 +32,19 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
     container.addEventListener('scroll', updateActiveIndex, { passive: true })
     return () => container.removeEventListener('scroll', updateActiveIndex)
   }, [products.length])
+
+  // Precargar la portada de los slides vecinos para transiciones instantáneas
+  useEffect(() => {
+    const preload = (product: ProductCardData) => {
+      const src = getImageUrl(product.imageUrl, { width: 500 })
+      const img = new Image()
+      img.src = src
+    }
+    const prev = products[activeIndex - 1]
+    const next = products[activeIndex + 1]
+    if (prev) preload(prev)
+    if (next) preload(next)
+  }, [activeIndex, products])
 
   // Renderizar solo slide activo ± 1 para reducir DOM
   const start = Math.max(0, activeIndex - 1)

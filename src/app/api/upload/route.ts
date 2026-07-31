@@ -58,45 +58,27 @@ export async function POST(req: NextRequest) {
       .webp({ quality: config.quality })
       .toBuffer()
 
-    const thumbBuffer = await sharp(buffer)
-      .resize(400, 400, {
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 70 })
-      .toBuffer()
-
     let url: string
-    let thumbUrl: string
     let width: number
     let height: number
 
     if (cloudinaryConfigured) {
       const publicId = generatePublicId(type)
-      const thumbPublicId = `${publicId}-thumb`
+      const result = await uploadToCloudinary(optimizedBuffer, publicId)
 
-      const [mainResult, thumbResult] = await Promise.all([
-        uploadToCloudinary(optimizedBuffer, publicId),
-        uploadToCloudinary(thumbBuffer, thumbPublicId),
-      ])
-
-      url = mainResult.url.replace('/upload/', '/upload/f_auto,q_auto/')
-      thumbUrl = thumbResult.url.replace('/upload/', '/upload/f_auto,q_auto/')
-      width = mainResult.width
-      height = mainResult.height
+      url = result.url.replace('/upload/', '/upload/f_auto,q_auto/')
+      width = result.width
+      height = result.height
     } else {
       const timestamp = Date.now()
       const randomSuffix = Math.random().toString(36).substring(2, 8)
       const fileName = `${type}-${timestamp}-${randomSuffix}.webp`
-      const thumbFileName = `${type}-${timestamp}-${randomSuffix}-thumb.webp`
 
       const uploadDir = join(process.cwd(), 'public', 'uploads', type)
       await mkdir(uploadDir, { recursive: true })
       await writeFile(join(uploadDir, fileName), optimizedBuffer)
-      await writeFile(join(uploadDir, thumbFileName), thumbBuffer)
 
       url = `/uploads/${type}/${fileName}`
-      thumbUrl = `/uploads/${type}/${thumbFileName}`
 
       const metadata = await sharp(optimizedBuffer).metadata()
       width = metadata.width || 0
@@ -106,7 +88,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       url,
-      thumbUrl,
       width,
       height,
     })

@@ -6,7 +6,7 @@
   height: calc(100dvh - 64px);
   width: 100vw;
   overflow-y: scroll;
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
   background-color: var(--neutral-900);

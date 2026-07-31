@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react'
 import { Heart, ShoppingBag, Star, Share2 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
-import { formatPrice, truncate, getThumbUrl, getImageUrl } from '@/lib/utils'
+import { formatPrice, truncate, getImageUrl } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
@@ -104,7 +104,6 @@ export function ProductCard({
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [sharedToast, setSharedToast] = useState(false)
-  const [imgSrc, setImgSrc] = useState(getImageUrl(getThumbUrl(product.imageUrl), { width: 400, quality: 80 }))
 
   useEffect(() => {
     const counts = getSocialCounts(product.id)
@@ -192,13 +191,12 @@ export function ProductCard({
       {/* ---- IMAGEN ---- */}
       <div className={styles.imageWrapper}>
         <Image
-          src={imgSrc}
+          src={getImageUrl(product.imageUrl, { width: 400 })}
           alt={product.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className={styles.image}
           priority={priority}
-          onError={() => setImgSrc(getImageUrl(product.imageUrl, { width: 400, quality: 80 }))}
         />
 
         {/* Badges superiores */}

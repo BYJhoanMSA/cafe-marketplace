@@ -66,7 +66,10 @@ export function formatRelativeDate(date: Date | string): string {
 }
 
 /**
- * Genera la URL de imagen de Cloudflare R2 con transformaciones on-the-fly.
+ * Genera la URL de imagen optimizada.
+ * Para URLs de Cloudinary inyecta las transformaciones en la RUTA
+ * (ej: /image/upload/f_auto,q_auto,w_500/...), que es el único formato
+ * que Cloudinary aplica. Para URLs locales devuelve la URL tal cual.
  */
 export function getImageUrl(
   originalUrl: string,
@@ -79,16 +82,38 @@ export function getImageUrl(
   } = {}
 ): string {
   if (!originalUrl) return ''
-  const { width, height, fit = 'cover', format = 'webp', quality = 85 } = options
-  const params: string[] = []
-  if (width) params.push(`w=${width}`)
-  if (height) params.push(`h=${height}`)
-  params.push(`fit=${fit}`)
-  params.push(`format=${format}`)
-  params.push(`quality=${quality}`)
-  const separator = originalUrl.includes('?') ? '&' : '?'
-  return `${originalUrl}${separator}${params.join('&')}`
+  const { width, height } = options
+
+  const cloudinaryMatch = originalUrl.match(/^(.*?\/image\/upload\/)(.+)$/)
+  if (!cloudinaryMatch) return originalUrl
+
+  const prefix = cloudinaryMatch[1]!
+  const rest = cloudinaryMatch[2]!
+  const segments = rest.split('/')
+  const first = segments[0] ?? ''
+
+  const isVersion = /^v\d+$/.test(first)
+  const isTransform =
+    !isVersion &&
+    /^[a-zA-Z0-9_,:.]+$/.test(first) &&
+    /^(f_|q_|w_|h_|c_|e_|r_|d_|o_|g_|a_|x_|y_|z_|fl_|cs_|ch_|dpr_|n_)/.test(first)
+
+  const transforms: string[] = []
+  if (isTransform) {
+    transforms.push(...first.split(',').filter((t) => !/^[wh]_\d+$/.test(t)))
+  } else {
+    transforms.push('f_auto', 'q_auto')
+  }
+  if (width) transforms.push(`w_${width}`)
+  if (height) transforms.push(`h_${height}`)
+
+  const restSegments = (isTransform ? segments.slice(1) : segments).join('/')
+  return `${prefix}${transforms.join(',')}/${restSegments}`
 }
+
+/** Placeholder base64 minúsculo (borroso) para next/image mientras carga la imagen real */
+export const IMAGE_BLUR_PLACEHOLDER =
+  'data:image/jpeg;base64,/9j/2wBDABcQERQRDhcUEhQaGBcbIjklIh8fIkYyNSk5UkhXVVFIUE5bZoNvW2F8Yk5QcptzfIeLkpSSWG2grJ+OqoOPko3/2wBDARgaGiIeIkMlJUONXlBejY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY3/wAARCAAQABADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAf/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJwAF//Z'
 
 /**
  * Categoría y color semántico de un cupping score SCA.
@@ -99,13 +124,6 @@ export function getCuppingScoreCategory(score: number): { label: string; color: 
   if (score >= 84) return { label: 'Muy bueno', color: 'var(--forest-300)' }
   if (score >= 80) return { label: 'Especialidad', color: 'var(--terra-500)' }
   return { label: 'Bueno', color: 'var(--neutral-500)' }
-}
-
-/** Genera URL de thumbnail a partir de la URL completa de la imagen */
-export function getThumbUrl(imageUrl: string): string {
-  if (!imageUrl || !imageUrl.includes('.')) return imageUrl
-  const dotIndex = imageUrl.lastIndexOf('.')
-  return imageUrl.slice(0, dotIndex) + '-thumb' + imageUrl.slice(dotIndex)
 }
 
 /** Respuesta estándar de API Route exitosa */

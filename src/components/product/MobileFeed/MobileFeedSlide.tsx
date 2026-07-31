@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
-import { formatPrice, getImageUrl } from '@/lib/utils'
+import { formatPrice, getImageUrl, IMAGE_BLUR_PLACEHOLDER } from '@/lib/utils'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { useCart } from '@/context/CartContext'
@@ -50,10 +50,6 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
   useEffect(() => {
     setActiveImageIndex(0)
   }, [product.id])
-
-  const optimizedImage = isActive
-    ? getImageUrl(product.imageUrl, { width: 500, quality: 80 })
-    : getImageUrl(product.imageUrl, { width: 300, quality: 60 })
 
   const goToIndex = useCallback((index: number, animated: boolean) => {
     if (!stripRef.current) return
@@ -188,22 +184,36 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className={styles.imageStrip} ref={stripRef}>
-          {images.map((img, idx) => (
-            <div key={idx} className={styles.imageStripItem}>
-              <Image
-                src={getImageUrl(img, { width: 500, quality: 80 })}
-                alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
-                fill
-                priority={isActive && idx === 0}
-                className={styles.image}
-                sizes="100vw"
-              />
-            </div>
-          ))}
-        </div>
+        {isActive ? (
+          <div className={styles.imageStrip} ref={stripRef}>
+            {images.map((img, idx) => (
+              <div key={idx} className={styles.imageStripItem}>
+                <Image
+                  src={getImageUrl(img, { width: 500 })}
+                  alt={idx === 0 ? product.imageAlt : `${product.title} - Imagen ${idx + 1}`}
+                  fill
+                  priority={idx === 0}
+                  className={styles.image}
+                  sizes="100vw"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_PLACEHOLDER}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Image
+            src={getImageUrl(product.imageUrl, { width: 300 })}
+            alt={product.imageAlt}
+            fill
+            className={styles.image}
+            sizes="100vw"
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_PLACEHOLDER}
+          />
+        )}
 
-        {images.length > 1 && (
+        {isActive && images.length > 1 && (
           <>
             {activeImageIndex > 0 && (
               <button
@@ -229,7 +239,7 @@ export function MobileFeedSlide({ product, isActive, onAddToCart }: MobileFeedSl
         <div className={styles.overlayBottom} />
       </div>
 
-      {images.length > 1 && (
+      {isActive && images.length > 1 && (
         <div className={styles.imageDots}>
           {images.map((_, idx) => (
             <button
