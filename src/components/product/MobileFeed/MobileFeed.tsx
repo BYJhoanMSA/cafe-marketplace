@@ -15,11 +15,42 @@ interface MobileFeedProps {
 /** Tiempo sin scroll para considerar que el usuario se detuvo en un producto */
 const SETTLE_DELAY_MS = 400
 
+/** Máximo de slides montados en caché (estilo TikTok: los vistos no se destruyen) */
+const MAX_CACHED_SLIDES = 12
+
+/** Lista de ids montados (ventana activa + vistos), ordenada por índice de producto */
+function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {
+  const valid = new Set(products.map((p) => p.id))
+  const indexOf = (id: string) => products.findIndex((p) => p.id === id)
+
+  let list = prev.filter((id) => valid.has(id))
+
+  const start = Math.max(0, activeIndex - 1)
+  const end = Math.min(products.length - 1, activeIndex + 1)
+  for (let i = start; i <= end; i++) {
+    const product = products[i]
+    if (product && !list.includes(product.id)) list.push(product.id)
+  }
+
+  // Desalojar los más lejanos al activo cuando se supera el tope (LRU por distancia)
+  if (list.length > MAX_CACHED_SLIDES) {
+    list = list
+      .map((id) => ({ id, dist: Math.abs(indexOf(id) - activeIndex) }))
+      .sort((a, b) => a.dist - b.dist)
+      .slice(0, MAX_CACHED_SLIDES)
+      .map((x) => x.id)
+  }
+
+  return list.sort((a, b) => indexOf(a) - indexOf(b))
+}
+
 export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [settled, setSettled] = useState(true)
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [mountedIds, setMountedIds] = useState<string[]>([])
+  const [seen, setSeen] = useState<Set<string>>(() => new Set())
 
   // Scroll handler — calcula el slide activo y marca cuándo el usuario se detiene
   useEffect(() => {
@@ -45,7 +76,7 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
     }
   }, [products.length])
 
-  // Precargar la portada a alta calidad de los slides vecinos para el upgrade instantáneo
+  // Precargar portada a alta calidad de los slides vecinos para el upgrade instantáneo
   useEffect(() => {
     const preload = (product: ProductCardData) => {
       const src = getImageUrl(product.imageUrl, { width: 1000 })
@@ -58,29 +89,45 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
     if (next) preload(next)
   }, [activeIndex, products])
 
-  // Renderizar solo slide activo ± 1 para reducir DOM
-  const start = Math.max(0, activeIndex - 1)
-  const end = Math.min(products.length - 1, activeIndex + 1)
-  const visibleProducts = products.slice(start, end + 1)
-  const offsetStart = start
+  // Marcar como "visto" cuando el usuario se detiene en el producto (calidad alta mostrada)
+  useEffect(() => {
+    if (!settled) return
+    const product = products[activeIndex]
+    if (product && !seen.has(product.id)) {
+      setSeen((prev) => new Set(prev).add(product.id))
+    }
+  }, [settled, activeIndex, products, seen])
+
+  // Render cache estilo TikTok: una vez montado, el slide se mantiene hasta ser desalojado
+  const desired = buildMountedList(mountedIds, activeIndex, products)
+  if (desired.join(',') !== mountedIds.join(',')) {
+    setMountedIds(desired)
+  }
+
+  const indexOf = (id: string) => products.findIndex((p) => p.id === id)
+  const firstIndex = mountedIds.length ? indexOf(mountedIds[0]!) : 0
+  const lastIndex = mountedIds.length ? indexOf(mountedIds[mountedIds.length - 1]!) : -1
 
   return (
     <div className={styles.feedContainer} ref={containerRef}>
-      <div style={{ height: `${offsetStart * 100}%` }} />
-      {visibleProducts.map((product, index) => {
-        const realIndex = offsetStart + index
+      <div style={{ height: `${firstIndex * 100}%` }} />
+      {mountedIds.map((id) => {
+        const realIndex = indexOf(id)
+        const product = products[realIndex]
+        if (!product) return null
         return (
-          <div key={product.id} data-index={realIndex} className={styles.slide}>
-            <MobileFeedSlide 
-              product={product} 
+          <div key={id} className={styles.slide}>
+            <MobileFeedSlide
+              product={product}
               isActive={realIndex === activeIndex}
               settled={settled}
+              seen={seen.has(id)}
               onAddToCart={onAddToCart}
             />
           </div>
         )
       })}
-      <div style={{ height: `${(products.length - 1 - end) * 100}%` }} />
+      <div style={{ height: `${(products.length - 1 - lastIndex) * 100}%` }} />
     </div>
   )
 }

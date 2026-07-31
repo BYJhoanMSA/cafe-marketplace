@@ -17,12 +17,13 @@ interface MobileFeedSlideProps {
   product: ProductCardData
   isActive: boolean
   settled: boolean
+  seen: boolean
   onAddToCart?: (productId: string) => void
 }
 
 const SWIPE_THRESHOLD = 60
 
-export function MobileFeedSlide({ product, isActive, settled, onAddToCart }: MobileFeedSlideProps) {
+export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart }: MobileFeedSlideProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
@@ -35,6 +36,7 @@ export function MobileFeedSlide({ product, isActive, settled, onAddToCart }: Mob
   const images: string[] = product.images?.length ? product.images : [product.imageUrl]
 
   const showHighQuality = isActive && settled
+  const showCachedCover = seen && !showHighQuality
 
   const [activeImageIndex, setActiveImageIndex] = useState(0)
 
@@ -198,12 +200,21 @@ export function MobileFeedSlide({ product, isActive, settled, onAddToCart }: Mob
                   priority={idx === 0}
                   className={styles.image}
                   sizes="100vw"
-                  placeholder="blur"
+                  placeholder={seen ? 'empty' : 'blur'}
                   blurDataURL={IMAGE_BLUR_PLACEHOLDER}
                 />
               </div>
             ))}
           </div>
+        ) : showCachedCover ? (
+          <Image
+            src={getImageUrl(product.imageUrl, { width: 1000 })}
+            alt={product.imageAlt}
+            fill
+            className={styles.image}
+            sizes="100vw"
+            placeholder="empty"
+          />
         ) : (
           <Image
             src={getImageUrl(product.imageUrl, { width: 200 })}
