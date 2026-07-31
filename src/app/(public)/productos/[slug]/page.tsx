@@ -4,7 +4,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
-import { Star, Heart, Share2, ArrowLeft } from 'lucide-react'
+import { Star, Heart, Share2, ArrowLeft, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
@@ -363,7 +363,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             </div>
             
             <Button size="full" style={{ flex: 1 }} onClick={handleAddToCart}>
-              Agregar al carrito
+              <ShoppingCart size={18} className={styles.cartIcon} aria-hidden="true" />
+              <span className={styles.cartLabel}>Agregar al carrito</span>
             </Button>
             
             <Button 

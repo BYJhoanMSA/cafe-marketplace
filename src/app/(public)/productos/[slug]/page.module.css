@@ -282,6 +282,25 @@
   margin-top: var(--space-2);
 }
 
+/* Botón "Agregar al carrito": ícono solo en mobile, texto solo en desktop */
+.cartIcon {
+  display: none;
+}
+
+.cartLabel {
+  display: inline;
+}
+
+@media (max-width: 767px) {
+  .cartIcon {
+    display: inline-flex;
+  }
+
+  .cartLabel {
+    display: none;
+  }
+}
+
 /* ================================================================
    CARACTERÍSTICAS
    ================================================================ */

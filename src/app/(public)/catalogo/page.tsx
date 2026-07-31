@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import { ProductCard } from '@/components/product/ProductCard'
 import { MobileFeed } from '@/components/product/MobileFeed'
 import { CatalogFilterBar } from '@/components/product/CatalogFilterBar'
+import { PillBarWrapper } from '@/components/ui/PillSelector/PillBarWrapper'
+import { FLAVOR_ITEMS } from '@/components/ui/PillSelector/PillSelector.data'
 import { getActiveProducts } from '@/server/actions/catalog.actions'
 import type { CatalogFilters } from '@/server/actions/catalog.actions'
 import styles from './page.module.css'
@@ -41,6 +43,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
       {products.length > 0 && (
         <div className={styles.mobileView}>
           <MobileFeed products={products} />
+          <PillBarWrapper items={FLAVOR_ITEMS} activeId="coffee" />
         </div>
       )}
 
