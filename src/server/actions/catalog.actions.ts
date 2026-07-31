@@ -14,6 +14,53 @@ export interface CatalogFilters {
   process?: string
 }
 
+export interface ProductSizeOption {
+  value: string
+  label: string
+  weightGrams: number | null
+  price: number
+  available: boolean
+}
+
+export interface ProductGrindOption {
+  id: string
+  label: string
+  available: boolean
+}
+
+export interface ProductVariant {
+  id: string
+  weightGrams: number | null
+  grindType: string | null
+  price: number
+  inStock: boolean
+}
+
+export interface ProductDetail {
+  id: string
+  slug: string
+  title: string
+  vendor: { name: string; slug: string }
+  price: number
+  comparePrice: number | null
+  currency: string
+  description: string
+  cuppingScore: number | null
+  roastLevel: string
+  origin: { country: string; region: string; farm: string }
+  process: string
+  variety: string
+  elevation: string
+  flavorNotes: string[]
+  images: string[]
+  category: string
+  sizeOptions: ProductSizeOption[]
+  variants: ProductVariant[]
+  grindOptions: ProductGrindOption[]
+  rating: number
+  reviewCount: number
+}
+
 function parseAltitudeRange(filterRange: string): { min: number; max: number } | null {
   if (filterRange.endsWith('+')) {
     const min = parseInt(filterRange.replace('+', ''), 10)
@@ -104,7 +151,7 @@ export async function invalidateProductCache(slug: string) {
   invalidateCache(`product:${slug}`)
 }
 
-export async function getProductBySlug(slug: string) {
+export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
   return withCache(`product:${slug}`, async () => {
     try {
       const [p, grindTypes, variantSizes] = await Promise.all([
@@ -143,7 +190,7 @@ export async function getProductBySlug(slug: string) {
       const availableGrinds = new Set(p.variants.map(v => v.grindType).filter(Boolean))
 
       const seenWeights = new Set<number | null>()
-      const sizeOptions: { value: string; label: string; weightGrams: number | null; price: number; available: boolean }[] = []
+      const sizeOptions: ProductSizeOption[] = []
       for (const s of variantSizes) {
         const weight = s.grams
         seenWeights.add(weight)
@@ -170,7 +217,7 @@ export async function getProductBySlug(slug: string) {
         })
       }
 
-      const grindOptions: { id: string; label: string; available: boolean }[] = grindTypes.map(g => ({
+      const grindOptions: ProductGrindOption[] = grindTypes.map(g => ({
         id: g.value,
         label: g.label,
         available: availableGrinds.has(g.value),

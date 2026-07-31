@@ -3,7 +3,7 @@
 // src/app/(public)/productos/[slug]/page.tsx
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, useCallback, use } from 'react'
 import { Star, Heart, Share2, ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
@@ -13,36 +13,47 @@ import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
 import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
+import type { ProductDetail, ProductGrindOption, ProductVariant } from '@/server/actions/catalog.actions'
 import { EscudoDatos, CartaTostador, EscudoCompra } from '@/components/product/EscudoDatos'
 import styles from './page.module.css'
 
-const FALLBACK_PRODUCT = {
+interface SelectedVariant {
+  id?: string
+  weightGrams: number | null
+  grindType?: string | null
+  price: number
+  sizeValue?: string
+  label?: string
+}
+
+const FALLBACK_PRODUCT: ProductDetail = {
   id: '',
   slug: '',
   title: 'Producto no encontrado',
   vendor: { name: '', slug: '' },
   price: 0,
+  comparePrice: null,
   currency: 'USD',
   description: 'Este producto no está disponible actualmente.',
-  cuppingScore: null as number | null,
+  cuppingScore: null,
   roastLevel: 'medium',
   origin: { country: '', region: '', farm: '' },
   process: '',
   variety: '',
   elevation: '',
-  flavorNotes: [] as string[],
+  flavorNotes: [],
   images: ['/images/products/placeholder-1.jpg'],
   category: '',
-  sizeOptions: [] as { value: string; label: string; weightGrams: number | null; price: number; available?: boolean }[],
-  variants: [] as { id: string; weightGrams: number | null; grindType: string | null; price: number; inStock: boolean }[],
-  grindOptions: [] as { id: string; label: string; available?: boolean }[],
+  sizeOptions: [],
+  variants: [],
+  grindOptions: [],
   rating: 0,
   reviewCount: 0,
 }
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
-  const [product, setProduct] = useState<any>(null)
+  const [product, setProduct] = useState<ProductDetail | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -56,8 +67,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }, [slug])
 
   const [activeImage, setActiveImage] = useState(0)
-  const [selectedVariant, setSelectedVariant] = useState<any>(null)
-  const [selectedGrind, setSelectedGrind] = useState<any>(null)
+  const [selectedVariant, setSelectedVariant] = useState<SelectedVariant | null>(null)
+  const [selectedGrind, setSelectedGrind] = useState<ProductGrindOption | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(0)
@@ -68,22 +79,36 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     setShares(counts.shares)
   }, [slug])
 
-  function findVariant(weightGrams: number | null, grindType: string | null) {
-    return product?.variants?.find((v: any) => v.weightGrams === weightGrams && v.grindType === grindType) || null
-  }
+  const findVariant = useCallback(
+    (weightGrams: number | null, grindType: string | null): ProductVariant | null => {
+      return product?.variants?.find((v) => v.weightGrams === weightGrams && v.grindType === grindType) ?? null
+    },
+    [product]
+  )
 
   useEffect(() => {
     if (!product) return
     setActiveImage(0)
-    const firstSize = product.sizeOptions?.find((s: any) => s.available !== false) || null
-    const firstGrind = product.grindOptions?.find((g: any) => g.available !== false) || null
+    const firstSize = product.sizeOptions.find((s) => s.available) || null
+    const firstGrind = product.grindOptions.find((g) => g.available) || null
     const match = firstSize && firstGrind ? findVariant(firstSize.weightGrams, firstGrind.id) : null
-    setSelectedVariant(match || firstSize ? { ...match, ...firstSize, sizeValue: firstSize?.value } : null)
-    setSelectedGrind(firstGrind || null)
+    setSelectedVariant(
+      match || firstSize
+        ? {
+            id: match?.id ?? firstSize?.value ?? '',
+            weightGrams: match?.weightGrams ?? firstSize?.weightGrams ?? null,
+            grindType: match?.grindType ?? null,
+            price: match?.price ?? firstSize?.price ?? 0,
+            sizeValue: firstSize?.value,
+            label: firstSize?.label,
+          }
+        : null
+    )
+    setSelectedGrind(firstGrind)
     setQuantity(1)
     setFavorites(20)
     setShares(100)
-  }, [product])
+  }, [product, findVariant])
 
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
@@ -106,20 +131,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   const isFavorited = isFavorite(product.id)
 
-  function handleSelectSize(sizeValue: string) {
-    const size = product.sizeOptions?.find((s: any) => s.value === sizeValue)
+  const handleSelectSize = (sizeValue: string) => {
+    const size = product.sizeOptions.find((s) => s.value === sizeValue)
     if (!size) return
-    const match = findVariant(size.weightGrams, selectedGrind?.id || null)
-    setSelectedVariant(match || size ? { ...match, ...size, id: match?.id || `size-${sizeValue}` } : null)
+    const match = findVariant(size.weightGrams, selectedGrind?.id ?? null)
+    setSelectedVariant(match || size ? { ...match, ...size, id: match?.id ?? `size-${sizeValue}` } : null)
   }
 
-  function handleSelectGrind(grindId: string) {
-    const grind = product.grindOptions?.find((g: any) => g.id === grindId)
+  const handleSelectGrind = (grindId: string) => {
+    const grind = product.grindOptions.find((g) => g.id === grindId)
     if (!grind) return
     setSelectedGrind(grind)
-    const currentSize = selectedVariant?.weightGrams ?? product.sizeOptions?.find((s: any) => s.available !== false)?.weightGrams
+    const currentSize = selectedVariant?.weightGrams ?? product.sizeOptions.find((s) => s.available)?.weightGrams ?? null
     const match = findVariant(currentSize, grindId)
-    setSelectedVariant(match || { ...match, price: selectedVariant?.price ?? product.price, weightGrams: currentSize })
+    setSelectedVariant(match ?? { price: selectedVariant?.price ?? product.price, weightGrams: currentSize })
   }
 
   const handleShare = () => {
@@ -149,7 +174,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       title: product.title,
       price: selectedVariant?.price ?? product.price,
       currency: product.currency,
-      imageUrl: product.images[0],
+      imageUrl: product.images[0] ?? '',
       vendorName: product.vendor.name,
       originCountry: product.origin.country,
       originRegion: product.origin.region,
@@ -162,12 +187,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       {
         id: `${product.id}-${selectedVariant.id ?? selectedVariant.sizeValue}-${selectedGrind.id}`,
         productId: product.id,
-        variantId: selectedVariant.id || selectedVariant.sizeValue,
+        variantId: selectedVariant.id ?? selectedVariant.sizeValue ?? '',
         title: product.title,
-        variantTitle: `${selectedVariant.label || selectedVariant.sizeValue} • ${selectedGrind.label}`,
+        variantTitle: `${selectedVariant.label || selectedVariant.sizeValue || ''} • ${selectedGrind.label}`,
         priceInCents: selectedVariant.price,
         currency: product.currency,
-        imageUrl: product.images[0],
+        imageUrl: product.images[0] ?? '',
       },
       quantity
     )
@@ -175,7 +200,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   
   const hasDiscount = product.comparePrice && product.comparePrice > (selectedVariant?.price ?? product.price)
 
-  function handleQuantityChange(delta: number) {
+  const handleQuantityChange = (delta: number) => {
     const newVal = quantity + delta
     if (newVal >= 1 && newVal <= 10) setQuantity(newVal)
   }
@@ -203,7 +228,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       <section className={styles.gallery} aria-label="Galería de imágenes">
         <div className={styles.mainImageWrapper}>
           <Image
-            src={product.images[activeImage] || product.images[0]}
+            src={product.images[activeImage] || product.images[0] || ''}
             alt={`${product.title} - Imagen ${activeImage + 1}`}
             fill
             priority

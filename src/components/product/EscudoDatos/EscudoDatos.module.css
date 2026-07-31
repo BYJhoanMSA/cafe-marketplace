@@ -111,16 +111,33 @@
   gap: 1.4rem;
 }
 
+.tondosGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.tondosTitle {
+  margin: 0;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--gold-300);
+}
+
 .tondosRow {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(84px, 104px));
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: clamp(0.6rem, 2vw, 1.1rem);
 }
 
 .tondo {
   width: clamp(84px, 21vw, 104px);
-  aspect-ratio: 1;
+  height: clamp(84px, 21vw, 104px);
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,7 +153,7 @@
     inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
     0 14px 26px -16px var(--shadow-xl);
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
 
 .tondo:hover {
@@ -150,11 +167,27 @@
 .tondoActive,
 .tondo:focus-visible {
   border-color: var(--gold-300);
+  background: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
   box-shadow:
-    inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
-    inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
+    inset 0 0 0 3px color-mix(in srgb, var(--gold-500) 30%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-0) 10%, transparent),
     0 0 0 2px var(--gold-300),
     0 14px 26px -16px var(--shadow-lg);
+}
+
+.tondoActive .tondoGlyph,
+.tondo:focus-visible .tondoGlyph {
+  color: var(--gold-300);
+}
+
+.tondoActive strong,
+.tondo:focus-visible strong {
+  color: var(--neutral-0);
+}
+
+.tondoActive span,
+.tondo:focus-visible span {
+  color: var(--gold-300);
 }
 
 .tondoGlyph {

@@ -86,42 +86,48 @@ export function EscudoCompra({
 }: EscudoCompraProps) {
   return (
     <div className={styles.escudoCompra}>
-      {/* Fila 1 — Tamaños */}
-      <div className={styles.tondosRow}>
-        {sizes.map((s) => (
-          <button
-            key={s.value}
-            type="button"
-            className={`${styles.tondo} ${s.available === false ? styles.tondoDisabled : ''} ${selectedSizeValue === s.value ? styles.tondoActive : ''}`}
-            onClick={() => onSelectSize(s.value)}
-            disabled={s.available === false}
-            aria-pressed={selectedSizeValue === s.value}
-            aria-disabled={s.available === false}
-          >
-            <BeanGlyph size={20} />
-            <strong>{s.label}</strong>
-            <span>{s.available === false ? 'No disponible' : s.weightGrams ? `${s.weightGrams} g` : ''}</span>
-          </button>
-        ))}
+      {/* Grupo 1 — Tamaños */}
+      <div className={styles.tondosGroup}>
+        <p className={styles.tondosTitle}>Tamaño</p>
+        <div className={styles.tondosRow}>
+          {sizes.map((s) => (
+            <button
+              key={s.value}
+              type="button"
+              className={`${styles.tondo} ${s.available === false ? styles.tondoDisabled : ''} ${selectedSizeValue === s.value ? styles.tondoActive : ''}`}
+              onClick={() => onSelectSize(s.value)}
+              disabled={s.available === false}
+              aria-pressed={selectedSizeValue === s.value}
+              aria-disabled={s.available === false}
+            >
+              <BeanGlyph size={20} />
+              <strong>{s.label}</strong>
+              <span>{s.available === false ? 'No disponible' : s.weightGrams ? `${s.weightGrams} g` : ''}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Fila 2 — Moliendas */}
-      <div className={styles.tondosRow}>
-        {grinds.map((g) => (
-          <button
-            key={g.id}
-            type="button"
-            className={`${styles.tondo} ${g.available === false ? styles.tondoDisabled : ''} ${selectedGrindId === g.id ? styles.tondoActive : ''}`}
-            onClick={() => onSelectGrind(g.id)}
-            disabled={g.available === false}
-            aria-pressed={selectedGrindId === g.id}
-            aria-disabled={g.available === false}
-          >
-            <BeanGlyph size={20} double />
-            <strong>{g.label}</strong>
-            {g.available === false && <span>No disponible</span>}
-          </button>
-        ))}
+      {/* Grupo 2 — Moliendas */}
+      <div className={styles.tondosGroup}>
+        <p className={styles.tondosTitle}>Molienda</p>
+        <div className={styles.tondosRow}>
+          {grinds.map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              className={`${styles.tondo} ${g.available === false ? styles.tondoDisabled : ''} ${selectedGrindId === g.id ? styles.tondoActive : ''}`}
+              onClick={() => onSelectGrind(g.id)}
+              disabled={g.available === false}
+              aria-pressed={selectedGrindId === g.id}
+              aria-disabled={g.available === false}
+            >
+              <BeanGlyph size={20} double />
+              <strong>{g.label}</strong>
+              {g.available === false && <span>No disponible</span>}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Reserva — cantidad + botón */}
