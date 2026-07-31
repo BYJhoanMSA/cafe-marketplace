@@ -1,24 +1,46 @@
 import type { Metadata, Viewport } from 'next'
-import { DM_Serif_Display, Inter, DM_Mono } from 'next/font/google'
+import { Cinzel, Cormorant_Garamond, EB_Garamond, Libre_Baskerville, DM_Mono } from 'next/font/google'
 import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { FavoritesProvider } from '@/context/FavoritesContext'
 import { CartDrawer } from '@/components/cart/CartDrawer'
 
 // ============================================================
-// Fuentes — cargadas y optimizadas por Next.js Font
+// Fuentes — tipografía de styledk (Casa del Cafeto), cargadas
+// y optimizadas por Next.js Font. VERSIÓN PREVIEW (reversible).
 // ============================================================
-const dmSerifDisplay = DM_Serif_Display({
+// --font-primary  → Cinzel (inscripciones / display)
+// --font-secondary→ EB Garamond (cuerpo)
+// --font-sub      → Cormorant Garamond (subtítulos)
+// --font-quote    → Libre Baskerville (citas)
+const cinzel = Cinzel({
   subsets: ['latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-primary',
   display: 'swap',
 })
 
-const inter = Inter({
+const ebGaramond = EB_Garamond({
   subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
   variable: '--font-secondary',
+  display: 'swap',
+})
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-sub',
+  display: 'swap',
+})
+
+const libreBaskerville = Libre_Baskerville({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-quote',
   display: 'swap',
 })
 
@@ -102,7 +124,7 @@ export default function RootLayout({
     <html
       lang="es"
       suppressHydrationWarning
-      className={`${dmSerifDisplay.variable} ${inter.variable} ${dmMono.variable}`}
+      className={`${cinzel.variable} ${ebGaramond.variable} ${cormorant.variable} ${libreBaskerville.variable} ${dmMono.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />

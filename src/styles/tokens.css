@@ -5,7 +5,7 @@
    El modo oscuro se activa con: document.documentElement.dataset.theme = 'dark'
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap');
 
 /* =============================================================================
    TOKENS BASE — Paleta de colores (no usar directamente en componentes)
@@ -145,8 +145,11 @@
    TIPOGRAFÍA
    ============================================================================= */
 :root {
-  --font-primary:   'DM Serif Display', Georgia, serif;
-  --font-secondary: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Tipografía de styledk (Casa del Cafeto) — VERSIÓN PREVIEW (reversible) */
+  --font-primary:   'Cinzel', 'Times New Roman', serif;      /* inscripciones / display */
+  --font-secondary: 'EB Garamond', Georgia, serif;           /* cuerpo */
+  --font-sub:       'Cormorant Garamond', Georgia, serif;    /* subtítulos elegantes */
+  --font-quote:     'Libre Baskerville', Georgia, serif;     /* citas grabadas */
   --font-mono:      'DM Mono', 'Courier New', monospace;
 
   /* Pesos */
@@ -155,18 +158,18 @@
   --font-weight-semibold: 600;
   --font-weight-bold:     700;
 
-  /* Escala modular 1.25 (Major Third) */
+  /* Escala modular basada en los tamaños de styledk (1.25 Major Third) */
   --text-xs:      0.6875rem;  /* 11px */
   --text-sm:      0.8125rem;  /* 13px */
-  --text-base:    1rem;       /* 16px — NUNCA bajar de 16px en inputs (iOS zoom) */
-  --text-md:      1.125rem;   /* 18px */
-  --text-lg:      1.25rem;    /* 20px */
+  --text-base:    1.05rem;    /* 16.8px — cuerpo de styledk (NUNCA <16px en inputs) */
+  --text-md:      1.15rem;    /* 18.4px */
+  --text-lg:      1.3rem;     /* 20.8px */
   --text-xl:      1.5rem;     /* 24px */
-  --text-2xl:     1.875rem;   /* 30px */
-  --text-3xl:     2.25rem;    /* 36px */
+  --text-2xl:     1.9rem;     /* 30.4px */
+  --text-3xl:     2.4rem;     /* 38.4px */
   --text-4xl:     3rem;       /* 48px */
-  --text-5xl:     3.75rem;    /* 60px */
-  --text-display: 5rem;       /* 80px */
+  --text-5xl:     3.6rem;     /* 57.6px */
+  --text-display: 4.4rem;     /* 70.4px — máximo del hero de styledk */
 
   /* Line heights */
   --leading-tight:   1.2;
