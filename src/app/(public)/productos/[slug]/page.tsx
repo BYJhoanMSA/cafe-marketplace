@@ -9,9 +9,8 @@ import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
-import { useFavorites } from '@/context/FavoritesContext'
 import { canIncrementSocialCount } from '@/lib/rateLimit'
-import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
+import { getSocialCounts, incrementShares } from '@/lib/socialCounts'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
 import type { ProductDetail, ProductGrindOption, ProductVariant } from '@/server/actions/catalog.actions'
 import { EscudoDatos, CartaTostador, EscudoCompra } from '@/components/product/EscudoDatos'
@@ -111,7 +110,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }, [product, findVariant])
 
   const { addToCart } = useCart()
-  const { toggleFavorite, isFavorite } = useFavorites()
 
   if (loading || !product) {
     return (
@@ -128,8 +126,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       </div>
     )
   }
-
-  const isFavorited = isFavorite(product.id)
 
   const handleSelectSize = (sizeValue: string) => {
     const size = product.sizeOptions.find((s) => s.value === sizeValue)
@@ -161,24 +157,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href)
     }
-  }
-
-  const handleToggleFavorite = () => {
-    if (!isFavorited && canIncrementSocialCount(product.id)) {
-      const newFavs = incrementFavorites(product.id)
-      setFavorites(newFavs)
-    }
-    toggleFavorite({
-      id: product.id,
-      slug: product.slug,
-      title: product.title,
-      price: selectedVariant?.price ?? product.price,
-      currency: product.currency,
-      imageUrl: product.images[0] ?? '',
-      vendorName: product.vendor.name,
-      originCountry: product.origin.country,
-      originRegion: product.origin.region,
-    })
   }
 
   const handleAddToCart = () => {
@@ -358,12 +336,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             selectedSizeValue={selectedVariant?.sizeValue}
             selectedGrindId={selectedGrind?.id}
             quantity={quantity}
-            isFavorited={isFavorited}
+            price={selectedVariant?.price ?? product.price}
+            currency={product.currency}
             onSelectSize={handleSelectSize}
             onSelectGrind={handleSelectGrind}
             onQuantityChange={handleQuantityChange}
             onAddToCart={handleAddToCart}
-            onToggleFavorite={handleToggleFavorite}
           />
         )}
 

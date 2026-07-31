@@ -4,8 +4,8 @@
 // VERSIÓN PREVIEW (reversible) — Escudo de compra replicado de styledk/producto.html:
 // tondos de cata para tamaños y moliendas + reserva (cantidad y botón dorado).
 
-import { Heart } from 'lucide-react'
 import styles from './EscudoDatos.module.css'
+import { formatPrice } from '@/lib/utils'
 
 export interface EscudoSizeOption {
   value: string
@@ -27,12 +27,12 @@ interface EscudoCompraProps {
   selectedSizeValue?: string
   selectedGrindId?: string
   quantity: number
-  isFavorited?: boolean
+  price: number
+  currency: string
   onSelectSize: (value: string) => void
   onSelectGrind: (id: string) => void
   onQuantityChange: (delta: number) => void
   onAddToCart: () => void
-  onToggleFavorite?: () => void
 }
 
 function BeanGlyph({ double = false, size = 26 }: { double?: boolean; size?: number }) {
@@ -77,12 +77,12 @@ export function EscudoCompra({
   selectedSizeValue,
   selectedGrindId,
   quantity,
-  isFavorited,
+  price,
+  currency,
   onSelectSize,
   onSelectGrind,
   onQuantityChange,
   onAddToCart,
-  onToggleFavorite,
 }: EscudoCompraProps) {
   const availableSizes = sizes.filter((s) => s.available !== false)
   const availableGrinds = grinds.filter((g) => g.available !== false)
@@ -107,7 +107,6 @@ export function EscudoCompra({
             >
               <BeanGlyph size={20} />
               <strong>{s.label}</strong>
-              <span>{s.weightGrams ? `${s.weightGrams} g` : ''}</span>
             </button>
           ))}
         </div>
@@ -134,7 +133,7 @@ export function EscudoCompra({
         </div>
       </div>
 
-      {/* Reserva — cantidad + botón */}
+      {/* Reserva — cantidad + precio + botón */}
       <div className={styles.reserva}>
         <div className={styles.reservaField}>
           <label htmlFor="cantidad-obra">Cantidad</label>
@@ -159,25 +158,16 @@ export function EscudoCompra({
           </div>
         </div>
 
+        <div className={styles.reservaField}>
+          <label htmlFor="precio-obra">Precio</label>
+          <span className={styles.reservaPrecio} id="precio-obra">
+            {formatPrice(price, currency)}
+          </span>
+        </div>
+
         <button type="button" className={styles.reservaBtn} onClick={onAddToCart}>
           Agregar al carrito
         </button>
-
-        {onToggleFavorite && (
-          <button
-            type="button"
-            className={styles.favoriteBtn}
-            onClick={onToggleFavorite}
-            aria-label={isFavorited ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-            aria-pressed={isFavorited}
-          >
-            <Heart
-              size={18}
-              fill={isFavorited ? 'var(--terra-500)' : 'none'}
-              color={isFavorited ? 'var(--terra-500)' : 'currentColor'}
-            />
-          </button>
-        )}
       </div>
     </div>
   )
