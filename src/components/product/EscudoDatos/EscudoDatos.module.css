@@ -12,16 +12,15 @@
   padding: 1.6rem 1.8rem;
   background: linear-gradient(
     115deg,
-    var(--neutral-0),
-    var(--neutral-50) 45%,
-    var(--neutral-100) 55%,
-    var(--neutral-200)
+    var(--neutral-800),
+    var(--neutral-900) 60%,
+    var(--neutral-950)
   );
-  border: 1px solid var(--color-border-default);
+  border: 1px solid color-mix(in srgb, var(--gold-500) 50%, transparent);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--neutral-0) 70%, transparent),
-    inset 0 0 0 4px color-mix(in srgb, var(--neutral-0) 28%, transparent),
-    inset 0 0 0 5px color-mix(in srgb, var(--gold-700) 35%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--gold-500) 22%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-0) 4%, transparent),
+    inset 0 0 0 5px color-mix(in srgb, var(--gold-500) 16%, transparent),
     var(--shadow-lg);
 }
 
@@ -36,7 +35,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--gold-900);
+  color: var(--gold-300);
   padding-bottom: 0.45rem;
 }
 
@@ -44,8 +43,8 @@
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 1rem;
   line-height: 1.5;
-  color: var(--neutral-800);
-  border-bottom: 1px solid color-mix(in srgb, var(--gold-700) 18%, transparent);
+  color: var(--neutral-100);
+  border-bottom: 1px solid color-mix(in srgb, var(--gold-500) 22%, transparent);
   padding-bottom: 0.9rem;
   margin-bottom: 0.9rem;
 }
@@ -114,26 +113,28 @@
 
 .tondosRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: clamp(0.9rem, 2vw, 1.2rem);
+  grid-template-columns: repeat(auto-fit, minmax(84px, 104px));
+  justify-content: center;
+  gap: clamp(0.6rem, 2vw, 1.1rem);
 }
 
 .tondo {
+  width: clamp(84px, 21vw, 104px);
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
   text-align: center;
-  padding: 1rem;
+  padding: 0.6rem;
   border-radius: 50%;
-  border: 3px double var(--gold-700);
+  border: 3px double var(--gold-500);
   background: radial-gradient(circle at 32% 26%, var(--neutral-0), var(--neutral-200));
   box-shadow:
     inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
     inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
-    0 14px 26px -16px var(--shadow-lg);
+    0 14px 26px -16px var(--shadow-xl);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -148,11 +149,11 @@
 
 .tondoActive,
 .tondo:focus-visible {
-  border-color: var(--gold-500);
+  border-color: var(--gold-300);
   box-shadow:
     inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
     inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
-    0 0 0 2px var(--gold-500),
+    0 0 0 2px var(--gold-300),
     0 14px 26px -16px var(--shadow-lg);
 }
 
@@ -160,19 +161,42 @@
   color: var(--gold-700);
 }
 
+.tondoDisabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(0.7);
+}
+
+.tondoDisabled:hover {
+  transform: none;
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--neutral-0) 40%, transparent),
+    inset 0 0 0 4px color-mix(in srgb, var(--neutral-800) 12%, transparent),
+    0 14px 26px -16px var(--shadow-xl);
+}
+
+.tondoDisabled strong {
+  color: var(--neutral-500);
+}
+
+.tondoDisabled span {
+  color: var(--terra-700);
+}
+
 .tondo strong {
   font-family: 'Cinzel', 'Times New Roman', serif;
-  font-size: 0.64rem;
-  letter-spacing: 0.18em;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--neutral-800);
+  line-height: 1.3;
 }
 
 .tondo span {
   font-family: 'EB Garamond', Georgia, serif;
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-style: italic;
-  line-height: 1.4;
+  line-height: 1.3;
   color: var(--gold-900);
 }
 
@@ -196,7 +220,7 @@
   font-size: 0.62rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--gold-900);
+  color: var(--gold-300);
 }
 
 .reservaCantidad {

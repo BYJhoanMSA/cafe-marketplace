@@ -48,3 +48,4 @@ coverage/
 .prettiercache
 *.tsbuildinfo
 .eslintrc.json
+.response.html

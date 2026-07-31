@@ -135,30 +135,52 @@ export async function getProductBySlug(slug: string) {
 
       if (!p || p.variants.length === 0) return null
 
+      const lowestPriceVariant = [...p.variants].sort((a, b) => a.priceInCents - b.priceInCents)[0] as (typeof p.variants)[number]
+
+      // Todas las versiones de tamaño y molienda (catálogo de settings),
+      // marcando disponibilidad real en las variantes del producto.
+      const availableWeights = new Set(p.variants.map(v => v.weightGrams))
+      const availableGrinds = new Set(p.variants.map(v => v.grindType).filter(Boolean))
+
       const seenWeights = new Set<number | null>()
-      const sizeOptions: { value: string; label: string; weightGrams: number | null; price: number }[] = []
+      const sizeOptions: { value: string; label: string; weightGrams: number | null; price: number; available: boolean }[] = []
+      for (const s of variantSizes) {
+        const weight = s.grams
+        seenWeights.add(weight)
+        const v = p.variants.find(vv => vv.weightGrams === weight)
+        sizeOptions.push({
+          value: String(weight),
+          label: s.label,
+          weightGrams: weight,
+          price: v?.priceInCents ?? lowestPriceVariant.priceInCents,
+          available: availableWeights.has(weight),
+        })
+      }
+      // Pesos presentes en el producto que no están en el catálogo de settings
       for (const v of p.variants) {
         const key = v.weightGrams ?? 0
         if (seenWeights.has(key)) continue
         seenWeights.add(key)
-        const sizeLabel = variantSizes.find(s => s.grams === v.weightGrams)?.label || v.title.split(' - ')[0] || `${v.weightGrams}g`
         sizeOptions.push({
           value: String(key),
-          label: sizeLabel,
+          label: v.title.split(' - ')[0] || `${v.weightGrams}g`,
           weightGrams: v.weightGrams,
           price: v.priceInCents,
+          available: true,
         })
       }
 
-      const usedGrindValues = new Set(p.variants.map(v => v.grindType).filter(Boolean))
-      const activeGrindOptions = grindTypes.filter(g => usedGrindValues.has(g.value))
-      const grindOptions = activeGrindOptions.length > 0
-        ? activeGrindOptions.map(g => ({ id: g.value, label: g.label }))
-        : (usedGrindValues.size > 0
-          ? [...usedGrindValues].map(v => ({ id: v!, label: v! }))
-          : [{ id: 'whole-bean', label: 'En grano' }])
-
-      const lowestPriceVariant = [...p.variants].sort((a, b) => a.priceInCents - b.priceInCents)[0] as (typeof p.variants)[number]
+      const grindOptions: { id: string; label: string; available: boolean }[] = grindTypes.map(g => ({
+        id: g.value,
+        label: g.label,
+        available: availableGrinds.has(g.value),
+      }))
+      // Moliendas presentes en el producto que no están en el catálogo de settings
+      for (const v of p.variants) {
+        if (v.grindType && !grindTypes.some(g => g.value === v.grindType)) {
+          grindOptions.push({ id: v.grindType, label: v.grindType, available: true })
+        }
+      }
 
       return {
         id: p.id,

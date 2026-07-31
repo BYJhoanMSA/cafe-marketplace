@@ -33,9 +33,9 @@ const FALLBACK_PRODUCT = {
   flavorNotes: [] as string[],
   images: ['/images/products/placeholder-1.jpg'],
   category: '',
-  sizeOptions: [] as { value: string; label: string; weightGrams: number | null; price: number }[],
+  sizeOptions: [] as { value: string; label: string; weightGrams: number | null; price: number; available?: boolean }[],
   variants: [] as { id: string; weightGrams: number | null; grindType: string | null; price: number; inStock: boolean }[],
-  grindOptions: [] as { id: string; label: string }[],
+  grindOptions: [] as { id: string; label: string; available?: boolean }[],
   rating: 0,
   reviewCount: 0,
 }
@@ -75,8 +75,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   useEffect(() => {
     if (!product) return
     setActiveImage(0)
-    const firstSize = product.sizeOptions?.[0] || null
-    const firstGrind = product.grindOptions?.[0] || null
+    const firstSize = product.sizeOptions?.find((s: any) => s.available !== false) || null
+    const firstGrind = product.grindOptions?.find((g: any) => g.available !== false) || null
     const match = firstSize && firstGrind ? findVariant(firstSize.weightGrams, firstGrind.id) : null
     setSelectedVariant(match || firstSize ? { ...match, ...firstSize, sizeValue: firstSize?.value } : null)
     setSelectedGrind(firstGrind || null)
@@ -117,7 +117,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const grind = product.grindOptions?.find((g: any) => g.id === grindId)
     if (!grind) return
     setSelectedGrind(grind)
-    const currentSize = selectedVariant?.weightGrams ?? product.sizeOptions?.[0]?.weightGrams
+    const currentSize = selectedVariant?.weightGrams ?? product.sizeOptions?.find((s: any) => s.available !== false)?.weightGrams
     const match = findVariant(currentSize, grindId)
     setSelectedVariant(match || { ...match, price: selectedVariant?.price ?? product.price, weightGrams: currentSize })
   }
