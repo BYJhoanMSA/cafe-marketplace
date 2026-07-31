@@ -20,6 +20,11 @@ const eslintConfig = [
       ".response.html",
     ],
   },
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;
