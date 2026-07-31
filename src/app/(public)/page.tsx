@@ -145,11 +145,9 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className={styles.originGrid}>
-            <Suspense fallback={<OriginsFallback />}>
-              <HomepageOrigins />
-            </Suspense>
-          </div>
+          <Suspense fallback={<OriginsFallback />}>
+            <HomepageOrigins />
+          </Suspense>
         </div>
       </section>
 
