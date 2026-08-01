@@ -190,7 +190,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
 
             {/* Cuenta */}
             <Link
-              href={userName ? '/cuenta' : '/auth/login'}
+              href={userName ? '/admin' : '/auth/login'}
               className={styles.actionButton}
               aria-label={userName ? `Mi cuenta: ${userName}` : 'Iniciar sesión'}
             >
