@@ -167,6 +167,19 @@
   letter-spacing: 0.02em;
 }
 
+.pendingBadge {
+  position: absolute;
+  bottom: var(--space-2);
+  left: var(--space-2);
+  padding: 3px 8px;
+  background: var(--gold-500, #eab308);
+  color: var(--neutral-900);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.02em;
+}
+
 .imageActions {
   display: flex;
   flex-direction: column;

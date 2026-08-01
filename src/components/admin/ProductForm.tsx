@@ -101,14 +101,38 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
     })
   }
 
+  // Sube a Cloudinary solo las imágenes marcadas como pendientes (sin URL real)
+  const uploadPendingImages = async (imgs: UploadedImage[]): Promise<UploadedImage[]> => {
+    const uploaded: UploadedImage[] = []
+    for (const img of imgs) {
+      if (img.file) {
+        const formData = new FormData()
+        formData.append('file', img.file)
+        formData.append('type', 'product')
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || `Error subiendo imagen: ${img.file.name}`)
+        }
+        uploaded.push({ url: data.url, alt: img.alt, width: data.width, height: data.height, position: img.position })
+      } else {
+        uploaded.push({ url: img.url, alt: img.alt, width: img.width, height: img.height, position: img.position })
+      }
+    }
+    return uploaded
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
+      // 1. Subir a Cloudinary las imágenes pendientes (solo al guardar)
+      const finalImages = await uploadPendingImages(images)
+
       if (isEditing) {
-          const result = await updateProduct(initialData.id, { ...formData, images, vendorId: selectedVendorId, categoryId: selectedCategoryId, isFeatured: false })
+          const result = await updateProduct(initialData.id, { ...formData, images: finalImages, vendorId: selectedVendorId, categoryId: selectedCategoryId, isFeatured: false })
         if (result.success) {
           router.push('/admin/productos')
           router.refresh()
@@ -117,7 +141,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           setError(result.error || 'Error al actualizar el producto')
         }
       } else {
-        const result = await createProduct({ ...formData, images, vendorId: selectedVendorId, categoryId: selectedCategoryId })
+        const result = await createProduct({ ...formData, images: finalImages, vendorId: selectedVendorId, categoryId: selectedCategoryId })
         if (!result.success) {
           setError(result.error || 'Error al guardar el producto')
           setLoading(false)

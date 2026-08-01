@@ -23,14 +23,36 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
       : []
   )
 
+  const uploadPendingImages = async (imgs: UploadedImage[], type: 'hero' | 'feature'): Promise<UploadedImage[]> => {
+    const uploaded: UploadedImage[] = []
+    for (const img of imgs) {
+      if (img.file) {
+        const formData = new FormData()
+        formData.append('file', img.file)
+        formData.append('type', type)
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || `Error subiendo imagen: ${img.file.name}`)
+        }
+        uploaded.push({ url: data.url, alt: img.alt, width: data.width, height: data.height, position: img.position })
+      } else {
+        uploaded.push({ url: img.url, alt: img.alt, width: img.width, height: img.height, position: img.position })
+      }
+    }
+    return uploaded
+  }
+
   const handleSave = async () => {
     setIsSaving(true)
     setSaveMsg('')
     try {
+      const finalHero = await uploadPendingImages(heroImages, 'hero')
+      const finalHeroMobile = await uploadPendingImages(heroMobileImages, 'hero')
       const finalConfig: HomepageConfig = {
         ...config,
-        heroImageUrl: heroImages[0]?.url || config.heroImageUrl,
-        heroImageUrlMobile: heroMobileImages[0]?.url || config.heroImageUrlMobile || config.heroImageUrl,
+        heroImageUrl: finalHero[0]?.url || config.heroImageUrl,
+        heroImageUrlMobile: finalHeroMobile[0]?.url || config.heroImageUrlMobile || config.heroImageUrl,
       }
       const res = await updateHomepageSettings(finalConfig)
       if (res.success) {

@@ -1,16 +1,15 @@
 'use client'
 
 // src/components/admin/ImageUploader/ImageUploader.tsx
-// Componente de subida de imágenes con:
+// Componente de selección de imágenes con:
 // - Drag & Drop
-// - Vista previa antes de subir
-// - Optimización automática en servidor (sharp → WebP)
-// - Indicador de ahorro de espacio
+// - Vista previa local (blob) ANTES de subir
+// - La subida real (optimización + Cloudinary) ocurre al enviar el formulario
 // - Reordenamiento por arrastre
 // - Eliminación individual
 
 import { useState, useRef, useCallback } from 'react'
-import { Upload, X, ImageIcon, Loader2, GripVertical, Star } from 'lucide-react'
+import { Upload, X, ImageIcon, GripVertical, Star } from 'lucide-react'
 import styles from './ImageUploader.module.css'
 
 export interface UploadedImage {
@@ -19,6 +18,7 @@ export interface UploadedImage {
   width?: number
   height?: number
   position: number
+  file?: File
 }
 
 interface ImageUploaderProps {
@@ -37,45 +37,10 @@ export function ImageUploader({
   label = 'Imágenes del producto',
 }: ImageUploaderProps) {
   const [isDraggingOver, setIsDraggingOver] = useState(false)
-  const [uploading, setUploading] = useState<string[]>([]) // nombres de archivos subiendo
   const [errors, setErrors] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const uploadFile = useCallback(async (file: File): Promise<UploadedImage | null> => {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('type', type)
-
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 30000)
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal,
-      })
-      clearTimeout(timeoutId)
-      const data = await res.json()
-
-      if (!res.ok || !data.success) {
-        setErrors(prev => [...prev, data.error || 'Error subiendo imagen'])
-        return null
-      }
-
-      return {
-        url: data.url,
-        alt: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
-        width: data.width,
-        height: data.height,
-        position: 0,
-      }
-    } catch {
-      setErrors(prev => [...prev, `Error subiendo ${file.name}`])
-      return null
-    }
-  }, [type])
-
-  const handleFiles = useCallback(async (files: FileList | File[]) => {
+  const handleFiles = useCallback((files: FileList | File[]) => {
     const fileArray = Array.from(files)
     const remaining = maxImages - images.length
 
@@ -84,20 +49,22 @@ export function ImageUploader({
       return
     }
 
-    const toUpload = fileArray.slice(0, remaining)
+    const toAdd = fileArray.slice(0, remaining)
     setErrors([])
-    setUploading(toUpload.map(f => f.name))
 
-    const results = await Promise.all(toUpload.map(uploadFile))
-    const successful = results.filter(Boolean) as UploadedImage[]
+    const newEntries: UploadedImage[] = toAdd.map((file) => ({
+      url: URL.createObjectURL(file),
+      alt: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+      file,
+      position: 0,
+    }))
 
-    const newImages = [...images, ...successful].map((img, i) => ({
+    const newImages = [...images, ...newEntries].map((img, i) => ({
       ...img,
       position: i,
     }))
     onChange(newImages)
-    setUploading([])
-  }, [images, maxImages, onChange, uploadFile])
+  }, [images, maxImages, onChange])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -108,19 +75,27 @@ export function ImageUploader({
   const handleRemove = useCallback(async (index: number) => {
     const img = images[index]
     if (!img) return
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 10000)
-      await fetch('/api/upload', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: img.url }),
-        signal: controller.signal,
-      })
-      clearTimeout(timeoutId)
-    } catch {
-      // Silencioso: la imagen se quita del estado aunque el DELETE falle
+
+    if (img.url.startsWith('blob:')) {
+      // Imagen pendiente de subir: solo se revoca la vista previa local
+      URL.revokeObjectURL(img.url)
+    } else {
+      // Imagen ya publicada: intentar eliminarla del almacenamiento
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
+        await fetch('/api/upload', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: img.url }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+      } catch {
+        // Silencioso: la imagen se quita del estado aunque el DELETE falle
+      }
     }
+
     const updated = images.filter((_, i) => i !== index).map((img, i) => ({ ...img, position: i }))
     onChange(updated)
   }, [images, onChange])
@@ -147,7 +122,7 @@ export function ImageUploader({
       {/* Zona de arrastre */}
       {images.length < maxImages && (
         <div
-          className={`${styles.dropzone} ${isDraggingOver ? styles.dragActive : ''} ${uploading.length > 0 ? styles.uploading : ''}`}
+          className={`${styles.dropzone} ${isDraggingOver ? styles.dragActive : ''}`}
           onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true) }}
           onDragLeave={() => setIsDraggingOver(false)}
           onDrop={handleDrop}
@@ -161,21 +136,12 @@ export function ImageUploader({
             className={styles.hiddenInput}
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
           />
-          {uploading.length > 0 ? (
-            <div className={styles.uploadingIndicator}>
-              <Loader2 size={28} className={styles.spin} />
-              <span>Optimizando y subiendo {uploading.length} imagen{uploading.length > 1 ? 'es' : ''}...</span>
-            </div>
-          ) : (
-            <>
-              <Upload size={32} className={styles.uploadIcon} />
-              <div className={styles.dropzoneText}>
-                <strong>Arrastra imágenes aquí</strong>
-                <span>o haz clic para seleccionar</span>
-                <span className={styles.hint}>JPG, PNG o WebP · Máx 10MB · Se optimizarán automáticamente a WebP</span>
-              </div>
-            </>
-          )}
+          <Upload size={32} className={styles.uploadIcon} />
+          <div className={styles.dropzoneText}>
+            <strong>Arrastra imágenes aquí</strong>
+            <span>o haz clic para seleccionar</span>
+            <span className={styles.hint}>JPG, PNG o WebP · Máx 10MB · Se subirán a Cloudinary al guardar</span>
+          </div>
         </div>
       )}
 
@@ -188,7 +154,7 @@ export function ImageUploader({
         </div>
       )}
 
-      {/* Grid de imágenes subidas */}
+      {/* Grid de imágenes */}
       {images.length > 0 && (
         <div className={styles.imageGrid}>
           {images.map((img, index) => (
@@ -199,6 +165,11 @@ export function ImageUploader({
                 {index === 0 && (
                   <span className={styles.primaryBadge}>
                     <Star size={10} fill="currentColor" /> Principal
+                  </span>
+                )}
+                {img.file && (
+                  <span className={styles.pendingBadge}>
+                    Pendiente
                   </span>
                 )}
               </div>
@@ -237,7 +208,7 @@ export function ImageUploader({
         </div>
       )}
 
-      {images.length === 0 && uploading.length === 0 && (
+      {images.length === 0 && (
         <div className={styles.emptyState}>
           <ImageIcon size={36} className={styles.emptyIcon} />
           <span>Sin imágenes aún</span>
