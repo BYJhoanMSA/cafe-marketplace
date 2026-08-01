@@ -13,23 +13,20 @@ export async function getUserVendor(userId: string) {
 
 /**
  * Asegura que el usuario tenga una marca (vendor) para poder publicar productos.
- * Si no tiene, la crea con datos derivados de su perfil. Idempotente.
+ * Si no tiene, la crea con el nombre de perfil del usuario. Idempotente.
  */
-export async function ensureUserVendor(
-  userId: string,
-  user?: { firstName?: string; lastName?: string }
-) {
+export async function ensureUserVendor(userId: string, userName?: string) {
   const existing = await getUserVendor(userId)
   if (existing) return existing
 
-  const baseName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
-  const base = slugify(baseName || 'tienda') || 'tienda'
+  const baseName = (userName ?? '').trim() || 'Nueva marca'
+  const base = slugify(baseName) || 'tienda'
   const slug = `${base}-${userId.slice(0, 8)}`
 
   return prisma.vendor.create({
     data: {
       userId,
-      storeName: baseName || 'Nueva marca',
+      storeName: baseName,
       slug,
       shortDescription: 'Tienda de café',
       country: 'CO',

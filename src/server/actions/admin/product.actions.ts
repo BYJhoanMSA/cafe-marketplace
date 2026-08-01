@@ -59,7 +59,7 @@ const ProductSchema = z.object({
  * - admin: usa el vendorId enviado (si existe) o su propio vendor.
  * - resto: SIEMPRE su propio vendor (se crea automáticamente si no tiene).
  */
-async function resolveVendorId(session: { user: { id: string; role?: string } }, requestedVendorId?: string): Promise<{ vendorId: string; storeName: string } | null> {
+async function resolveVendorId(session: { user: { id: string; role?: string; name?: string | null } }, requestedVendorId?: string): Promise<{ vendorId: string; storeName: string } | null> {
   if (session.user.role === 'admin' && requestedVendorId) {
     const vendor = await prisma.vendor.findUnique({
       where: { id: requestedVendorId },
@@ -80,7 +80,7 @@ async function resolveVendorId(session: { user: { id: string; role?: string } },
     return null
   }
 
-  const created = await ensureUserVendor(session.user.id)
+  const created = await ensureUserVendor(session.user.id, session.user.name ?? undefined)
   return { vendorId: created.id, storeName: created.storeName }
 }
 
