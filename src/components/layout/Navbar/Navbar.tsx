@@ -68,6 +68,11 @@ const NAV_LINKS = [
 ]
 
 // ================================================================
+// Navegación del menú mobile (links del header + Inicio)
+// ================================================================
+const MOBILE_MENU_LINKS = [{ href: '/', label: 'Inicio' }, ...NAV_LINKS]
+
+// ================================================================
 // Componente principal
 // ================================================================
 export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) {
@@ -80,6 +85,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
   const { theme, toggleTheme } = useTheme()
   const [searchOpen, setSearchOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Enfocar el input de búsqueda al abrirse
   useEffect(() => {
@@ -88,12 +94,22 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
     }
   }, [searchOpen])
 
+  // Cerrar el menú mobile al navegar
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
+
   function isActive(href: string) {
     if (href === '/') return pathname === '/'
     return pathname.startsWith(href)
   }
 
-  const { isOpen: pillBarOpen, toggle: togglePillBar } = usePillBar()
+  const { isOpen: pillBarOpen, toggle: togglePillBar, close: closePillBar } = usePillBar()
+
+  const toggleMenu = () => {
+    setMenuOpen((o) => !o)
+    if (pillBarOpen) closePillBar()
+  }
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -212,26 +228,45 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
         role="navigation"
       >
         <div className={styles.tabBarInner}>
-          {/* Inicio */}
-          <Link
-            href="/"
-            className={`${styles.tabItem} ${isActive('/') ? styles.active : ''}`}
-            aria-label="Inicio"
-            aria-current={isActive('/') ? 'page' : undefined}
-          >
-            <span className={styles.tabIcon}>
-              <HomeIcon size={28} />
-              <span className={styles.tabActiveIndicator} aria-hidden="true" />
-            </span>
-            <span className={styles.tabLabel}>Inicio</span>
-          </Link>
+          {/* Inicio — en mobile abre el menú con los links del header */}
+          {isMobile ? (
+            <button
+              type="button"
+              className={`${styles.tabItem} ${menuOpen || isActive('/') ? styles.active : ''}`}
+              onClick={toggleMenu}
+              aria-label="Abrir menú"
+              aria-expanded={menuOpen}
+            >
+              <span className={styles.tabIcon}>
+                <HomeIcon size={28} />
+                <span className={styles.tabActiveIndicator} aria-hidden="true" />
+              </span>
+              <span className={styles.tabLabel}>Inicio</span>
+            </button>
+          ) : (
+            <Link
+              href="/"
+              className={`${styles.tabItem} ${isActive('/') ? styles.active : ''}`}
+              aria-label="Inicio"
+              aria-current={isActive('/') ? 'page' : undefined}
+            >
+              <span className={styles.tabIcon}>
+                <HomeIcon size={28} />
+                <span className={styles.tabActiveIndicator} aria-hidden="true" />
+              </span>
+              <span className={styles.tabLabel}>Inicio</span>
+            </Link>
+          )}
 
           {/* Buscar — en mobile abre el selector de sabores */}
           {isMobile ? (
             <button
               type="button"
               className={`${styles.tabItem} ${pillBarOpen ? styles.active : ''}`}
-              onClick={togglePillBar}
+              onClick={() => {
+                setMenuOpen(false)
+                togglePillBar()
+              }}
               aria-label="Buscar productos"
               aria-pressed={pillBarOpen}
             >
@@ -302,6 +337,31 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
           </button>
         </div>
       </nav>
+
+      {/* ============================================================
+          MENU MOBILE — links del header (overlay sobre el contenido)
+          ============================================================ */}
+      <div
+        className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ''}`}
+        role="dialog"
+        aria-label="Menú de navegación"
+        aria-hidden={!menuOpen}
+      >
+        <ul className={styles.mobileMenuList} role="list">
+          {MOBILE_MENU_LINKS.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={`${styles.mobileMenuLink} ${isActive(link.href) ? styles.active : ''}`}
+                onClick={() => setMenuOpen(false)}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   )
 }
