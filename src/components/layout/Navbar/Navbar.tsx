@@ -360,6 +360,41 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               </Link>
             </li>
           ))}
+
+          {/* Acceso a cuenta: dashboard si hay sesión, login/registro si no */}
+          <li className={styles.mobileMenuDivider} aria-hidden="true" />
+          {userName ? (
+            <li>
+              <Link
+                href="/admin"
+                className={`${styles.mobileMenuLink} ${isActive('/admin') ? styles.active : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                Mi cuenta
+              </Link>
+            </li>
+          ) : (
+            <>
+              <li>
+                <Link
+                  href="/auth/login"
+                  className={`${styles.mobileMenuLink} ${isActive('/auth/login') ? styles.active : ''}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Iniciar sesión
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/auth/registro"
+                  className={`${styles.mobileMenuLink} ${isActive('/auth/registro') ? styles.active : ''}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Crear cuenta
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </>

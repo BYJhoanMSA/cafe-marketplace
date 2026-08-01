@@ -395,6 +395,12 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.mobileMenuDivider {
+  height: 1px;
+  margin: var(--space-2) 0;
+  background-color: var(--color-border-default);
+}
+
 [data-theme="dark"] .mobileMenu {
   background-color: rgba(15, 12, 10, 0.95);
 }
