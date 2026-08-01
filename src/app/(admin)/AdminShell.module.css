@@ -1,4 +1,4 @@
-/* src/app/(admin)/layout.module.css */
+/* src/app/(admin)/AdminShell.module.css */
 
 .container {
   display: flex;
@@ -6,6 +6,7 @@
   background-color: var(--color-bg-secondary);
 }
 
+/* ── Sidebar desktop ── */
 .sidebar {
   width: 250px;
   background-color: var(--color-bg-primary);
@@ -25,6 +26,7 @@
   color: var(--color-ink-primary);
   text-decoration: none;
   border-bottom: 1px solid var(--color-border-default);
+  flex-shrink: 0;
 }
 
 .nav {
@@ -33,6 +35,7 @@
   padding: var(--space-4);
   gap: var(--space-2);
   flex: 1;
+  overflow-y: auto;
 }
 
 .navItem {
@@ -99,11 +102,29 @@
   text-transform: capitalize;
 }
 
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-secondary);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.logoutButton:hover {
+  color: var(--terra-500, #ef4444);
+}
+
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  min-width: 0;
 }
 
 .header {
@@ -112,6 +133,7 @@
   border-bottom: 1px solid var(--color-border-default);
   display: flex;
   align-items: center;
+  gap: var(--space-3);
   padding: 0 var(--space-8);
   position: sticky;
   top: 0;
@@ -124,4 +146,115 @@
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* ── Botón hamburguesa (solo mobile) ── */
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-primary);
+}
+
+.hamburger:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+/* ── Drawer mobile ── */
+.backdrop {
+  display: none;
+}
+
+.drawer {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .header {
+    padding: 0 var(--space-4);
+  }
+
+  .content {
+    padding: var(--space-4);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 190;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-out);
+  }
+
+  .backdropOpen {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 200;
+    background-color: var(--color-bg-primary);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(-100%);
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .drawerOpen {
+    transform: translateX(0);
+  }
+
+  .drawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .drawerHeader .logo {
+    border-bottom: none;
+  }
+
+  .closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-right: var(--space-3);
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-ink-secondary);
+  }
+
+  .closeButton:hover {
+    color: var(--color-ink-primary);
+    background-color: var(--color-bg-elevated);
+  }
 }
