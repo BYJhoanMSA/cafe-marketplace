@@ -3,7 +3,7 @@
 // src/components/ui/Input/Input.tsx
 // Input con label flotante, validación, íconos y estados semánticos
 
-import { forwardRef, useId } from 'react'
+import { forwardRef, useId, useState } from 'react'
 import type { InputHTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import styles from './Input.module.css'
@@ -32,6 +32,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       className,
       wrapperClassName,
       id,
+      placeholder,
+      onFocus,
+      onBlur,
       ...props
     },
     ref
@@ -42,7 +45,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const errorId = `${inputId}-error`
     const hintId = `${inputId}-hint`
 
+    const [focused, setFocused] = useState(false)
     const hasValue = Boolean(props.value ?? props.defaultValue)
+
+    // El placeholder (sugerencia) solo se muestra cuando el label ya flotó
+    // (con valor o al enfocar). Evita que la sugerencia se solape con el label.
+    const activePlaceholder = focused || hasValue ? placeholder : ' '
 
     return (
       <div className={cn(styles.wrapper, wrapperClassName)}>
@@ -50,7 +58,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            placeholder=" " // Necesario para el selector :not(:placeholder-shown)
+            placeholder={activePlaceholder} // Necesario para el selector :not(:placeholder-shown)
+            onFocus={(e) => {
+              setFocused(true)
+              onFocus?.(e)
+            }}
+            onBlur={(e) => {
+              setFocused(false)
+              onBlur?.(e)
+            }}
             aria-invalid={status === 'error'}
             aria-describedby={
               errorMessage ? errorId : hint ? hintId : undefined
