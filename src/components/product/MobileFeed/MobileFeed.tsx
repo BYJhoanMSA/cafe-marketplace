@@ -99,35 +99,72 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
 
   // Restaurar la posición del feed al volver al catálogo (botón atrás o "Volver al catálogo").
   // Prioriza el índice del producto tocado (límite exacto de slide) y, si no hay, el scroll
-  // en píxeles guardado. Se asigna scrollTop directamente (instantáneo) y se re-aplica por
-  // varios frames para que ningún reset (snap/re-render) lo deje en el primer producto.
+  // en píxeles guardado. Monta la ventana de slides alrededor del índice restaurado para que
+  // la altura del contenedor sea correcta desde el inicio (sin huecos que la colapsen) y
+  // re-aplica el scroll por varios frames para que ningún reset lo deje en el primer producto.
   useLayoutEffect(() => {
     if (didRestoreRef.current) return
     const container = containerRef.current
     if (!container) return
     if (mountedIds.length === 0) return
 
-    let target: number | null = null
+    let targetIndex: number | null = null
+    let targetPx: number | null = null
+
     const tapped = sessionStorage.getItem(TAPPED_INDEX_KEY)
     sessionStorage.removeItem(TAPPED_INDEX_KEY)
     if (tapped != null) {
       const idx = Number(tapped)
-      if (!Number.isNaN(idx) && idx > 0) target = idx * container.clientHeight
+      if (!Number.isNaN(idx)) targetIndex = idx
     }
-    if (target == null) {
+    if (targetIndex == null) {
       const saved = sessionStorage.getItem(SCROLL_POS_KEY)
       sessionStorage.removeItem(SCROLL_POS_KEY)
       if (saved != null) {
         const px = Number(saved)
-        if (!Number.isNaN(px) && px > 0) target = px
+        if (!Number.isNaN(px) && px > 0) {
+          targetPx = px
+          targetIndex = Math.round(px / container.clientHeight)
+        }
       }
     }
-    if (target == null) return
+    if (targetIndex == null) return
+
+    targetIndex = Math.min(Math.max(targetIndex, 0), products.length - 1)
+    if (targetIndex === 0) {
+      didRestoreRef.current = true
+      return
+    }
 
     didRestoreRef.current = true
+
+    // Montar la ventana alrededor del índice restaurado: espaciadores correctos y
+    // altura total estable (evita el colapso que recortaba el scroll al producto 5).
+    const lo = Math.max(0, targetIndex - 1)
+    const hi = Math.min(products.length - 1, targetIndex + 1)
+    const freshWindow: string[] = []
+    for (let i = lo; i <= hi; i++) {
+      const p = products[i]
+      if (p) freshWindow.push(p.id)
+    }
+    if (freshWindow.length && freshWindow.join(',') !== mountedIds.join(',')) {
+      setMountedIds(freshWindow)
+    }
+
+    const step = container.clientHeight
+    const desiredPx = targetPx ?? targetIndex * step
     const maxScroll = container.scrollHeight - container.clientHeight
-    const clamped = Math.min(target, maxScroll)
-    if (clamped <= 0) return
+    const clamped = Math.min(desiredPx, maxScroll)
+
+    console.log('[feed-restore]', {
+      targetIndex,
+      desiredPx,
+      step,
+      scrollHeight: container.scrollHeight,
+      maxScroll,
+      clamped,
+      mounted: freshWindow.length,
+    })
 
     let attempts = 0
     const apply = () => {
@@ -135,9 +172,19 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
         container.scrollTop = clamped
       }
       attempts += 1
-      if (attempts < 8) requestAnimationFrame(apply)
+      if (attempts < 30) requestAnimationFrame(apply)
     }
     apply()
+
+    setTimeout(() => {
+      const finalStep = container.clientHeight
+      console.log('[feed-restore-final]', {
+        scrollTop: container.scrollTop,
+        activeIndex: finalStep > 0 ? Math.round(container.scrollTop / finalStep) : -1,
+        scrollHeight: container.scrollHeight,
+        mounted: mountedIds.length,
+      })
+    }, 800)
   }, [mountedIds])
 
   // Guardar la posición final al desmontar (navegación al PDP).

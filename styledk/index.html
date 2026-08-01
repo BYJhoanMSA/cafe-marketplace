@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casa del Cafeto · Café Orgánico Premium de Colombia</title>
+  <meta name="description" content="Café de especialidad de origen colombiano, tostado artesanalmente. Una casa dedicada al café como obra de arte.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Filtros de material: piedra y mármol procedimentales (sin imágenes) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="fx-stone" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8 0.07" numOctaves="4" seed="11" stitchTiles="stitch" result="vein"/>
+        <feColorMatrix in="vein" type="saturate" values="0" result="grey"/>
+        <feComponentTransfer in="grey" result="soft">
+          <feFuncA type="table" tableValues="0.05 0.24"/>
+        </feComponentTransfer>
+        <feBlend in="SourceGraphic" in2="soft" mode="multiply"/>
+      </filter>
+      <filter id="fx-marble" x="-15%" y="-15%" width="130%" height="130%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05 0.04" numOctaves="5" seed="7" stitchTiles="stitch" result="marble"/>
+        <feColorMatrix in="marble" type="saturate" values="0" result="grey"/>
+        <feComponentTransfer in="grey" result="soft">
+          <feFuncA type="table" tableValues="0.06 0.30"/>
+        </feComponentTransfer>
+        <feBlend in="SourceGraphic" in2="soft" mode="multiply"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Marco arquitectónico: columnas estriadas que enmarcan el palacio -->
+  <div class="column-frame" aria-hidden="true">
+    <aside class="column column--l">
+      <div class="column__capital">
+        <span class="capital__abacus"></span>
+        <span class="capital__dentil"></span>
+        <span class="capital__echinus"></span>
+      </div>
+      <div class="column__shaft"></div>
+      <div class="column__base">
+        <span class="base__astragal"></span>
+        <span class="base__torus"></span>
+        <span class="base__scotia"></span>
+        <span class="base__plinth"></span>
+      </div>
+    </aside>
+    <aside class="column column--r">
+      <div class="column__capital">
+        <span class="capital__abacus"></span>
+        <span class="capital__dentil"></span>
+        <span class="capital__echinus"></span>
+      </div>
+      <div class="column__shaft"></div>
+      <div class="column__base">
+        <span class="base__astragal"></span>
+        <span class="base__torus"></span>
+        <span class="base__scotia"></span>
+        <span class="base__plinth"></span>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ================= FAÇADE · FACHADA DEL PALACIO ================= -->
+  <header class="facade" id="inicio">
+
+    <!-- Cornisa superior + banda denticulada -->
+    <div class="cornice cornice--top" aria-hidden="true">
+      <span class="cornice__dentil"></span>
+      <span class="cornice__band"></span>
+    </div>
+
+    <div class="facade__inner">
+
+      <!-- Lema bajo la cornisa -->
+      <p class="facade__eyebrow">Tostadores artesanales · Origin Colombia · Est. MDCCCXCVIII</p>
+
+      <!-- Escudo central con guirnaldas de cafeto -->
+      <div class="escutcheon">
+        <span class="escutcheon__sprig escutcheon__sprig--l" aria-hidden="true"></span>
+        <a class="logo" href="#inicio" aria-label="Casa del Cafeto — Inicio">
+          <span class="logo__shield" aria-hidden="true">
+            <svg viewBox="0 0 64 78" role="img" aria-label="Escudo con grano de café">
+              <g fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M32 4 L56 12 L52 52 Q32 74 12 52 L8 12 Z"/>
+                <path d="M13 22 L51 22 M15 33 L49 33"/>
+                <ellipse cx="32" cy="49" rx="8" ry="11"/>
+                <path d="M32 40 Q27 48 32 58"/>
+              </g>
+            </svg>
+          </span>
+          <span class="logo__name">Casa <em>del</em> Cafeto</span>
+          <span class="logo__tag">Café orgánico · Premium</span>
+        </a>
+        <span class="escutcheon__sprig escutcheon__sprig--r" aria-hidden="true"></span>
+      </div>
+
+      <!-- Navegación del palacio -->
+      <nav class="nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="#catalogo">La Colección</a></li>
+          <li><a href="#sobre">La Casa</a></li>
+          <li><a href="#proceso">El Oficio</a></li>
+          <li><a href="#sala">Sala Principal</a></li>
+          <li><a href="#testimonios">Epigrafía</a></li>
+        </ul>
+      </nav>
+
+      <!-- Doble línea ornamental -->
+      <div class="rule rule--double" aria-hidden="true">
+        <span class="rule__diamond"></span>
+      </div>
+    </div>
+
+    <!-- Cornisa inferior -->
+    <div class="cornice cornice--bottom" aria-hidden="true">
+      <span class="cornice__band"></span>
+      <span class="cornice__dentil"></span>
+    </div>
+  </header>
+
+  <main class="building">
+
+    <!-- ================= PATIO · HERO ================= -->
+    <section class="patio" aria-labelledby="patio-title">
+      <div class="container patio__inner">
+
+        <header class="patio__head">
+          <p class="overline">Café de especialidad · Alto cauca, Colombia</p>
+          <h1 id="patio-title">Café Orgánico Premium</h1>
+          <div class="ornament-divider" role="img" aria-label="Divisor con rama de cafeto"></div>
+        </header>
+
+        <!-- Gran arco renacentista -->
+        <div class="arch">
+          <div class="arch__voussoirs" aria-hidden="true"></div>
+          <div class="arch__keystone" aria-hidden="true">
+            <span class="arch__keystone-glyph"></span>
+          </div>
+          <figure class="arch__opening">
+            <div class="arch__plate" role="img" aria-label="Grabado de cafeto con cerezas dentro de un medallón"></div>
+            <figcaption>Grabado de cafeto · Plata o Plomo no, café siempre</figcaption>
+          </figure>
+        </div>
+
+        <p class="patio__lede">
+          Bienvenido a la <strong>Casa del Cafeto</strong>, un palacio consagrado al fruto
+          del árbol de café: semillas de altura, tostado artesanal y el tiempo que toda
+          obra de arte merece.
+        </p>
+
+        <a class="btn btn--gold" href="#catalogo">Recorrer la colección</a>
+      </div>
+    </section>
+
+    <!-- ================= GALERÍA · CATÁLOGO ================= -->
+    <section class="galeria" id="catalogo" aria-labelledby="galeria-title">
+      <div class="container">
+
+        <header class="section-head">
+          <p class="overline">Galeria del palacio</p>
+          <h2 id="galeria-title">La Colección</h2>
+          <div class="ornament-divider" role="img" aria-label="Divisor con rama de cafeto"></div>
+          <p class="section-head__lead">Cuatro orígenes, cuatro frescos. Cada lote descansa en su propio
+            nicho, como las esculturas de un museo renacentista.</p>
+        </header>
+
+        <div class="galeria__grid">
+
+          <article class="niche artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha de San Agustín, Bourbon Rosado"></a>
+            <div class="niche__arch">
+              <div class="niche__art niche__art--1" role="img" aria-label="Lote San Agustín, Bourbon Rosado"></div>
+            </div>
+            <div class="niche__capital" aria-hidden="true"></div>
+            <div class="niche__body">
+              <h3>San Agustín</h3>
+              <p class="niche__origin">Huila · Bourbon Rosado</p>
+              <p>Tueste claro, cuerpo sedoso, notas de panela y azahar.</p>
+              <span class="niche__price">250 g · €19</span>
+            </div>
+            <div class="niche__pedestal" aria-hidden="true"></div>
+          </article>
+
+          <article class="niche artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha de Sierra Nevada, Geisha"></a>
+            <div class="niche__arch">
+              <div class="niche__art niche__art--2" role="img" aria-label="Lote Sierra Nevada, Geisha"></div>
+            </div>
+            <div class="niche__capital" aria-hidden="true"></div>
+            <div class="niche__body">
+              <h3>Sierra Nevada</h3>
+              <p class="niche__origin">Magdalena · Geisha</p>
+              <p>Tueste medio, flores de jacarandá y miel de abeja.</p>
+              <span class="niche__price">250 g · €24</span>
+            </div>
+            <div class="niche__pedestal" aria-hidden="true"></div>
+          </article>
+
+          <article class="niche artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha de Huila Mágico, Castillo"></a>
+            <div class="niche__arch">
+              <div class="niche__art niche__art--3" role="img" aria-label="Lote Huila Mágico, Castillo"></div>
+            </div>
+            <div class="niche__capital" aria-hidden="true"></div>
+            <div class="niche__body">
+              <h3>Huila Mágico</h3>
+              <p class="niche__origin">Huila · Castillo</p>
+              <p>Tueste medio, nuez tostada y cacao fino.</p>
+              <span class="niche__price">250 g · €16</span>
+            </div>
+            <div class="niche__pedestal" aria-hidden="true"></div>
+          </article>
+
+          <article class="niche artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha de Quindío Real, Caturra"></a>
+            <div class="niche__arch">
+              <div class="niche__art niche__art--4" role="img" aria-label="Lote Quindío Real, Caturra"></div>
+            </div>
+            <div class="niche__capital" aria-hidden="true"></div>
+            <div class="niche__body">
+              <h3>Quindío Real</h3>
+              <p class="niche__origin">Quindío · Caturra</p>
+              <p>Tueste oscuro, chocolate negro y roble añejo.</p>
+              <span class="niche__price">250 g · €17</span>
+            </div>
+            <div class="niche__pedestal" aria-hidden="true"></div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CLAUSTRO · SOBRE NOSOTROS ================= -->
+    <section class="claustro" id="sobre" aria-labelledby="sobre-title">
+      <div class="container claustro__inner">
+
+        <div class="claustro__text">
+          <p class="overline">Sobre la casa</p>
+          <h2 id="sobre-title">Un Claustro Consagrado al Cafeto</h2>
+          <div class="ornament-divider ornament-divider--left" role="img" aria-label="Divisor con rama de cafeto"></div>
+          <p>
+            En las laderas de la cordillera andina, entre nieblas de altura, cultivamos
+            café orgánico bajo sombra de árboles nativos. Cada cereza se recolecta a mano,
+            se lava en los lavaderos de piedra de la hacienda y se seca lentamente al sol.
+          </p>
+          <p>
+            Nuestro tostador, un artesano de la tercera generación, tuesta en pequeños lotes
+            para que cada origen hable por sí mismo. Así, el palacio de la Casa del Cafeto
+            guarda lo que la tierra andina concede: un café limpio, honesto y monumental.
+          </p>
+          <blockquote class="claustro__quote">
+            “No tostamos grano; descubrimos lo que el cafeto ya había decidido.”
+          </blockquote>
+          <ul class="claustro__facts">
+            <li><strong>CXXVI</strong><span>años de tradición</span></li>
+            <li><strong>1.900 m</strong><span>de altitud media</span></li>
+            <li><strong>100%</strong><span>orgánico certificado</span></li>
+          </ul>
+        </div>
+
+        <figure class="claustro__image">
+          <div class="cloister-window">
+            <div class="cloister-window__opening" role="img" aria-label="Ventanal del claustro: grabado de cafeto con cerezas"></div>
+          </div>
+          <figcaption>El claustro sur · Huerta del cafeto, 1.900 m s.n.m.</figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- ================= CORREDOR · PROCESO ================= -->
+    <section class="corredor" id="proceso" aria-labelledby="proceso-title">
+      <div class="container">
+
+        <header class="section-head">
+          <p class="overline">El corredor del museo</p>
+          <h2 id="proceso-title">Del Fruto a la Taza</h2>
+          <div class="ornament-divider" role="img" aria-label="Divisor con rama de cafeto"></div>
+          <p class="section-head__lead">Ocho salas del oficio, unidas por un mismo corredor ornamental.</p>
+        </header>
+
+        <ol class="proceso">
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">I</span>
+            <h3>Semilla</h3>
+            <p>Selección de semillas de cafetos orgánicos de altura.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">II</span>
+            <h3>Cultivo</h3>
+            <p>Bajo sombra de guamos y nogales, sin químicos.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">III</span>
+            <h3>Recolección</h3>
+            <p>Cerezas maduras, cosecha a mano, cesto a cesto.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">IV</span>
+            <h3>Lavado</h3>
+            <p>Despulpe y fermentación en canales de piedra.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">V</span>
+            <h3>Secado</h3>
+            <p>Pergamino al sol en patios de ladrillo viejo.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">VI</span>
+            <h3>Tueste</h3>
+            <p>Lotes pequeños, fuego lento, oído y paciencia.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">VII</span>
+            <h3>Empaque</h3>
+            <p>Granos frescos sellados al día de tueste.</p>
+          </li>
+          <li class="paso">
+            <span class="paso__num" aria-hidden="true">VIII</span>
+            <h3>Taza</h3>
+            <p>La obra culminada, servida en tu mesa.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= SALA PRINCIPAL · PRODUCTOS DESTACADOS ================= -->
+    <section class="sala" id="sala" aria-labelledby="sala-title">
+      <div class="container">
+
+        <header class="section-head">
+          <p class="overline">Sala principal</p>
+          <h2 id="sala-title">Obras en Pedestal</h2>
+          <div class="ornament-divider" role="img" aria-label="Divisor con rama de cafeto"></div>
+          <p class="section-head__lead">Las piezas maestras de la casa, expuestas como estatuas.</p>
+        </header>
+
+        <div class="sala__grid">
+
+          <article class="exhibit artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha de la Reserva Geisha"></a>
+            <div class="pedestal">
+              <div class="pedestal__plinth" aria-hidden="true"></div>
+              <div class="pedestal__shaft" aria-hidden="true">
+                <div class="pedestal__medallion" role="img" aria-label="Medallón con grano de café: Reserva Geisha"></div>
+              </div>
+              <div class="pedestal__base" aria-hidden="true"></div>
+            </div>
+            <div class="exhibit__plaque">
+              <h3>Reserva Geisha</h3>
+              <p class="exhibit__origin">Edición del cosechero · Tueste claro</p>
+              <p>Jazmín, bergamota y miel silvestre.</p>
+              <span class="exhibit__price">250 g · €34</span>
+            </div>
+          </article>
+
+          <article class="exhibit artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha del Origen Supremo"></a>
+            <div class="pedestal">
+              <div class="pedestal__plinth" aria-hidden="true"></div>
+              <div class="pedestal__shaft" aria-hidden="true">
+                <div class="pedestal__medallion pedestal__medallion--2" role="img" aria-label="Medallón con grano de café: Origen Supremo"></div>
+              </div>
+              <div class="pedestal__base" aria-hidden="true"></div>
+            </div>
+            <div class="exhibit__plaque">
+              <h3>Origen Supremo</h3>
+              <p class="exhibit__origin">Huila · Tueste medio</p>
+              <p>Chocolate, panela y notas cítricas.</p>
+              <span class="exhibit__price">1 kg · €42</span>
+            </div>
+          </article>
+
+          <article class="exhibit artifact">
+            <a class="artifact-link" href="producto.html" aria-label="Ver ficha del Oro de Tueste"></a>
+            <div class="pedestal">
+              <div class="pedestal__plinth" aria-hidden="true"></div>
+              <div class="pedestal__shaft" aria-hidden="true">
+                <div class="pedestal__medallion pedestal__medallion--3" role="img" aria-label="Medallón con grano de café: Oro de Tueste"></div>
+              </div>
+              <div class="pedestal__base" aria-hidden="true"></div>
+            </div>
+            <div class="exhibit__plaque">
+              <h3>Oro de Tueste</h3>
+              <p class="exhibit__origin">Blend de finca · Tueste oscuro</p>
+              <p>Cacao, avellana y regaliz.</p>
+              <span class="exhibit__price">250 g · €22</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= EPIGRAFÍA · TESTIMONIOS ================= -->
+    <section class="epigrafia" id="testimonios" aria-labelledby="testimonios-title">
+      <div class="container">
+
+        <header class="section-head">
+          <p class="overline">Epigrafía</p>
+          <h2 id="testimonios-title">Voces Talladas en Mármol</h2>
+          <div class="ornament-divider" role="img" aria-label="Divisor con rama de cafeto"></div>
+        </header>
+
+        <div class="epigrafia__grid">
+
+          <blockquote class="placa">
+            <span class="placa__corner placa__corner--tl" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--tr" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--bl" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--br" aria-hidden="true"></span>
+            <p class="placa__text">“Nunca una taza me recordó tanto a la montaña. Es café con memoria.”</p>
+            <footer class="placa__author">— Elena Marchetti · Barista, Firenze</footer>
+          </blockquote>
+
+          <blockquote class="placa">
+            <span class="placa__corner placa__corner--tl" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--tr" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--bl" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--br" aria-hidden="true"></span>
+            <p class="placa__text">“El tueste artesanal se siente en cada sorbo: limpio, dulce, honesto.”</p>
+            <footer class="placa__author">— Andrés Quintero · Catador Q-Grader</footer>
+          </blockquote>
+
+          <blockquote class="placa">
+            <span class="placa__corner placa__corner--tl" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--tr" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--bl" aria-hidden="true"></span>
+            <span class="placa__corner placa__corner--br" aria-hidden="true"></span>
+            <p class="placa__text">“Compré por el diseño, volví por el café. Ambos son piezas de colección.”</p>
+            <footer class="placa__author">— Sofia Lindqvist · Coleccionista de cafés</footer>
+          </blockquote>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= BASE · FOOTER ================= -->
+  <footer class="base">
+    <div class="cornice cornice--large" aria-hidden="true">
+      <span class="cornice__dentil"></span>
+      <span class="cornice__band"></span>
+    </div>
+
+    <div class="container base__inner">
+
+      <a class="logo logo--footer" href="#inicio" aria-label="Casa del Cafeto — volver al inicio">
+        <span class="logo__shield" aria-hidden="true">
+          <svg viewBox="0 0 64 78" role="img" aria-label="Escudo con grano de café">
+            <g fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M32 4 L56 12 L52 52 Q32 74 12 52 L8 12 Z"/>
+              <path d="M13 22 L51 22 M15 33 L49 33"/>
+              <ellipse cx="32" cy="49" rx="8" ry="11"/>
+              <path d="M32 40 Q27 48 32 58"/>
+            </g>
+          </svg>
+        </span>
+        <span class="logo__name">Casa <em>del</em> Cafeto</span>
+        <span class="logo__tag">Café orgánico · Premium</span>
+      </a>
+
+      <p class="base__motto">
+        Café de especialidad de origen colombiano · Tostado artesanalmente,
+        servido con la solemnidad de un palacio.
+      </p>
+
+      <nav class="base__nav" aria-label="Navegación del pie de página">
+        <ul>
+          <li><a href="#catalogo">La Colección</a></li>
+          <li><a href="#sobre">La Casa</a></li>
+          <li><a href="#proceso">El Oficio</a></li>
+          <li><a href="#sala">Sala Principal</a></li>
+          <li><a href="#testimonios">Epigrafía</a></li>
+        </ul>
+      </nav>
+
+      <div class="ornament-divider ornament-divider--footer" role="img" aria-label="Divisor con rama de cafeto"></div>
+
+      <p class="base__legal">MMXXVI · Casa del Cafeto · Forjada en piedra, cultivada en las alturas de Colombia</p>
+    </div>
+  </footer>
+
+</body>
+</html>
