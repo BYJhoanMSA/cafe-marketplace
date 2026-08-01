@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatPrice, getImageUrl, IMAGE_BLUR_PLACEHOLDER } from '@/lib/utils'
@@ -20,16 +19,17 @@ interface MobileFeedSlideProps {
   settled: boolean
   seen: boolean
   onAddToCart?: (productId: string) => void
+  onOpenProduct: (slug: string) => void
+  onSaveTapped: (slug: string) => void
 }
 
 const SWIPE_THRESHOLD = 60
 
-export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart }: MobileFeedSlideProps) {
+export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart, onOpenProduct, onSaveTapped }: MobileFeedSlideProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [reviewsOpen, setReviewsOpen] = useState(false)
-  const router = useRouter()
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
 
@@ -127,7 +127,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
       const target = e.target as HTMLElement
       if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && !target.closest('button')) {
         suppressClick.current = true
-        router.push(`/productos/${product.slug}`)
+        onOpenProduct(product.slug)
       }
     }
 
@@ -139,7 +139,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
       suppressClick.current = false
       return
     }
-    router.push(`/productos/${product.slug}`)
+    onOpenProduct(product.slug)
   }
 
   const handlePrevImage = useCallback((e: React.MouseEvent) => {
@@ -338,7 +338,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
           ))}
         </div>
 
-        <Link href={`/productos/${product.slug}`} style={{ textDecoration: 'none' }}>
+        <Link href={`/productos/${product.slug}`} style={{ textDecoration: 'none' }} onClick={() => onSaveTapped(product.slug)}>
           <h2 className={styles.title}>{product.title}</h2>
           
           <div className={styles.origin}>

@@ -1,7 +1,8 @@
 'use client'
 
 // src/components/product/MobileFeed/MobileFeed.tsx
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { MobileFeedSlide } from './MobileFeedSlide'
 import { getImageUrl } from '@/lib/utils'
 import type { ProductCardData } from '../ProductCard'
@@ -20,6 +21,9 @@ const MAX_CACHED_SLIDES = 12
 
 /** Clave de sessionStorage para restaurar la posición del feed al volver del PDP */
 const SCROLL_POS_KEY = 'catalogo-scroll-pos'
+
+/** Clave de sessionStorage con el índice EXACTO del producto tocado (antes de navegar) */
+const TAPPED_INDEX_KEY = 'catalogo-tapped-index'
 
 /** Lista de ids montados (ventana activa + vistos), ordenada por índice de producto */
 function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {  const valid = new Set(products.map((p) => p.id))
@@ -47,6 +51,7 @@ function buildMountedList(prev: string[], activeIndex: number, products: Product
 }
 
 export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
+  const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [settled, setSettled] = useState(true)
@@ -56,24 +61,68 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const lastScrollSaveRef = useRef(0)
   const didRestoreRef = useRef(false)
 
+  // Guarda el índice exacto del producto tocado para regresar a ese slide al volver.
+  const saveTappedProduct = useCallback(
+    (slug: string) => {
+      const idx = products.findIndex((p) => p.slug === slug)
+      if (idx >= 0) {
+        try {
+          sessionStorage.setItem(TAPPED_INDEX_KEY, String(idx))
+        } catch {}
+      }
+    },
+    [products]
+  )
+
+  const openProduct = useCallback(
+    (slug: string) => {
+      saveTappedProduct(slug)
+      router.push(`/productos/${slug}`)
+    },
+    [saveTappedProduct, router]
+  )
+
   // Restaurar la posición del feed al volver al catálogo (botón atrás o "Volver al catálogo").
-  // Se asigna scrollTop directamente (instantáneo, ignora el `scroll-behavior: smooth`
-  // heredado) y solo después de que los slides estén montados para tener altura real.
+  // Prioriza el índice del producto tocado (límite exacto de slide) y, si no hay, el scroll
+  // en píxeles guardado. Se asigna scrollTop directamente (instantáneo) y se re-aplica por
+  // varios frames para que ningún reset (snap/re-render) lo deje en el primer producto.
   useLayoutEffect(() => {
     if (didRestoreRef.current) return
     const container = containerRef.current
     if (!container) return
     if (mountedIds.length === 0) return
 
-    const saved = sessionStorage.getItem(SCROLL_POS_KEY)
-    if (saved == null) return
-    sessionStorage.removeItem(SCROLL_POS_KEY)
-
-    const target = Number(saved)
-    if (Number.isNaN(target) || target <= 0) return
+    let target: number | null = null
+    const tapped = sessionStorage.getItem(TAPPED_INDEX_KEY)
+    sessionStorage.removeItem(TAPPED_INDEX_KEY)
+    if (tapped != null) {
+      const idx = Number(tapped)
+      if (!Number.isNaN(idx) && idx > 0) target = idx * container.clientHeight
+    }
+    if (target == null) {
+      const saved = sessionStorage.getItem(SCROLL_POS_KEY)
+      sessionStorage.removeItem(SCROLL_POS_KEY)
+      if (saved != null) {
+        const px = Number(saved)
+        if (!Number.isNaN(px) && px > 0) target = px
+      }
+    }
+    if (target == null) return
 
     didRestoreRef.current = true
-    container.scrollTop = target
+    const maxScroll = container.scrollHeight - container.clientHeight
+    const clamped = Math.min(target, maxScroll)
+    if (clamped <= 0) return
+
+    let attempts = 0
+    const apply = () => {
+      if (Math.abs(container.scrollTop - clamped) > 1) {
+        container.scrollTop = clamped
+      }
+      attempts += 1
+      if (attempts < 8) requestAnimationFrame(apply)
+    }
+    apply()
   }, [mountedIds])
 
   // Guardar la posición final al desmontar (navegación al PDP).
@@ -166,6 +215,8 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
               settled={settled}
               seen={seen.has(id)}
               onAddToCart={onAddToCart}
+              onOpenProduct={openProduct}
+              onSaveTapped={saveTappedProduct}
             />
           </div>
         )
