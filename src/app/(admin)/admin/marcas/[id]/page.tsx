@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { prisma } from '@/server/db/client'
+import { getAdminVendorById } from '@/server/actions/admin/vendor.actions'
 import { VendorForm } from '@/components/admin/VendorForm'
 
 export const metadata = {
@@ -15,20 +15,19 @@ interface EditVendorPageProps {
 
 export default async function EditVendorPage({ params }: EditVendorPageProps) {
   const { id } = await params
-  
-  const vendor = await prisma.vendor.findUnique({
-    where: { id }
-  })
 
-  if (!vendor) {
+  const res = await getAdminVendorById(id)
+  if (!res.success) {
     notFound()
   }
+
+  const vendor = res.vendor
 
   return (
     <div>
       <div style={{ marginBottom: 'var(--space-6)' }}>
-        <Link 
-          href="/admin/marcas" 
+        <Link
+          href="/admin/marcas"
           style={{
             display: 'inline-flex',
             alignItems: 'center',

@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/server/db/client'
+import { auth } from '@/lib/auth'
+import { getAdminProductById } from '@/server/actions/admin/product.actions'
 import { getVariantSizes, getGrindTypes } from '@/server/actions/settings.actions'
 import { ProductForm } from '@/components/admin/ProductForm'
 
@@ -16,21 +18,24 @@ interface EditProductPageProps {
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
   const { id } = await params
-  
-  const [product, vendors, categories, variantSizes, grindTypes] = await Promise.all([
-    prisma.product.findUnique({
-      where: { id },
-      include: {
-        images: { orderBy: { position: 'asc' } },
-        flavorNotes: { select: { note: true } },
-        origin: { select: { region: true } },
-      },
-    }),
-    prisma.vendor.findMany({
-      where: { deletedAt: null, status: 'active' },
-      select: { id: true, storeName: true },
-      orderBy: { storeName: 'asc' },
-    }),
+  const session = await auth()
+  const isAdmin = session?.user?.role === 'admin'
+
+  const vendorsPromise = isAdmin
+    ? prisma.vendor.findMany({
+        where: { deletedAt: null, status: 'active' },
+        select: { id: true, storeName: true },
+        orderBy: { storeName: 'asc' },
+      })
+    : prisma.vendor.findMany({
+        where: { userId: session?.user?.id, deletedAt: null, status: 'active' },
+        select: { id: true, storeName: true },
+        orderBy: { storeName: 'asc' },
+      })
+
+  const [res, vendors, categories, variantSizes, grindTypes] = await Promise.all([
+    getAdminProductById(id),
+    vendorsPromise,
     prisma.category.findMany({
       where: { isActive: true },
       select: { id: true, name: true },
@@ -40,6 +45,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     getGrindTypes(),
   ])
 
+  const product = res.success ? res.product : null
   if (!product) {
     notFound()
   }
@@ -54,8 +60,8 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   return (
     <div>
       <div style={{ marginBottom: 'var(--space-6)' }}>
-        <Link 
-          href="/admin/productos" 
+        <Link
+          href="/admin/productos"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -74,7 +80,14 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         </h1>
       </div>
 
-      <ProductForm initialData={serialized} vendors={vendors} categories={categories} variantSizes={variantSizes} grindTypes={grindTypes} />
+      <ProductForm
+        initialData={serialized}
+        vendors={vendors}
+        categories={categories}
+        variantSizes={variantSizes}
+        grindTypes={grindTypes}
+        isAdmin={isAdmin}
+      />
     </div>
   )
 }

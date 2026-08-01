@@ -105,6 +105,7 @@ model User {
   reviews      Review[]
   tasteProfile TasteProfile?
   vendor       Vendor? // Solo si role="vendor" (Fase 2)
+  createdProducts Product[] @relation("ProductCreatedBy")
 
   @@index([email])
   @@index([role])
@@ -284,6 +285,10 @@ model Product {
   shortDescription String?   @db.VarChar(500)
   status           String    @default("draft") @db.VarChar(20)
 
+  // Propietario del producto: usuario autenticado que lo creó.
+  // Nunca se asigna desde el frontend; lo fija el backend con la sesión.
+  createdById      String    @db.VarChar(36)
+
   // Datos específicos de café de especialidad
   // roastLevel: "light" | "medium-light" | "medium" | "medium-dark" | "dark"
   roastLevel       String    @db.VarChar(30)
@@ -324,6 +329,7 @@ model Product {
   vendor         Vendor                @relation(fields: [vendorId], references: [id])
   category       Category              @relation(fields: [categoryId], references: [id])
   origin         Origin                @relation(fields: [originId], references: [id])
+  createdBy      User                  @relation("ProductCreatedBy", fields: [createdById], references: [id])
   variants       Variant[]
   images         ProductImage[]
   reviews        Review[]
@@ -339,6 +345,7 @@ model Product {
   @@index([vendorId])
   @@index([categoryId])
   @@index([originId])
+  @@index([createdById])
   @@index([isFeatured])
   @@index([isNew])
   @@index([cuppingScore])

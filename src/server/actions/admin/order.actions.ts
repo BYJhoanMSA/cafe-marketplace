@@ -2,10 +2,20 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
-import { requireRole } from '@/server/middleware/auth.middleware'
+import {
+  requirePermission,
+  isForbiddenError,
+  forbiddenResponse,
+} from '@/server/middleware/auth.middleware'
+import { PERMISSIONS } from '@/server/auth/roles'
+
+// =============================================================================
+// Pedidos: EXCLUSIVO del Administrador General por ahora.
+// Los usuarios registrados no tienen acceso a la tabla de pedidos.
+// =============================================================================
 
 export async function getAdminOrders(page = 1, limit = 50) {
-  await requireRole(['admin', 'vendor'])
+  await requirePermission(PERMISSIONS.ORDER_READ)
 
   const [orders, total] = await Promise.all([
     prisma.order.findMany({
@@ -26,7 +36,8 @@ export async function getAdminOrders(page = 1, limit = 50) {
 }
 
 export async function getAdminOrderById(id: string) {
-  await requireRole(['admin', 'vendor'])
+  await requirePermission(PERMISSIONS.ORDER_READ)
+
   const order = await prisma.order.findUnique({
     where: { id },
     include: {
@@ -47,15 +58,15 @@ export async function getAdminOrderById(id: string) {
 }
 
 export async function updateOrderStatus(
-  id: string, 
-  data: { 
-    status: string; 
-    trackingNumber?: string; 
-    shippingCarrier?: string; 
-    trackingUrl?: string 
+  id: string,
+  data: {
+    status: string;
+    trackingNumber?: string;
+    shippingCarrier?: string;
+    trackingUrl?: string
   }
 ) {
-  await requireRole(['admin', 'vendor'])
+  await requirePermission(PERMISSIONS.ORDER_UPDATE)
 
   try {
     const updatePayload: any = {
@@ -83,6 +94,7 @@ export async function updateOrderStatus(
     revalidatePath('/admin/pedidos')
     return { success: true, order }
   } catch (error: any) {
+    if (isForbiddenError(error)) return forbiddenResponse()
     console.error('Error updating order status:', error)
     return { success: false, error: error.message || 'Error al actualizar el estado del pedido' }
   }

@@ -1,13 +1,21 @@
 // src/app/(admin)/admin/marcas/nuevo/page.tsx
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth'
 import { VendorForm } from '@/components/admin/VendorForm'
 
 export const metadata = {
   title: 'Nueva Marca | Panel Admin',
 }
 
-export default function NewVendorPage() {
+export default async function NewVendorPage() {
+  const session = await auth()
+  // Crear marcas es exclusivo del Administrador General
+  if (session?.user?.role !== 'admin') {
+    redirect('/admin/marcas')
+  }
+
   return (
     <div>
       <div style={{ marginBottom: 'var(--space-6)' }}>

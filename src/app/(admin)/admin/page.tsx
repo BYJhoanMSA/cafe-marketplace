@@ -4,14 +4,17 @@ import { getDashboardStats, getRecentOrders } from '@/server/actions/admin/dashb
 import { StatCard } from '@/components/admin/StatCard'
 import { RecentOrdersTable } from '@/components/admin/RecentOrdersTable'
 import { formatPrice } from '@/lib/utils'
+import { auth } from '@/lib/auth'
 
 export const metadata = {
   title: 'Dashboard | Panel Admin',
 }
 
 export default async function DashboardPage() {
+  const session = await auth()
+  const isAdmin = session?.user?.role === 'admin'
+
   const statsRes = await getDashboardStats()
-  const ordersRes = await getRecentOrders()
 
   const stats = statsRes.success && statsRes.data ? statsRes.data : {
     totalRevenue: 0,
@@ -20,7 +23,12 @@ export default async function DashboardPage() {
     newUsersCount: 0,
   }
 
-  const recentOrders = ordersRes.success && ordersRes.data ? ordersRes.data : []
+  // Pedidos: exclusivo del Administrador General
+  let recentOrders: any[] = []
+  if (isAdmin) {
+    const ordersRes = await getRecentOrders()
+    recentOrders = ordersRes.success && ordersRes.data ? ordersRes.data : []
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
@@ -29,41 +37,51 @@ export default async function DashboardPage() {
           Resumen General
         </h1>
         <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
-          Bienvenido al panel de control de tu Marketplace.
+          {isAdmin
+            ? 'Bienvenido al panel de control de tu Marketplace.'
+            : 'Bienvenido. Aquí puedes administrar tus propios productos.'}
         </p>
       </div>
 
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
-        gap: 'var(--space-4)' 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: 'var(--space-4)'
       }}>
-        <StatCard 
-          title="Ingresos Totales" 
-          value={formatPrice(stats.totalRevenue, 'USD')}
-          icon={<DollarSign size={24} />}
-          trend={{ value: '0% (MVP)', isPositive: true }}
-        />
-        <StatCard 
-          title="Pedidos Pendientes" 
-          value={stats.pendingOrdersCount}
-          icon={<ShoppingBag size={24} />}
-        />
-        <StatCard 
-          title="Productos Activos" 
-          value={stats.activeProductsCount}
+        {isAdmin && (
+          <>
+            <StatCard
+              title="Ingresos Totales"
+              value={formatPrice(stats.totalRevenue ?? 0, 'USD')}
+              icon={<DollarSign size={24} />}
+              trend={{ value: '0% (MVP)', isPositive: true }}
+            />
+            <StatCard
+              title="Pedidos Pendientes"
+              value={stats.pendingOrdersCount ?? 0}
+              icon={<ShoppingBag size={24} />}
+            />
+          </>
+        )}
+        <StatCard
+          title="Productos Activos"
+          value={stats.activeProductsCount ?? 0}
           icon={<Package size={24} />}
         />
-        <StatCard 
-          title="Nuevos Clientes (30d)" 
-          value={stats.newUsersCount}
-          icon={<Users size={24} />}
-        />
+        {isAdmin && (
+          <StatCard
+            title="Nuevos Clientes (30d)"
+            value={stats.newUsersCount ?? 0}
+            icon={<Users size={24} />}
+          />
+        )}
       </div>
 
-      <div style={{ marginTop: 'var(--space-4)' }}>
-        <RecentOrdersTable orders={recentOrders} />
-      </div>
+      {isAdmin && (
+        <div style={{ marginTop: 'var(--space-4)' }}>
+          <RecentOrdersTable orders={recentOrders} />
+        </div>
+      )}
     </div>
   )
 }

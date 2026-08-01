@@ -72,7 +72,8 @@ export async function registerUser(data: RegisterInput) {
         passwordHash,
         firstName,
         lastName,
-        role: 'customer',
+        // Todo usuario registrado administra sus propios productos (multiusuario).
+        role: 'vendor',
         status: 'active',
       },
     })

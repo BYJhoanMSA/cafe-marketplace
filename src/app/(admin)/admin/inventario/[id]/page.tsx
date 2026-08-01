@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { prisma } from '@/server/db/client'
+import { getAdminVariantById } from '@/server/actions/admin/inventory.actions'
 import { getProductsForSelect } from '@/server/actions/admin/inventory.actions'
 import { getVariantSizes, getGrindTypes } from '@/server/actions/settings.actions'
 import { VariantForm } from '@/components/admin/VariantForm'
@@ -18,16 +18,18 @@ interface EditVariantPageProps {
 export default async function EditVariantPage({ params }: EditVariantPageProps) {
   const { id } = await params
 
-  const [variant, products, variantSizes, grindTypes] = await Promise.all([
-    prisma.variant.findUnique({ where: { id } }),
+  const [res, products, variantSizes, grindTypes] = await Promise.all([
+    getAdminVariantById(id),
     getProductsForSelect(),
     getVariantSizes(),
     getGrindTypes(),
   ])
 
-  if (!variant) {
+  if (!res.success) {
     notFound()
   }
+
+  const variant = res.variant
 
   return (
     <div>

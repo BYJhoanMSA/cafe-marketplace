@@ -121,14 +121,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     // Cuando un usuario se registra via OAuth, creamos su perfil en nuestra tabla
     async createUser({ user }) {
-      if (user.name) {
-        const [firstName = '', ...rest] = user.name.split(' ')
-        const lastName = rest.join(' ')
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { firstName, lastName },
-        })
-      }
+      const [firstName = '', ...rest] = (user.name ?? '').split(' ')
+      const lastName = rest.join(' ')
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { firstName, lastName, role: 'vendor' },
+      })
     },
   },
 

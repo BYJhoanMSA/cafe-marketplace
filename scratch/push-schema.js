@@ -1,6 +1,19 @@
 const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-const dbUrl = "mysql://u882052138_dkar:Emperadorjaguar312@82.197.82.176:3306/u882052138_mcoffe?connect_timeout=60&sslmode=prefer";
+function loadDbUrl() {
+  if (process.env.PRODUCTION_DATABASE_URL) return process.env.PRODUCTION_DATABASE_URL;
+  const envPath = path.join(__dirname, '..', '.env.production.local');
+  try {
+    const content = fs.readFileSync(envPath, 'utf8');
+    const match = content.match(/^DATABASE_URL\s*=\s*["']?([^"'\r\n]+)/m);
+    if (match && match[1]) return match[1].trim();
+  } catch {}
+  return process.env.DATABASE_URL;
+}
+
+const dbUrl = loadDbUrl();
 
 console.log('Running prisma db push via Node script...');
 try {

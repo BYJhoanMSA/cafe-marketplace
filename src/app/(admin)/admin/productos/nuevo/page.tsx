@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/server/db/client'
+import { auth } from '@/lib/auth'
 import { getVariantSizes, getGrindTypes } from '@/server/actions/settings.actions'
 import { ProductForm } from '@/components/admin/ProductForm'
 
@@ -10,12 +11,23 @@ export const metadata = {
 }
 
 export default async function NewProductPage() {
+  const session = await auth()
+  const isAdmin = session?.user?.role === 'admin'
+
+  const vendorsPromise = isAdmin
+    ? prisma.vendor.findMany({
+        where: { deletedAt: null, status: 'active' },
+        select: { id: true, storeName: true },
+        orderBy: { storeName: 'asc' },
+      })
+    : prisma.vendor.findMany({
+        where: { userId: session?.user?.id, deletedAt: null, status: 'active' },
+        select: { id: true, storeName: true },
+        orderBy: { storeName: 'asc' },
+      })
+
   const [vendors, categories, variantSizes, grindTypes] = await Promise.all([
-    prisma.vendor.findMany({
-      where: { deletedAt: null, status: 'active' },
-      select: { id: true, storeName: true },
-      orderBy: { storeName: 'asc' },
-    }),
+    vendorsPromise,
     prisma.category.findMany({
       where: { isActive: true },
       select: { id: true, name: true },
@@ -28,8 +40,8 @@ export default async function NewProductPage() {
   return (
     <div>
       <div style={{ marginBottom: 'var(--space-6)' }}>
-        <Link 
-          href="/admin/productos" 
+        <Link
+          href="/admin/productos"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -48,7 +60,13 @@ export default async function NewProductPage() {
         </h1>
       </div>
 
-      <ProductForm vendors={vendors} categories={categories} variantSizes={variantSizes} grindTypes={grindTypes} />
+      <ProductForm
+        vendors={vendors}
+        categories={categories}
+        variantSizes={variantSizes}
+        grindTypes={grindTypes}
+        isAdmin={isAdmin}
+      />
     </div>
   )
 }

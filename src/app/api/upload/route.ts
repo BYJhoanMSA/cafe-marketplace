@@ -21,7 +21,8 @@ function generatePublicId(type: string): string {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user || session.user.role !== 'admin') {
+    const allowedRoles = ['admin', 'vendor']
+    if (!session?.user || !allowedRoles.includes(session.user.role ?? '')) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -100,7 +101,8 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session?.user || session.user.role !== 'admin') {
+    const allowedRoles = ['admin', 'vendor']
+    if (!session?.user || !allowedRoles.includes(session.user.role ?? '')) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 

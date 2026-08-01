@@ -3,36 +3,41 @@ import Link from 'next/link'
 import { getAdminVendors } from '@/server/actions/admin/vendor.actions'
 import { Badge } from '@/components/ui/Badge'
 import { Plus, Edit2, Ban } from 'lucide-react'
+import { auth } from '@/lib/auth'
 
 export const metadata = {
   title: 'Marcas | Panel Admin',
 }
 
 export default async function AdminVendorsPage() {
+  const session = await auth()
+  const isAdmin = session?.user?.role === 'admin'
   const { vendors } = await getAdminVendors()
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-weight-bold)' }}>Marcas Registradas</h1>
-        <Link 
-          href="/admin/marcas/nuevo" 
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)',
-            backgroundColor: 'var(--color-interactive)',
-            color: 'var(--color-ink-inverted)',
-            padding: 'var(--space-2) var(--space-4)',
-            borderRadius: 'var(--radius-md)',
-            textDecoration: 'none',
-            fontWeight: 'var(--font-weight-medium)',
-            fontSize: 'var(--text-sm)',
-          }}
-        >
-          <Plus size={16} />
-          Nueva Marca
-        </Link>
+        {isAdmin && (
+          <Link 
+            href="/admin/marcas/nuevo" 
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-2)',
+              backgroundColor: 'var(--color-interactive)',
+              color: 'var(--color-ink-inverted)',
+              padding: 'var(--space-2) var(--space-4)',
+              borderRadius: 'var(--radius-md)',
+              textDecoration: 'none',
+              fontWeight: 'var(--font-weight-medium)',
+              fontSize: 'var(--text-sm)',
+            }}
+          >
+            <Plus size={16} />
+            Nueva Marca
+          </Link>
+        )}
       </div>
 
       <div style={{ 

@@ -2,8 +2,15 @@
 
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/server/db/client'
-import { requireRole } from '@/server/middleware/auth.middleware'
+import {
+  requireRole,
+  requirePermission,
+  isForbiddenError,
+  forbiddenResponse,
+} from '@/server/middleware/auth.middleware'
+import { PERMISSIONS, canAccessVendor } from '@/server/auth/roles'
 import { z } from 'zod'
+import type { Prisma } from '@prisma/client'
 
 const VendorSchema = z.object({
   storeName: z.string().min(1).max(255),
@@ -16,12 +23,22 @@ const VendorSchema = z.object({
   status: z.string().max(20).default('active'),
 })
 
+// =============================================================================
+// GET /admin/marcas — listado respetando permisos
+// =============================================================================
+
 export async function getAdminVendors(page = 1, limit = 50) {
-  await requireRole(['admin', 'vendor'])
+  const session = await requireRole(['admin', 'vendor'])
+
+  const where: Prisma.VendorWhereInput = { deletedAt: null }
+  if (session.user.role !== 'admin') {
+    // Usuario normal: solo su propia marca
+    where.userId = session.user.id
+  }
 
   const [vendors, total] = await Promise.all([
     prisma.vendor.findMany({
-      where: { deletedAt: null },
+      where,
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
@@ -31,14 +48,34 @@ export async function getAdminVendors(page = 1, limit = 50) {
         }
       }
     }),
-    prisma.vendor.count({ where: { deletedAt: null } })
+    prisma.vendor.count({ where })
   ])
 
   return { vendors, total, page, limit }
 }
 
+export async function getAdminVendorById(id: string) {
+  const session = await requireRole(['admin', 'vendor'])
+
+  const vendor = await prisma.vendor.findUnique({ where: { id } })
+
+  if (!vendor) {
+    return { success: false, error: 'Marca no encontrada', status: 404 as const }
+  }
+
+  if (!canAccessVendor(session.user, vendor.userId)) {
+    return forbiddenResponse()
+  }
+
+  return { success: true, vendor }
+}
+
+// =============================================================================
+// POST /admin/marcas — crear marca (solo admin)
+// =============================================================================
+
 export async function createVendor(data: z.infer<typeof VendorSchema>) {
-  const session = await requireRole(['admin'])
+  const session = await requirePermission(PERMISSIONS.VENDOR_CREATE)
 
   const parsed = VendorSchema.safeParse(data)
   if (!parsed.success) {
@@ -49,13 +86,11 @@ export async function createVendor(data: z.infer<typeof VendorSchema>) {
     const existing = await prisma.vendor.findUnique({
       where: { slug: parsed.data.slug }
     })
-    
+
     if (existing) {
       return { success: false, error: 'El slug ya está en uso' }
     }
 
-    // Por MVP asociamos el Vendor al usuario admin que lo crea
-    // En producción habría un selector de usuarios o se crearía una invitación
     const vendor = await prisma.vendor.create({
       data: {
         userId: session.user.id,
@@ -73,15 +108,33 @@ export async function createVendor(data: z.infer<typeof VendorSchema>) {
     revalidatePath('/admin/marcas')
     return { success: true, vendor }
   } catch (error: any) {
+    if (isForbiddenError(error)) return forbiddenResponse()
     console.error('Error creating vendor:', error)
     return { success: false, error: error.message || 'Error al crear marca' }
   }
 }
 
+// =============================================================================
+// PATCH /admin/marcas/:id — actualizar (propietario o admin)
+// =============================================================================
+
 export async function updateVendor(id: string, data: z.infer<typeof VendorSchema>) {
-  await requireRole(['admin', 'vendor'])
+  const session = await requirePermission(PERMISSIONS.VENDOR_UPDATE_OWN)
 
   try {
+    const existing = await prisma.vendor.findUnique({
+      where: { id },
+      select: { id: true, userId: true },
+    })
+
+    if (!existing) {
+      return { success: false, error: 'Marca no encontrada', status: 404 as const }
+    }
+
+    if (!canAccessVendor(session.user, existing.userId)) {
+      return forbiddenResponse()
+    }
+
     const vendor = await prisma.vendor.update({
       where: { id },
       data: {
@@ -99,6 +152,7 @@ export async function updateVendor(id: string, data: z.infer<typeof VendorSchema
     revalidatePath('/admin/marcas')
     return { success: true, vendor }
   } catch (error: any) {
+    if (isForbiddenError(error)) return forbiddenResponse()
     console.error('Error updating vendor:', error)
     return { success: false, error: error.message || 'Error al actualizar marca' }
   }

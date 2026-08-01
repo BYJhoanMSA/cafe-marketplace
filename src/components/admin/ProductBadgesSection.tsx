@@ -5,15 +5,18 @@ interface ProductBadgesSectionProps {
   isLimited: boolean
   isOrganic: boolean
   isPublicity: boolean
+  showPublicity?: boolean
   onToggle: (key: 'isNew' | 'isLimited' | 'isOrganic' | 'isPublicity') => void
 }
 
-export function ProductBadgesSection({ isNew, isLimited, isOrganic, isPublicity, onToggle }: ProductBadgesSectionProps) {
+export function ProductBadgesSection({ isNew, isLimited, isOrganic, isPublicity, showPublicity = true, onToggle }: ProductBadgesSectionProps) {
   const badges = [
     { key: 'isNew' as const, label: 'Nuevo', color: 'var(--gold-500)', value: isNew },
     { key: 'isLimited' as const, label: 'Edición limitada', color: 'var(--terra-500)', value: isLimited },
     { key: 'isOrganic' as const, label: 'Orgánico', color: 'var(--forest-500)', value: isOrganic },
-    { key: 'isPublicity' as const, label: 'Publicidad', color: 'var(--color-interactive)', value: isPublicity },
+    ...(showPublicity
+      ? [{ key: 'isPublicity' as const, label: 'Publicidad', color: 'var(--color-interactive)', value: isPublicity }]
+      : []),
   ]
 
   return (

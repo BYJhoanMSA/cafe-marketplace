@@ -31,9 +31,10 @@ interface ProductFormProps {
   categories?: CategoryOption[]
   variantSizes?: VariantSizeOption[]
   grindTypes?: GrindTypeOption[]
+  isAdmin?: boolean
 }
 
-export function ProductForm({ initialData, vendors = [], categories = [], variantSizes = [], grindTypes = [] }: ProductFormProps) {
+export function ProductForm({ initialData, vendors = [], categories = [], variantSizes = [], grindTypes = [], isAdmin = false }: ProductFormProps) {
   const router = useRouter()
   const isEditing = !!initialData
   
@@ -453,6 +454,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         isLimited={formData.isLimited}
         isOrganic={formData.isOrganic}
         isPublicity={formData.isPublicity}
+        showPublicity={isAdmin}
         onToggle={(key) => setFormData(prev => ({ ...prev, [key]: !prev[key] }))}
       />
 

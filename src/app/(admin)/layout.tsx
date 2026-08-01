@@ -12,11 +12,12 @@ export default async function AdminLayout({
 }) {
   const session = await auth()
 
-  // Proteger la ruta: solo admin o vendor (en Fase 2)
+  // Proteger la ruta: solo admin o vendor
   if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'vendor')) {
     redirect('/auth/login')
   }
 
+  const isAdmin = session.user.role === 'admin'
   const initial = session.user.name ? session.user.name.charAt(0).toUpperCase() : 'A'
 
   return (
@@ -31,10 +32,12 @@ export default async function AdminLayout({
             <Box size={20} />
             Dashboard
           </Link>
-          <Link href="/admin/inicio" className={styles.navItem}>
-            <Box size={20} />
-            Página de Inicio
-          </Link>
+          {isAdmin && (
+            <Link href="/admin/inicio" className={styles.navItem}>
+              <Box size={20} />
+              Página de Inicio
+            </Link>
+          )}
           <Link href="/admin/productos" className={styles.navItem}>
             <Package size={20} />
             Productos
@@ -47,34 +50,38 @@ export default async function AdminLayout({
             <Box size={20} />
             Inventario
           </Link>
-          <Link href="/admin/pedidos" className={styles.navItem}>
-            <ShoppingCart size={20} />
-            Pedidos
-          </Link>
-          <Link href="/admin/clientes" className={styles.navItem}>
-            <ShoppingCart size={20} /> {/* Placeholder icon */}
-            Clientes
-          </Link>
-          <Link href="/admin/usuarios" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
-            Usuarios
-          </Link>
-          <Link href="/admin/roles" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
-            Roles
-          </Link>
-          <Link href="/admin/reportes" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
-            Reportes
-          </Link>
-          <Link href="/admin/configuraciones" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
-            Configuración
-          </Link>
-          <Link href="/admin/logs" className={styles.navItem}>
-            <Box size={20} /> {/* Placeholder icon */}
-            Logs
-          </Link>
+          {isAdmin && (
+            <>
+              <Link href="/admin/pedidos" className={styles.navItem}>
+                <ShoppingCart size={20} />
+                Pedidos
+              </Link>
+              <Link href="/admin/clientes" className={styles.navItem}>
+                <ShoppingCart size={20} /> {/* Placeholder icon */}
+                Clientes
+              </Link>
+              <Link href="/admin/usuarios" className={styles.navItem}>
+                <Box size={20} /> {/* Placeholder icon */}
+                Usuarios
+              </Link>
+              <Link href="/admin/roles" className={styles.navItem}>
+                <Box size={20} /> {/* Placeholder icon */}
+                Roles
+              </Link>
+              <Link href="/admin/reportes" className={styles.navItem}>
+                <Box size={20} /> {/* Placeholder icon */}
+                Reportes
+              </Link>
+              <Link href="/admin/configuraciones" className={styles.navItem}>
+                <Box size={20} /> {/* Placeholder icon */}
+                Configuración
+              </Link>
+              <Link href="/admin/logs" className={styles.navItem}>
+                <Box size={20} /> {/* Placeholder icon */}
+                Logs
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className={styles.userProfile}>

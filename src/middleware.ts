@@ -9,22 +9,40 @@ import type { NextRequest } from 'next/server'
 // Rutas que requieren autenticación
 const PROTECTED_ROUTES = ['/cuenta', '/checkout', '/admin']
 
-// Rutas exclusivas de administrador
-const ADMIN_ROUTES = ['/admin']
+// Área de administración: accesible solo para admin o vendor
+const ADMIN_AREA = '/admin'
+
+// Subrutas exclusivas del Administrador General
+const ADMIN_ONLY_ROUTES = [
+  '/admin/pedidos',
+  '/admin/clientes',
+  '/admin/usuarios',
+  '/admin/roles',
+  '/admin/reportes',
+  '/admin/configuraciones',
+  '/admin/logs',
+  '/admin/inicio',
+]
 
 // Rutas que NO deben estar disponibles si el usuario ya está autenticado
 const AUTH_ROUTES = ['/auth/login', '/auth/registro']
+
+const ALLOWED_ADMIN_ROLES = ['admin', 'vendor']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Obtener la sesión actual
   const session = await auth()
+  const role = session?.user?.role
 
   const isProtected = PROTECTED_ROUTES.some((route) =>
     pathname.startsWith(route)
   )
-  const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route))
+  const isAdminArea = pathname.startsWith(ADMIN_AREA)
+  const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  )
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route))
 
   // Si intenta acceder a ruta protegida sin sesión → redirigir a login
@@ -34,8 +52,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Si intenta acceder a ruta de admin sin ser admin → 403
-  if (isAdminRoute && session?.user?.role !== 'admin') {
+  // Área de administración: solo admin o vendor
+  if (isAdminArea && session && !ALLOWED_ADMIN_ROLES.includes(role ?? '')) {
+    return new NextResponse('Acceso denegado', { status: 403 })
+  }
+
+  // Subrutas exclusivas de admin (pedidos, usuarios, CMS, etc.)
+  if (isAdminOnlyRoute && role !== 'admin') {
     return new NextResponse('Acceso denegado', { status: 403 })
   }
 
