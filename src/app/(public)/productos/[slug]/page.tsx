@@ -299,6 +299,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             Replica de styledk/producto.html. Para revertir: eliminar
             este bloque y borrar src/components/product/EscudoDatos.
             ============================================================ */}
+        <h2 className={styles.caracteristicasTitle}>Características</h2>
         <EscudoDatos
           data={[
             {
