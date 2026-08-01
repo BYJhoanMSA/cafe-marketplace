@@ -39,7 +39,7 @@
 @media (max-width: 767px) {
   .bar {
     position: fixed;
-    bottom: 64px;
+    bottom: 72px;
     left: 0;
     right: 0;
     z-index: 99;

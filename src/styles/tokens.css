@@ -298,10 +298,10 @@
 :root {
   --pill-width:  64px;
   --pill-height: 96px;
-  --pill-icon-size: 50px;
-  --pill-width-mobile:  42px;
-  --pill-height-mobile: 64px;
-  --pill-icon-size-mobile: 24px;
+  --pill-icon-size: 54px;
+  --pill-width-mobile:  48px;
+  --pill-height-mobile: 76px;
+  --pill-icon-size-mobile: 30px;
   --coffee-gap:         14px;
 }
 

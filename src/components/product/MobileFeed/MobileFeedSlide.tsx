@@ -10,6 +10,7 @@ import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/soci
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { ReviewDrawer } from './ReviewDrawer'
+import { ProductDrawer } from './ProductDrawer'
 import type { ProductCardData } from '../ProductCard'
 import styles from './MobileFeed.module.css'
 
@@ -28,6 +29,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [reviewsOpen, setReviewsOpen] = useState(false)
+  const [productOpen, setProductOpen] = useState(false)
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
 
@@ -44,6 +46,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
   const touchStartY = useRef(0)
   const isDragging = useRef(false)
   const dragOffsetX = useRef(0)
+  const suppressClick = useRef(false)
   const stripRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -95,25 +98,48 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
     }
   }
 
-  function handleTouchEnd() {
-    if (!isDragging.current) return
+  function handleTouchEnd(e: React.TouchEvent) {
+    const touch = e.changedTouches[0]
 
-    const dx = dragOffsetX.current
+    if (isDragging.current) {
+      const dx = dragOffsetX.current
 
-    if (Math.abs(dx) > SWIPE_THRESHOLD) {
-      if (dx > 0 && activeImageIndex > 0) {
-        setActiveImageIndex((prev) => prev - 1)
-      } else if (dx < 0 && activeImageIndex < images.length - 1) {
-        setActiveImageIndex((prev) => prev + 1)
+      if (Math.abs(dx) > SWIPE_THRESHOLD) {
+        if (dx > 0 && activeImageIndex > 0) {
+          setActiveImageIndex((prev) => prev - 1)
+        } else if (dx < 0 && activeImageIndex < images.length - 1) {
+          setActiveImageIndex((prev) => prev + 1)
+        } else {
+          goToIndex(activeImageIndex, true)
+        }
       } else {
         goToIndex(activeImageIndex, true)
       }
-    } else {
-      goToIndex(activeImageIndex, true)
+
+      isDragging.current = false
+      dragOffsetX.current = 0
+      return
     }
 
-    isDragging.current = false
+    if (touch) {
+      const dx = touch.clientX - touchStartX.current
+      const dy = touch.clientY - touchStartY.current
+      const target = e.target as HTMLElement
+      if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && !target.closest('button')) {
+        suppressClick.current = true
+        setProductOpen(true)
+      }
+    }
+
     dragOffsetX.current = 0
+  }
+
+  function handleImageClick() {
+    if (suppressClick.current) {
+      suppressClick.current = false
+      return
+    }
+    setProductOpen(true)
   }
 
   const handlePrevImage = useCallback((e: React.MouseEvent) => {
@@ -188,6 +214,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={handleImageClick}
       >
         {showHighQuality ? (
           <div className={styles.imageStrip} ref={stripRef}>
@@ -343,6 +370,13 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
         isOpen={reviewsOpen}
         onClose={() => setReviewsOpen(false)}
         productName={product.title}
+      />
+
+      <ProductDrawer
+        isOpen={productOpen}
+        onClose={() => setProductOpen(false)}
+        product={product}
+        onAddToCart={onAddToCart}
       />
     </div>
   )

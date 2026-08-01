@@ -208,7 +208,7 @@
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-top: 1px solid var(--color-border-default);
-  height: 64px;
+  height: 72px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -259,7 +259,7 @@
 
 .tabLabel {
   font-family: var(--font-secondary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: var(--font-weight-medium);
   line-height: 1;
   letter-spacing: 0.02em;
@@ -282,8 +282,8 @@
 }
 
 .tabCenterIcon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-xl);
   background-color: var(--color-interactive);
   color: var(--color-ink-inverted);
@@ -301,7 +301,7 @@
 
 .tabCenterLabel {
   font-family: var(--font-secondary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-ink-primary);
   line-height: 1;

@@ -43,6 +43,6 @@ body {
    ============================================================ */
 @media (max-width: 767px) {
   main {
-    padding-bottom: 64px;
+    padding-bottom: 72px;
   }
 }
