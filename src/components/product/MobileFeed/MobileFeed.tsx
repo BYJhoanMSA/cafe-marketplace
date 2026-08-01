@@ -26,7 +26,8 @@ const SCROLL_POS_KEY = 'catalogo-scroll-pos'
 const TAPPED_INDEX_KEY = 'catalogo-tapped-index'
 
 /** Lista de ids montados (ventana activa + vistos), ordenada por índice de producto */
-function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {  const valid = new Set(products.map((p) => p.id))
+function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {
+  const valid = new Set(products.map((p) => p.id))
   const indexOf = (id: string) => products.findIndex((p) => p.id === id)
 
   let list = prev.filter((id) => valid.has(id))
@@ -38,6 +39,19 @@ function buildMountedList(prev: string[], activeIndex: number, products: Product
     if (product && !list.includes(product.id)) list.push(product.id)
   }
 
+  // Aplanar a un rango contiguo: si el índice activo salta (p. ej. al restaurar el
+  // scroll en un producto lejano), los slides intermedios deben montarse para no
+  // dejar huecos que colapsen la altura del contenedor y limiten el scrollTop.
+  const idxs = list.map((id) => indexOf(id))
+  const lo = Math.min(...idxs)
+  const hi = Math.max(...idxs)
+  const flattened: string[] = []
+  for (let i = lo; i <= hi; i++) {
+    const product = products[i]
+    if (product) flattened.push(product.id)
+  }
+  list = flattened
+
   // Desalojar los más lejanos al activo cuando se supera el tope (LRU por distancia)
   if (list.length > MAX_CACHED_SLIDES) {
     list = list
@@ -45,9 +59,10 @@ function buildMountedList(prev: string[], activeIndex: number, products: Product
       .sort((a, b) => a.dist - b.dist)
       .slice(0, MAX_CACHED_SLIDES)
       .map((x) => x.id)
+      .sort((a, b) => indexOf(a) - indexOf(b))
   }
 
-  return list.sort((a, b) => indexOf(a) - indexOf(b))
+  return list
 }
 
 export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
