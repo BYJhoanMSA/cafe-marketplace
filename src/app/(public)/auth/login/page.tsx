@@ -26,7 +26,7 @@ export default async function LoginPage() {
           <p className={styles.subtitle}>Inicia sesión para continuar</p>
         </div>
         
-        <LoginForm />
+        <LoginForm showGoogle={Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET)} />
 
         <div className={styles.footer}>
           ¿No tienes una cuenta?{' '}
