@@ -54,23 +54,27 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const [mountedIds, setMountedIds] = useState<string[]>([])
   const [seen, setSeen] = useState<Set<string>>(() => new Set())
   const lastScrollSaveRef = useRef(0)
+  const didRestoreRef = useRef(false)
 
   // Restaurar la posición del feed al volver al catálogo (botón atrás o "Volver al catálogo").
+  // Se asigna scrollTop directamente (instantáneo, ignora el `scroll-behavior: smooth`
+  // heredado) y solo después de que los slides estén montados para tener altura real.
   useLayoutEffect(() => {
+    if (didRestoreRef.current) return
     const container = containerRef.current
     if (!container) return
+    if (mountedIds.length === 0) return
 
     const saved = sessionStorage.getItem(SCROLL_POS_KEY)
+    if (saved == null) return
     sessionStorage.removeItem(SCROLL_POS_KEY)
-    if (saved != null) {
-      const target = Number(saved)
-      if (!Number.isNaN(target) && target > 0) {
-        const apply = () => container.scrollTo(0, target)
-        apply()
-        requestAnimationFrame(apply)
-      }
-    }
-  }, [])
+
+    const target = Number(saved)
+    if (Number.isNaN(target) || target <= 0) return
+
+    didRestoreRef.current = true
+    container.scrollTop = target
+  }, [mountedIds])
 
   // Guardar la posición final al desmontar (navegación al PDP).
   useEffect(() => {

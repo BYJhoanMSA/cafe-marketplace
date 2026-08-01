@@ -7,6 +7,7 @@
   width: 100vw;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
+  scroll-behavior: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
   background-color: var(--neutral-900);
