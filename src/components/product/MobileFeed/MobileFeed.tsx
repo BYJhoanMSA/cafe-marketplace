@@ -1,7 +1,7 @@
 'use client'
 
 // src/components/product/MobileFeed/MobileFeed.tsx
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { MobileFeedSlide } from './MobileFeedSlide'
 import { getImageUrl } from '@/lib/utils'
 import type { ProductCardData } from '../ProductCard'
@@ -53,22 +53,30 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mountedIds, setMountedIds] = useState<string[]>([])
   const [seen, setSeen] = useState<Set<string>>(() => new Set())
+  const lastScrollSaveRef = useRef(0)
 
-  // Guardar la posición del feed antes de desmontar (navegación al PDP)
-  // y restaurarla al volver atrás con el botón del dispositivo.
-  useEffect(() => {
+  // Restaurar la posición del feed al volver al catálogo (botón atrás o "Volver al catálogo").
+  useLayoutEffect(() => {
     const container = containerRef.current
     if (!container) return
 
     const saved = sessionStorage.getItem(SCROLL_POS_KEY)
     sessionStorage.removeItem(SCROLL_POS_KEY)
     if (saved != null) {
-      requestAnimationFrame(() => {
-        container.scrollTop = Number(saved)
-      })
+      const target = Number(saved)
+      if (!Number.isNaN(target) && target > 0) {
+        const apply = () => container.scrollTo(0, target)
+        apply()
+        requestAnimationFrame(apply)
+      }
     }
+  }, [])
 
+  // Guardar la posición final al desmontar (navegación al PDP).
+  useEffect(() => {
+    const container = containerRef.current
     return () => {
+      if (!container) return
       try {
         sessionStorage.setItem(SCROLL_POS_KEY, String(container.scrollTop))
       } catch {}
@@ -85,6 +93,14 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
       if (step <= 0) return
       const index = Math.round(container.scrollTop / step)
       setActiveIndex(Math.min(Math.max(index, 0), products.length - 1))
+
+      const now = Date.now()
+      if (now - lastScrollSaveRef.current > 150) {
+        lastScrollSaveRef.current = now
+        try {
+          sessionStorage.setItem(SCROLL_POS_KEY, String(container.scrollTop))
+        } catch {}
+      }
 
       setSettled(false)
       if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
