@@ -25,7 +25,7 @@ export function FlavorNotePicker({ selected, onToggle }: FlavorNotePickerProps) 
       <h3 style={{ margin: 0, fontSize: 'var(--text-md)', fontWeight: 'var(--font-weight-bold)' }}>
         🍒 Perfil Sensorial (Notas de Sabor)
       </h3>
-      <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
+      <p style={{ margin: 0, fontSize: 'var(--text-base)', color: 'var(--color-ink-secondary)' }}>
         Selecciona las notas que caracterizan este café (se usarán para los filtros del catálogo):
       </p>
 
@@ -44,7 +44,7 @@ export function FlavorNotePicker({ selected, onToggle }: FlavorNotePickerProps) 
                 backgroundColor: isSelected ? 'var(--color-interactive-light, rgba(37,99,235,0.1))' : 'var(--color-bg-primary)',
                 color: isSelected ? 'var(--color-interactive)' : 'var(--color-ink-secondary)',
                 fontWeight: isSelected ? 'var(--font-weight-bold)' : 'var(--font-weight-regular)',
-                fontSize: 'var(--text-xs)',
+                fontSize: 'var(--text-sm)',
                 cursor: 'pointer',
                 transition: 'all var(--duration-fast)',
               }}

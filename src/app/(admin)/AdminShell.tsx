@@ -153,6 +153,9 @@ export function AdminShell({ isAdmin, userName, userRole, initial, children }: A
 
       <main className={styles.main}>
         <header className={styles.header}>
+          <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-weight-medium)', margin: 0 }}>
+            Panel de Administración
+          </h2>
           <button
             type="button"
             className={styles.hamburger}
@@ -162,9 +165,6 @@ export function AdminShell({ isAdmin, userName, userRole, initial, children }: A
           >
             {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
-          <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-weight-medium)', margin: 0 }}>
-            Panel de Administración
-          </h2>
         </header>
         <div className={styles.content}>{children}</div>
       </main>

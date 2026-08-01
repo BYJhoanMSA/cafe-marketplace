@@ -1,7 +1,7 @@
 'use client'
 
 // src/components/admin/ProductForm.tsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -38,6 +38,14 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
   const router = useRouter()
   const isEditing = !!initialData
   
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768)
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedVendorId, setSelectedVendorId] = useState(initialData?.vendorId || (vendors[0]?.id || ''))
@@ -290,121 +298,250 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
         </p>
 
         {!initialData && (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              fontSize: 'var(--text-sm)',
-              minWidth: '500px',
-            }}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: 'left', padding: 'var(--space-2) var(--space-3)', borderBottom: '1px solid var(--color-border-default)', fontWeight: 'var(--font-weight-semibold)' }}>
-                    Tamaño
-                  </th>
-                  {grindTypes.map(g => (
-                    <th key={g.value} style={{
-                      textAlign: 'center', padding: 'var(--space-2) var(--space-1)',
-                      borderBottom: '1px solid var(--color-border-default)',
-                      fontWeight: selectedGrinds.includes(g.value) ? 'var(--font-weight-bold)' : 'var(--font-weight-regular)',
-                      color: selectedGrinds.includes(g.value) ? 'var(--color-interactive)' : 'var(--color-ink-tertiary)',
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                    }}
-                    onClick={() => {
-                      setSelectedGrinds(prev =>
-                        prev.includes(g.value) ? prev.filter(v => v !== g.value) : [...prev, g.value]
+          <>
+            {isMobile ? (
+              /* ── Vista mobile: chips + tarjetas de precios ── */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+                <div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-2)' }}>
+                    Tamaños disponibles
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+                    {variantSizes.map(s => {
+                      const checked = selectedSizes.includes(s.value)
+                      return (
+                        <button
+                          key={s.value}
+                          type="button"
+                          onClick={() => setSelectedSizes(prev =>
+                            checked ? prev.filter(v => v !== s.value) : [...prev, s.value]
+                          )}
+                          style={{
+                            padding: 'var(--space-2) var(--space-4)',
+                            borderRadius: 'var(--radius-pill)',
+                            border: checked ? '1px solid var(--color-interactive)' : '1px solid var(--color-border-default)',
+                            backgroundColor: checked ? 'var(--color-interactive-light, rgba(37,99,235,0.1))' : 'var(--color-bg-primary)',
+                            color: checked ? 'var(--color-interactive)' : 'var(--color-ink-secondary)',
+                            fontWeight: checked ? 'var(--font-weight-bold)' : 'var(--font-weight-regular)',
+                            fontSize: 'var(--text-base)',
+                            cursor: 'pointer',
+                            transition: 'all var(--duration-fast)',
+                          }}
+                        >
+                          {checked ? '✓ ' : ''}{s.label}
+                        </button>
                       )
-                    }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                        <input
-                          type="checkbox"
-                          checked={selectedGrinds.includes(g.value)}
-                          readOnly
-                        />
-                        <span style={{ writingMode: 'horizontal-tb' }}>{g.label}</span>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {variantSizes.map(s => {
-                  const sizeChecked = selectedSizes.includes(s.value)
-                  return (
-                    <tr key={s.value} style={{
-                      backgroundColor: sizeChecked ? 'var(--color-bg-primary)' : 'transparent',
-                    }}>
-                      <td style={{
-                        padding: 'var(--space-2) var(--space-3)',
-                        borderBottom: '1px solid var(--color-border-default)',
-                        fontWeight: sizeChecked ? 'var(--font-weight-semibold)' : 'var(--font-weight-regular)',
-                        cursor: 'pointer',
-                        userSelect: 'none',
-                      }}
-                      onClick={() => {
-                        setSelectedSizes(prev =>
-                          sizeChecked ? prev.filter(v => v !== s.value) : [...prev, s.value]
-                        )
-                      }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <input
-                            type="checkbox"
-                            checked={sizeChecked}
-                            readOnly
-                          />
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-2)' }}>
+                    Moliendas disponibles
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+                    {grindTypes.map(g => {
+                      const checked = selectedGrinds.includes(g.value)
+                      return (
+                        <button
+                          key={g.value}
+                          type="button"
+                          onClick={() => setSelectedGrinds(prev =>
+                            checked ? prev.filter(v => v !== g.value) : [...prev, g.value]
+                          )}
+                          style={{
+                            padding: 'var(--space-2) var(--space-4)',
+                            borderRadius: 'var(--radius-pill)',
+                            border: checked ? '1px solid var(--color-interactive)' : '1px solid var(--color-border-default)',
+                            backgroundColor: checked ? 'var(--color-interactive-light, rgba(37,99,235,0.1))' : 'var(--color-bg-primary)',
+                            color: checked ? 'var(--color-interactive)' : 'var(--color-ink-secondary)',
+                            fontWeight: checked ? 'var(--font-weight-bold)' : 'var(--font-weight-regular)',
+                            fontSize: 'var(--text-base)',
+                            cursor: 'pointer',
+                            transition: 'all var(--duration-fast)',
+                          }}
+                        >
+                          {checked ? '✓ ' : ''}{g.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {selectedSizes.length > 0 && selectedGrinds.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                    {variantSizes.filter(s => selectedSizes.includes(s.value)).map(s => (
+                      <div key={s.value} style={{
+                        padding: 'var(--space-4)',
+                        background: 'var(--color-bg-primary)',
+                        borderRadius: 'var(--radius-lg)',
+                        border: '1px solid var(--color-border-default)',
+                      }}>
+                        <div style={{ fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--text-base)', marginBottom: 'var(--space-3)' }}>
                           {s.label}
                         </div>
-                      </td>
-                      {grindTypes.map(g => {
-                        const isActive = sizeChecked && selectedGrinds.includes(g.value)
-                        const key = `${s.value}|${g.value}`
-                        return (
-                          <td key={g.value} style={{
-                            textAlign: 'center',
-                            padding: 'var(--space-1)',
-                            borderBottom: '1px solid var(--color-border-default)',
-                          }}>
-                            <input
-                              type="number"
-                              step="1"
-                              placeholder="Precio COP"
-                              disabled={!isActive}
-                              value={isActive ? (combinationPrices[key] || '') : ''}
-                              onChange={(e) => {
-                                setCombinationPrices(prev => ({ ...prev, [key]: e.target.value }))
-                              }}
-                              style={{
-                                width: '100%',
-                                minWidth: '80px',
-                                padding: 'var(--space-1) var(--space-2)',
-                                borderRadius: 'var(--radius-md)',
-                                border: isActive ? '1px solid var(--color-border-default)' : '1px solid transparent',
-                                background: isActive ? 'var(--color-bg-primary)' : 'transparent',
-                                fontFamily: 'inherit',
-                                fontSize: 'var(--text-sm)',
-                                textAlign: 'center',
-                                color: isActive ? 'var(--color-ink-primary)' : 'var(--color-ink-tertiary)',
-                                opacity: isActive ? 1 : 0.4,
-                              }}
-                            />
-                          </td>
-                        )
-                      })}
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                          {grindTypes.filter(g => selectedGrinds.includes(g.value)).map(g => {
+                            const key = `${s.value}|${g.value}`
+                            return (
+                              <div key={g.value} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                                <span style={{ flex: 1, fontSize: 'var(--text-sm)', color: 'var(--color-ink-secondary)' }}>
+                                  {g.label}
+                                </span>
+                                <input
+                                  type="number"
+                                  step="1"
+                                  placeholder="Precio COP"
+                                  value={combinationPrices[key] || ''}
+                                  onChange={(e) => {
+                                    setCombinationPrices(prev => ({ ...prev, [key]: e.target.value }))
+                                  }}
+                                  style={{
+                                    width: '130px',
+                                    padding: 'var(--space-2) var(--space-3)',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border-default)',
+                                    background: 'var(--color-bg-primary)',
+                                    fontFamily: 'inherit',
+                                    fontSize: 'var(--text-base)',
+                                    textAlign: 'center',
+                                    color: 'var(--color-ink-primary)',
+                                  }}
+                                />
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-            {selectedSizes.length > 0 && selectedGrinds.length > 0 && (
-              <div style={{ padding: 'var(--space-3) 0 0', fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
-                Se generarán <strong>{selectedSizes.length * selectedGrinds.length}</strong> variantes
+                {selectedSizes.length > 0 && selectedGrinds.length > 0 && (
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-ink-secondary)' }}>
+                    Se generarán <strong>{selectedSizes.length * selectedGrinds.length}</strong> variantes
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* ── Vista desktop: matriz ── */
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  fontSize: 'var(--text-sm)',
+                  minWidth: '500px',
+                }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'left', padding: 'var(--space-2) var(--space-3)', borderBottom: '1px solid var(--color-border-default)', fontWeight: 'var(--font-weight-semibold)' }}>
+                        Tamaño
+                      </th>
+                      {grindTypes.map(g => (
+                        <th key={g.value} style={{
+                          textAlign: 'center', padding: 'var(--space-2) var(--space-1)',
+                          borderBottom: '1px solid var(--color-border-default)',
+                          fontWeight: selectedGrinds.includes(g.value) ? 'var(--font-weight-bold)' : 'var(--font-weight-regular)',
+                          color: selectedGrinds.includes(g.value) ? 'var(--color-interactive)' : 'var(--color-ink-tertiary)',
+                          cursor: 'pointer',
+                          userSelect: 'none',
+                        }}
+                        onClick={() => {
+                          setSelectedGrinds(prev =>
+                            prev.includes(g.value) ? prev.filter(v => v !== g.value) : [...prev, g.value]
+                          )
+                        }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedGrinds.includes(g.value)}
+                              readOnly
+                            />
+                            <span style={{ writingMode: 'horizontal-tb' }}>{g.label}</span>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {variantSizes.map(s => {
+                      const sizeChecked = selectedSizes.includes(s.value)
+                      return (
+                        <tr key={s.value} style={{
+                          backgroundColor: sizeChecked ? 'var(--color-bg-primary)' : 'transparent',
+                        }}>
+                          <td style={{
+                            padding: 'var(--space-2) var(--space-3)',
+                            borderBottom: '1px solid var(--color-border-default)',
+                            fontWeight: sizeChecked ? 'var(--font-weight-semibold)' : 'var(--font-weight-regular)',
+                            cursor: 'pointer',
+                            userSelect: 'none',
+                          }}
+                          onClick={() => {
+                            setSelectedSizes(prev =>
+                              sizeChecked ? prev.filter(v => v !== s.value) : [...prev, s.value]
+                            )
+                          }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <input
+                                type="checkbox"
+                                checked={sizeChecked}
+                                readOnly
+                              />
+                              {s.label}
+                            </div>
+                          </td>
+                          {grindTypes.map(g => {
+                            const isActive = sizeChecked && selectedGrinds.includes(g.value)
+                            const key = `${s.value}|${g.value}`
+                            return (
+                              <td key={g.value} style={{
+                                textAlign: 'center',
+                                padding: 'var(--space-1)',
+                                borderBottom: '1px solid var(--color-border-default)',
+                              }}>
+                                <input
+                                  type="number"
+                                  step="1"
+                                  placeholder="Precio COP"
+                                  disabled={!isActive}
+                                  value={isActive ? (combinationPrices[key] || '') : ''}
+                                  onChange={(e) => {
+                                    setCombinationPrices(prev => ({ ...prev, [key]: e.target.value }))
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    minWidth: '80px',
+                                    padding: 'var(--space-1) var(--space-2)',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: isActive ? '1px solid var(--color-border-default)' : '1px solid transparent',
+                                    background: isActive ? 'var(--color-bg-primary)' : 'transparent',
+                                    fontFamily: 'inherit',
+                                    fontSize: 'var(--text-sm)',
+                                    textAlign: 'center',
+                                    color: isActive ? 'var(--color-ink-primary)' : 'var(--color-ink-tertiary)',
+                                    opacity: isActive ? 1 : 0.4,
+                                  }}
+                                />
+                              </td>
+                            )
+                          })}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+
+                {selectedSizes.length > 0 && selectedGrinds.length > 0 && (
+                  <div style={{ padding: 'var(--space-3) 0 0', fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
+                    Se generarán <strong>{selectedSizes.length * selectedGrinds.length}</strong> variantes
+                  </div>
+                )}
               </div>
             )}
-          </div>
+          </>
         )}
       </div>
 
@@ -420,7 +557,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
       />
 
       {/* SECCIÓN: ATRIBUTOS TÉCNICOS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 'var(--space-4)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
           <Select 
