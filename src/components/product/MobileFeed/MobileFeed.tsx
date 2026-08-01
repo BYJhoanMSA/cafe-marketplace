@@ -18,9 +18,11 @@ const SETTLE_DELAY_MS = 400
 /** Máximo de slides montados en caché (estilo TikTok: los vistos no se destruyen) */
 const MAX_CACHED_SLIDES = 12
 
+/** Clave de sessionStorage para restaurar la posición del feed al volver del PDP */
+const SCROLL_POS_KEY = 'catalogo-scroll-pos'
+
 /** Lista de ids montados (ventana activa + vistos), ordenada por índice de producto */
-function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {
-  const valid = new Set(products.map((p) => p.id))
+function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {  const valid = new Set(products.map((p) => p.id))
   const indexOf = (id: string) => products.findIndex((p) => p.id === id)
 
   let list = prev.filter((id) => valid.has(id))
@@ -51,6 +53,27 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mountedIds, setMountedIds] = useState<string[]>([])
   const [seen, setSeen] = useState<Set<string>>(() => new Set())
+
+  // Guardar la posición del feed antes de desmontar (navegación al PDP)
+  // y restaurarla al volver atrás con el botón del dispositivo.
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const saved = sessionStorage.getItem(SCROLL_POS_KEY)
+    sessionStorage.removeItem(SCROLL_POS_KEY)
+    if (saved != null) {
+      requestAnimationFrame(() => {
+        container.scrollTop = Number(saved)
+      })
+    }
+
+    return () => {
+      try {
+        sessionStorage.setItem(SCROLL_POS_KEY, String(container.scrollTop))
+      } catch {}
+    }
+  }, [])
 
   // Scroll handler — calcula el slide activo y marca cuándo el usuario se detiene
   useEffect(() => {

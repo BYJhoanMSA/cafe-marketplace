@@ -131,7 +131,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const size = product.sizeOptions.find((s) => s.value === sizeValue)
     if (!size) return
     const match = findVariant(size.weightGrams, selectedGrind?.id ?? null)
-    setSelectedVariant(match || size ? { ...match, ...size, id: match?.id ?? `size-${sizeValue}` } : null)
+    setSelectedVariant(match || size ? { ...match, ...size, id: match?.id ?? `size-${sizeValue}`, sizeValue } : null)
   }
 
   const handleSelectGrind = (grindId: string) => {
