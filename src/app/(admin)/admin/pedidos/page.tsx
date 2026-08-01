@@ -16,7 +16,7 @@ export default async function AdminOrdersPage() {
     <div>
       <div style={{ marginBottom: 'var(--space-6)' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-weight-bold)' }}>Gestión de Pedidos</h1>
-        <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
+        <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-base)' }}>
           Historial y control de despachos de compras realizadas en la tienda.
         </p>
       </div>

@@ -17,7 +17,7 @@ export default async function AdminInventoryPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <div>
           <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-weight-bold)' }}>Control de Inventario</h1>
-          <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
+          <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-base)' }}>
             Gestión de SKUs, precios y existencias por variante de producto.
           </p>
         </div>

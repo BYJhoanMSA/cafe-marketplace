@@ -36,7 +36,7 @@ export default async function DashboardPage() {
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-2)' }}>
           Resumen General
         </h1>
-        <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
+        <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-base)' }}>
           {isAdmin
             ? 'Bienvenido al panel de control de tu Marketplace.'
             : 'Bienvenido. Aquí puedes administrar tus propios productos.'}

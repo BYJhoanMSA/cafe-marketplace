@@ -56,7 +56,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 'var(--font-weight-bold)' }}>
               Pedido #{order.displayId}
             </h1>
-            <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-sm)' }}>
+            <p style={{ color: 'var(--color-ink-secondary)', fontSize: 'var(--text-base)' }}>
               Realizado el {formatRelativeDate(order.createdAt)}
             </p>
           </div>

@@ -176,7 +176,7 @@ export function InicioEditor({ initialConfig }: { initialConfig: HomepageConfig 
         <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-weight-bold)', margin: 0 }}>
           ⭐ Por qué elegirnos (Beneficios)
         </h3>
-        <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--color-ink-secondary)' }}>
+        <p style={{ margin: 0, fontSize: 'var(--text-base)', color: 'var(--color-ink-secondary)' }}>
           Edita cada bloque de forma independiente. Los cambios se guardan todos al presionar el botón.
         </p>
 
