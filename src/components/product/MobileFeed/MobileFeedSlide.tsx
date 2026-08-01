@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatPrice, getImageUrl, IMAGE_BLUR_PLACEHOLDER } from '@/lib/utils'
@@ -10,7 +11,6 @@ import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/soci
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { ReviewDrawer } from './ReviewDrawer'
-import { ProductDrawer } from './ProductDrawer'
 import type { ProductCardData } from '../ProductCard'
 import styles from './MobileFeed.module.css'
 
@@ -29,7 +29,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
   const [favorites, setFavorites] = useState(20)
   const [shares, setShares] = useState(100)
   const [reviewsOpen, setReviewsOpen] = useState(false)
-  const [productOpen, setProductOpen] = useState(false)
+  const router = useRouter()
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
 
@@ -127,7 +127,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
       const target = e.target as HTMLElement
       if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && !target.closest('button')) {
         suppressClick.current = true
-        setProductOpen(true)
+        router.push(`/productos/${product.slug}`)
       }
     }
 
@@ -139,7 +139,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
       suppressClick.current = false
       return
     }
-    setProductOpen(true)
+    router.push(`/productos/${product.slug}`)
   }
 
   const handlePrevImage = useCallback((e: React.MouseEvent) => {
@@ -370,13 +370,6 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart 
         isOpen={reviewsOpen}
         onClose={() => setReviewsOpen(false)}
         productName={product.title}
-      />
-
-      <ProductDrawer
-        isOpen={productOpen}
-        onClose={() => setProductOpen(false)}
-        product={product}
-        onAddToCart={onAddToCart}
       />
     </div>
   )

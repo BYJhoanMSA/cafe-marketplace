@@ -2,8 +2,8 @@
 
 /* Contenedor principal del feed vertical */
 .feedContainer {
-  height: calc(100vh - 64px); /* 100vh menos el tab bar inferior */
-  height: calc(100dvh - 64px);
+  height: calc(100vh - 72px); /* 100vh menos el tab bar inferior */
+  height: calc(100dvh - 72px);
   width: 100vw;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
