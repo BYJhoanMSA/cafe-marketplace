@@ -2,6 +2,7 @@
 
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
+import { COLOMBIAN_REGIONS } from '@/lib/colombia'
 
 interface OriginTerroirSectionProps {
   regionName: string
@@ -37,16 +38,7 @@ export function OriginTerroirSection({
           <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Región / Origen</label>
           <Select
             options={[
-              { label: '🇨🇴 Huila', value: 'Huila' },
-              { label: '🇨🇴 Nariño', value: 'Nariño' },
-              { label: '🇨🇴 Tolima', value: 'Tolima' },
-              { label: '🇨🇴 Antioquia', value: 'Antioquia' },
-              { label: '🇨🇴 Cauca', value: 'Cauca' },
-              { label: '🇨🇴 Quindío / Eje Cafetero', value: 'Quindío' },
-              { label: '🇨🇴 Caldas', value: 'Caldas' },
-              { label: '🇨🇴 Risaralda', value: 'Risaralda' },
-              { label: '🇨🇴 Cundinamarca', value: 'Cundinamarca' },
-              { label: '🇨🇴 Santander', value: 'Santander' },
+              ...COLOMBIAN_REGIONS,
               { label: '🇨🇴 Sierra Nevada', value: 'Sierra Nevada' },
             ]}
             value={regionName}
