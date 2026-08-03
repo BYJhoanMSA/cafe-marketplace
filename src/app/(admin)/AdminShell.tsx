@@ -8,7 +8,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
-import { Menu, X, Package, Tags, Box, ShoppingCart, LogOut } from 'lucide-react'
+import { Menu, X, Package, Tags, Box, ShoppingCart, LogOut, Home } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import styles from './AdminShell.module.css'
 
@@ -147,6 +147,14 @@ export function AdminShell({ isAdmin, userName, userRole, initial, children }: A
         </div>
         <nav className={styles.nav}>
           <NavLinks isAdmin={isAdmin} onNavigate={closeSidebar} />
+          <Link
+            href="/"
+            className={`${styles.navItem} ${styles.homeItem}`}
+            onClick={closeSidebar}
+          >
+            <Home size={20} />
+            Volver a la página de inicio
+          </Link>
         </nav>
         <div className={styles.userProfile}>{profile}</div>
       </aside>

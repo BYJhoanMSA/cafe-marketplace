@@ -39,6 +39,8 @@ export interface ProductCard {
   isLimited: boolean
   isOrganic: boolean
   category: string | null
+  favoritesCount: number
+  sharesCount: number
 }
 
 export function mapToProductCard(p: ProductCardRaw): ProductCard {
@@ -64,5 +66,7 @@ export function mapToProductCard(p: ProductCardRaw): ProductCard {
     isLimited: p.isLimited,
     isOrganic: p.isOrganic,
     category: p.category?.name || null,
+    favoritesCount: p.favoritesCount,
+    sharesCount: p.sharesCount,
   }
 }

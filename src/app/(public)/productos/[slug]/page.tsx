@@ -9,8 +9,7 @@ import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
-import { canIncrementSocialCount } from '@/lib/rateLimit'
-import { getSocialCounts, incrementShares } from '@/lib/socialCounts'
+import { incrementSocialCount } from '@/server/actions/social.actions'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
 import type { ProductDetail, ProductGrindOption, ProductVariant } from '@/server/actions/catalog.actions'
 import { EscudoDatos, CartaTostador, EscudoCompra } from '@/components/product/EscudoDatos'
@@ -48,6 +47,8 @@ const FALLBACK_PRODUCT: ProductDetail = {
   grindOptions: [],
   rating: 0,
   reviewCount: 0,
+  favoritesCount: 0,
+  sharesCount: 0,
 }
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -69,14 +70,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [selectedVariant, setSelectedVariant] = useState<SelectedVariant | null>(null)
   const [selectedGrind, setSelectedGrind] = useState<ProductGrindOption | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const [favorites, setFavorites] = useState(20)
-  const [shares, setShares] = useState(0)
+  const [favorites, setFavorites] = useState(product?.favoritesCount ?? 0)
+  const [shares, setShares] = useState(product?.sharesCount ?? 0)
 
   useEffect(() => {
-    const counts = getSocialCounts(slug)
-    setFavorites(counts.favorites)
-    setShares(counts.shares)
-  }, [slug])
+    if (!product) return
+    setFavorites(product.favoritesCount ?? 0)
+    setShares(product.sharesCount ?? 0)
+  }, [product?.id, product?.favoritesCount, product?.sharesCount])
 
   const findVariant = useCallback(
     (weightGrams: number | null, grindType: string | null): ProductVariant | null => {
@@ -105,8 +106,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     )
     setSelectedGrind(firstGrind)
     setQuantity(1)
-    setFavorites(20)
-    setShares(100)
+    setFavorites(product.favoritesCount ?? 0)
+    setShares(product.sharesCount ?? 0)
   }, [product, findVariant])
 
   const { addToCart } = useCart()
@@ -144,9 +145,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   const handleShare = () => {
-    if (!canIncrementSocialCount(product.id)) return
-    const newShares = incrementShares(product.id)
-    setShares(newShares)
+    incrementSocialCount(product.id, 'shares').then((res) => {
+      setShares(res.count)
+    })
     const shareData = {
       title: product.title,
       text: `Descubre ${product.title} en Cafe Seleccion`,
@@ -299,6 +300,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             Replica de styledk/producto.html. Para revertir: eliminar
             este bloque y borrar src/components/product/EscudoDatos.
             ============================================================ */}
+        {/* CARTA DEL TOSTADOR — VERSIÓN PREVIEW (reversible) */}
+        <CartaTostador text={product.description} roaster={product.vendor.name} />
+
         <h2 className={styles.caracteristicasTitle}>Características</h2>
         <EscudoDatos
           data={[
@@ -325,9 +329,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             { label: 'Notas', value: product.flavorNotes.join(', ') },
           ]}
         />
-
-        {/* CARTA DEL TOSTADOR — VERSIÓN PREVIEW (reversible) */}
-        <CartaTostador text={product.description} roaster={product.vendor.name} />
 
         {/* SECCIÓN DE COMPRA — VERSIÓN PREVIEW (reversible) */}
         {selectedVariant && selectedGrind && (

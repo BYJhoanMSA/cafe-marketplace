@@ -316,6 +316,10 @@ model Product {
   reviewCount      Int       @default(0)
   totalSold        Int       @default(0)
 
+  // Contadores sociales (favoritos y compartidos globales)
+  favoritesCount   Int       @default(0)
+  sharesCount      Int       @default(0)
+
   // SEO
   metaTitle        String?   @db.VarChar(70)
   metaDescription  String?   @db.VarChar(160)

@@ -59,6 +59,8 @@ export interface ProductDetail {
   grindOptions: ProductGrindOption[]
   rating: number
   reviewCount: number
+  favoritesCount: number
+  sharesCount: number
 }
 
 function parseAltitudeRange(filterRange: string): { min: number; max: number } | null {
@@ -261,7 +263,9 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
         })),
         grindOptions,
         rating: Number(p.avgRating),
-        reviewCount: p.reviewCount
+        reviewCount: p.reviewCount,
+        favoritesCount: p.favoritesCount,
+        sharesCount: p.sharesCount,
       }
     } catch (error) {
       console.error('Error fetching product by slug:', error)

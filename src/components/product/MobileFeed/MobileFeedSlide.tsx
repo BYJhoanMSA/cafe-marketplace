@@ -5,10 +5,9 @@ import Link from 'next/link'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Heart, MessageCircle, Share2, ShoppingBag, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatPrice, getImageUrl, IMAGE_BLUR_PLACEHOLDER } from '@/lib/utils'
-import { canIncrementSocialCount } from '@/lib/rateLimit'
-import { getSocialCounts, incrementFavorites, incrementShares } from '@/lib/socialCounts'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
+import { incrementSocialCount } from '@/server/actions/social.actions'
 import { ReviewDrawer } from './ReviewDrawer'
 import type { ProductCardData } from '../ProductCard'
 import styles from './MobileFeed.module.css'
@@ -27,8 +26,8 @@ const SWIPE_THRESHOLD = 60
 
 export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart, onOpenProduct, onSaveTapped }: MobileFeedSlideProps) {
   const [isAdding, setIsAdding] = useState(false)
-  const [favorites, setFavorites] = useState(20)
-  const [shares, setShares] = useState(100)
+  const [favorites, setFavorites] = useState(product.favoritesCount ?? 0)
+  const [shares, setShares] = useState(product.sharesCount ?? 0)
   const [reviewsOpen, setReviewsOpen] = useState(false)
   const { addToCart } = useCart()
   const { toggleFavorite, isFavorite } = useFavorites()
@@ -50,10 +49,9 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
   const stripRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const counts = getSocialCounts(product.id)
-    setFavorites(counts.favorites)
-    setShares(counts.shares)
-  }, [product.id])
+    setFavorites(product.favoritesCount ?? 0)
+    setShares(product.sharesCount ?? 0)
+  }, [product.id, product.favoritesCount, product.sharesCount])
 
   useEffect(() => {
     setActiveImageIndex(0)
@@ -154,9 +152,10 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
 
   function handleToggleFavorite(e: React.MouseEvent) {
     e.stopPropagation()
-    if (!isFavorited && canIncrementSocialCount(product.id)) {
-      const newFavs = incrementFavorites(product.id)
-      setFavorites(newFavs)
+    if (!isFavorited) {
+      incrementSocialCount(product.id, 'favorites').then((res) => {
+        setFavorites(res.count)
+      })
     }
     toggleFavorite({
       id: product.id,
@@ -173,9 +172,6 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
 
   function handleShare(e: React.MouseEvent) {
     e.stopPropagation()
-    if (!canIncrementSocialCount(product.id)) return
-    const newShares = incrementShares(product.id)
-    setShares(newShares)
     const shareData = {
       title: product.title,
       text: `Descubre ${product.title} en Cafe Seleccion`,
@@ -186,6 +182,9 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
     } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(shareData.url)
     }
+    incrementSocialCount(product.id, 'shares').then((res) => {
+      setShares(res.count)
+    })
   }
 
   async function handleAddToCart(e: React.MouseEvent) {

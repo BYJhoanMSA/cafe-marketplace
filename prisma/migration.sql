@@ -44,3 +44,9 @@ ALTER TABLE products ADD CONSTRAINT products_createdById_fkey
 
 -- 6. Propietario obligatorio
 ALTER TABLE products MODIFY createdById VARCHAR(36) NOT NULL;
+
+-- =============================================================================
+-- CONTADORES SOCIALES GLOBALES — favoritos y compartidos por producto
+-- =============================================================================
+ALTER TABLE products ADD COLUMN favoritesCount INT NOT NULL DEFAULT 0;
+ALTER TABLE products ADD COLUMN sharesCount INT NOT NULL DEFAULT 0;

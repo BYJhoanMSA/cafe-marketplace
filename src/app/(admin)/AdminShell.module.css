@@ -119,6 +119,13 @@
   color: var(--terra-500, #ef4444);
 }
 
+.homeItem {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border-default);
+  padding-top: var(--space-4);
+  border-radius: 0;
+}
+
 .main {
   flex: 1;
   display: flex;
