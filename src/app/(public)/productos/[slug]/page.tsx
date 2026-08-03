@@ -347,6 +347,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           />
         )}
 
+        <p style={{
+          marginTop: 'var(--space-4)',
+          fontSize: 'var(--text-xs)',
+          lineHeight: '1.6',
+          color: 'var(--color-ink-tertiary)',
+          maxWidth: '560px',
+        }}>
+          Este producto es comercializado por Nosotros en calidad de intermediarios. El registro
+          sanitario INVIMA es responsabilidad del productor de origen. No garantizamos ni verificamos
+          la existencia de dicho registro, aunque procuramos trabajar con productores que cumplen
+          buenas prácticas de higiene y manufactura.
+        </p>
+
         {/* CARACTERÍSTICAS */}
         <div className={styles.features}>
           <div className={styles.featureItem}>
