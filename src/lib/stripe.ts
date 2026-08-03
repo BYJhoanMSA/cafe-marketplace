@@ -3,15 +3,16 @@
 
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY environment variable')
-}
-
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-02-24.acacia',
-  typescript: true,
-  timeout: 15000,
-})
+// Stripe se inicializa de forma perezosa: el error solo se lanza si se usa de
+// verdad (pagos), nunca en el import del build. Evita que la compilación falle
+// cuando STRIPE_SECRET_KEY no está definida en el entorno de build.
+export const stripe: Stripe | null = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-02-24.acacia',
+      typescript: true,
+      timeout: 15000,
+    })
+  : null
 
 export async function getOrCreateStripeCustomer({
   userId,
@@ -30,6 +31,10 @@ export async function getOrCreateStripeCustomer({
   })
 
   if (user?.stripeCustomerId) return user.stripeCustomerId
+
+  if (!stripe) {
+    throw new Error('Stripe no configurado (falta STRIPE_SECRET_KEY)')
+  }
 
   const customer = await stripe.customers.create({
     email,

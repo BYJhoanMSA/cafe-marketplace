@@ -23,6 +23,10 @@ export async function POST(request: NextRequest) {
     return new Response('STRIPE_WEBHOOK_SECRET no configurado', { status: 500 })
   }
 
+  if (!stripe) {
+    return new Response('STRIPE_SECRET_KEY no configurado', { status: 500 })
+  }
+
   let event
 
   try {
