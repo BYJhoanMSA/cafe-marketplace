@@ -49,3 +49,6 @@ coverage/
 *.tsbuildinfo
 .eslintrc.json
 .response.html
+
+# Acceso a produccion (contiene credenciales - NUNCA subir)
+scratch/ACCESO_PRODUCCION.md
