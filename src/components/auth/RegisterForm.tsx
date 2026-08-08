@@ -45,13 +45,18 @@ export function RegisterForm() {
     try {
       const result = await registerUser(formData)
       if (result.success) {
-        // Redirigir al inicio logueado
-        router.push('/')
-        router.refresh()
+        // Cuenta creada. Si el login automático funcionó, vamos al inicio;
+        // si no (p. ej. sesión no persistida), invitamos a iniciar sesión.
+        if (result.autoLogin) {
+          router.push('/')
+          router.refresh()
+        } else {
+          router.push('/auth/login')
+        }
       } else {
         setError(result.error ?? 'Error al registrar usuario')
       }
-    } catch (err) {
+    } catch {
       setError('Ocurrió un error inesperado. Intenta nuevamente.')
     } finally {
       setLoading(false)

@@ -12,18 +12,15 @@ import { prisma } from '@/server/db/client'
 import { LoginSchema, OtpVerifySchema } from '@/server/validators/user.schema'
 import { consumeOtpCode } from '@/lib/otp'
 
-// URL base explícita de la aplicación. Al definirla, Auth.js deja de confiar en
-// el header Host (evita host-header injection en enlaces de email).
-const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || undefined
+// AUTH_URL/NEXTAUTH_URL (si se definen) las usa Auth.js automáticamente para
+// enlaces de email y callbacks OAuth; no intervienen en la confianza del Host.
 
-// Seguridad: NUNCA confiar en el Host a ciegas en producción.
-// - trustHost=true solo si lo pide el operador (AUTH_TRUST_HOST=true) o en desarrollo.
-// - Si no hay AUTH_URL definida se mantiene el comportamiento legacy para no romper
-//   el despliegue actual; se recomienda definir AUTH_URL (ver .env.example).
-const trustHost =
-  process.env.AUTH_TRUST_HOST === 'true' ||
-  process.env.NODE_ENV === 'development' ||
-  !authUrl
+// Seguridad: por defecto se mantiene trustHost=true (comportamiento legacy) para
+// no romper despliegues detrás de proxies/dominios propios (Hostinger, Cloudflare,
+// preview URLs, IP directa, etc.) donde el Host no coincide con AUTH_URL.
+// - AUTH_TRUST_HOST=false  → endurecer: Auth.js valida el Host contra AUTH_URL.
+// - AUTH_TRUST_HOST=true   → forzar confianza en el Host (no recomendado en prod).
+const trustHost = process.env.AUTH_TRUST_HOST !== 'false'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -46,8 +43,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { email, password } = parsed.data
 
-        // Si ingresaron solo el usuario (ej: "dkar"), autocompletamos el dominio
-        const lookupEmail = email.includes('@') ? email : `${email}@cafemarketplace.com`
+        // Normalizar el usuario/email:
+        // - "dkar"               → "dkar@cafemarketplace.com"
+        // - "dkar@cafemarketplace"→ "dkar@cafemarketplace.com" (sin TLD)
+        // - "dkar@cafemarketplace.com" → tal cual
+        const raw = email.toLowerCase().trim()
+        const [localPart, domainPart] = raw.split('@')
+        const lookupEmail = !raw.includes('@')
+          ? `${raw}@cafemarketplace.com`
+          : domainPart && !domainPart.includes('.')
+            ? `${localPart}@${domainPart}.com`
+            : raw
 
         const user = await prisma.user.findUnique({
           where: { email: lookupEmail.toLowerCase(), deletedAt: null },
