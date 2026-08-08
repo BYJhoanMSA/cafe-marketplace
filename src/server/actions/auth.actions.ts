@@ -15,6 +15,20 @@ async function getClientIp(): Promise<string> {
   return h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 }
 
+// En Auth.js beta.32, signIn con redirect:false NO lanza excepción cuando el
+// sign-in falla: devuelve la URL de redirección y, si falló, esa URL incluye
+// el parámetro ?error=... (ej: error=CredentialsSignin). Lo detectamos aquí
+// porque auth() en la misma acción aún no ve la cookie de sesión recién creada.
+function hasAuthError(url: unknown): boolean {
+  if (typeof url !== 'string') return false
+  try {
+    const parsed = new URL(url, process.env.AUTH_URL ?? 'http://localhost')
+    return parsed.searchParams.has('error')
+  } catch {
+    return false
+  }
+}
+
 export async function loginUser(data: LoginInput) {
   const ip = await getClientIp()
   // Rate limit por IP y por IP+email para frenar fuerza bruta distribuida
@@ -33,17 +47,13 @@ export async function loginUser(data: LoginInput) {
       return { success: false, error: 'Demasiados intentos para esta cuenta. Intenta de nuevo en 5 minutos.' }
     }
 
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email: parsed.data.email,
       password: parsed.data.password,
       redirect: false, // Manejamos la redirección en el cliente
     })
 
-    // IMPORTANTE: en Auth.js beta.32, signIn con redirect:false NO lanza excepción
-    // cuando las credenciales fallan; devuelve la URL con ?error=... y NO crea sesión.
-    // Verificamos la sesión real para no devolver un falso éxito.
-    const session = await auth()
-    if (!session?.user) {
+    if (hasAuthError(result)) {
       return { success: false, error: 'Email o contraseña incorrectos' }
     }
 
@@ -105,14 +115,13 @@ export async function registerUser(data: RegisterInput) {
     })
 
     // 4. Iniciar sesión automáticamente después de registrarse
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email,
       password,
       redirect: false,
     })
 
-    const session = await auth()
-    return { success: true, userId: user.id, autoLogin: Boolean(session?.user) }
+    return { success: true, userId: user.id, autoLogin: !hasAuthError(result) }
   } catch (error) {
     if (error instanceof AuthJsError) {
       // Ignoramos el error de signIn si ocurre porque el registro en sí fue exitoso
@@ -200,16 +209,15 @@ export async function verifyLoginCode(email: string, code: string) {
   }
 
   try {
-    await signIn('otp', {
+    const result = await signIn('otp', {
       email: normalized,
       code: parsed.data.code,
       redirect: false,
     })
 
-    // Mismo criterio que loginUser: signIn con redirect:false no lanza si el
-    // código falla, así que verificamos la sesión real antes de reportar éxito.
-    const session = await auth()
-    if (!session?.user) {
+    // Mismo criterio que loginUser: detectamos el fallo por el ?error= de la URL
+    // de redirección devuelta por signIn (no por auth(), que aún no ve la cookie).
+    if (hasAuthError(result)) {
       return { success: false, error: 'Código incorrecto o expirado' }
     }
 

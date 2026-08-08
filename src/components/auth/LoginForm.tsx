@@ -66,7 +66,7 @@ export function LoginForm({ showGoogle = false }: { showGoogle?: boolean }) {
       } else {
         setError(result.error ?? 'Error al enviar enlace')
       }
-    } catch (err) {
+    } catch {
       setError('Error al conectar con el servidor')
     } finally {
       setMagicLoading(false)
