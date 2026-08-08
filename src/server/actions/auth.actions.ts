@@ -39,6 +39,14 @@ export async function loginUser(data: LoginInput) {
       redirect: false, // Manejamos la redirección en el cliente
     })
 
+    // IMPORTANTE: en Auth.js beta.32, signIn con redirect:false NO lanza excepción
+    // cuando las credenciales fallan; devuelve la URL con ?error=... y NO crea sesión.
+    // Verificamos la sesión real para no devolver un falso éxito.
+    const session = await auth()
+    if (!session?.user) {
+      return { success: false, error: 'Email o contraseña incorrectos' }
+    }
+
     return { success: true }
   } catch (error) {
     if (error instanceof AuthJsError) {
@@ -103,7 +111,8 @@ export async function registerUser(data: RegisterInput) {
       redirect: false,
     })
 
-    return { success: true, userId: user.id }
+    const session = await auth()
+    return { success: true, userId: user.id, autoLogin: Boolean(session?.user) }
   } catch (error) {
     if (error instanceof AuthJsError) {
       // Ignoramos el error de signIn si ocurre porque el registro en sí fue exitoso
@@ -196,6 +205,14 @@ export async function verifyLoginCode(email: string, code: string) {
       code: parsed.data.code,
       redirect: false,
     })
+
+    // Mismo criterio que loginUser: signIn con redirect:false no lanza si el
+    // código falla, así que verificamos la sesión real antes de reportar éxito.
+    const session = await auth()
+    if (!session?.user) {
+      return { success: false, error: 'Código incorrecto o expirado' }
+    }
+
     return { success: true }
   } catch (error) {
     if (error instanceof AuthJsError) {

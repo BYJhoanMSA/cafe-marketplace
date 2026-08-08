@@ -39,7 +39,7 @@ export function LoginForm({ showGoogle = false }: { showGoogle?: boolean }) {
       } else {
         setError(result.error ?? 'Error de autenticación')
       }
-    } catch (err) {
+    } catch {
       setError('Ocurrió un error inesperado')
     } finally {
       setLoading(false)
