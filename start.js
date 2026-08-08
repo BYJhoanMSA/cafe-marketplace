@@ -29,6 +29,11 @@ const root = __dirname
 loadEnvFile(path.join(root, '.env.production'), false)
 loadEnvFile(path.join(root, '.env.production.local'), true)
 
+// Aceptar NEXTAUTH_SECRET como respaldo de AUTH_SECRET (nombres v4/v5)
+if (!process.env.AUTH_SECRET && process.env.NEXTAUTH_SECRET) {
+  process.env.AUTH_SECRET = process.env.NEXTAUTH_SECRET
+}
+
 // Validar que los secrets críticos no sean placeholders
 const REQUIRED_SECRETS = [
   'AUTH_SECRET',
@@ -45,5 +50,9 @@ for (const key of REQUIRED_SECRETS) {
     process.exit(1)
   }
 }
+
+const _authSecret = process.env.AUTH_SECRET
+console.log(`[start] AUTH_SECRET cargado: ${_authSecret ? `SÍ (${_authSecret.length} chars)` : 'NO'}`)
+console.log(`[start] AUTH_TRUST_HOST: ${process.env.AUTH_TRUST_HOST ?? '(no definido => confiado)'}`)
 
 require('./.next/standalone/server.js')

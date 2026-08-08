@@ -10,9 +10,10 @@ if (!fs.existsSync(serverPath)) {
 const loaderCode = `// === INYECTADO: carga .env.production.local antes de arrancar ===
 const fs$env = require('fs')
 const path$env = require('path')
-const envLocalPath = path$env.join(__dirname, '.env.production.local')
-if (fs$env.existsSync(envLocalPath)) {
-  const content = fs$env.readFileSync(envLocalPath, 'utf-8')
+const placeholderRe$env = /openssl-rand|placeholder|pendiente|^tu-|usuario:password/i
+function setEnvFromFile$env(filePath, override) {
+  if (!fs$env.existsSync(filePath)) return
+  const content = fs$env.readFileSync(filePath, 'utf-8')
   for (const line of content.split('\\n')) {
     const trimmed = line.trim()
     if (!trimmed || trimmed.startsWith('#')) continue
@@ -24,9 +25,17 @@ if (fs$env.existsSync(envLocalPath)) {
         (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1)
     }
-    process.env[key] = value
+    // Nunca sobrescribir con valores vacíos o placeholders: rompen secrets
+    // (ej. AUTH_SECRET vacío => "MissingSecret" en Auth.js).
+    if (!value || placeholderRe$env.test(value)) continue
+    if (override || !process.env[key]) {
+      process.env[key] = value
+    }
   }
 }
+setEnvFromFile$env(path$env.join(__dirname, '.env.production.local'), true)
+// Fallback al .env.production.local de la raíz del repo (al subir del standalone)
+setEnvFromFile$env(path$env.join(__dirname, '..', '..', '.env.production.local'), false)
 // ================================================================
 `
 
