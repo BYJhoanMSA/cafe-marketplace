@@ -12,7 +12,7 @@ function fileHasSecret(p: string): string {
     if (!fs.existsSync(p)) return '(no existe)'
     const c = fs.readFileSync(p, 'utf8')
     const m = c.match(/^AUTH_SECRET\s*=\s*(.*)$/m)
-    const v = m ? m[1].trim().replace(/^["']|["']$/g, '') : ''
+    const v = m && m[1] ? m[1].trim().replace(/^["']|["']$/g, '') : ''
     return v ? `SÍ (len=${v.length})` : 'AUTH_SECRET ausente/vacío en el archivo'
   } catch (e) {
     return `error: ${(e as Error).message}`
