@@ -11,9 +11,10 @@ import { slugify } from '@/lib/utils'
 
 interface VendorFormProps {
   initialData?: any
+  isAdmin?: boolean
 }
 
-export function VendorForm({ initialData }: VendorFormProps) {
+export function VendorForm({ initialData, isAdmin = false }: VendorFormProps) {
   const router = useRouter()
   const isEditing = !!initialData
   
@@ -154,18 +155,27 @@ export function VendorForm({ initialData }: VendorFormProps) {
           placeholder="https://..."
         />
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
-          <Select 
-            options={[
-              { label: 'Activo', value: 'active' },
-              { label: 'Pendiente', value: 'pending' },
-              { label: 'Suspendido', value: 'suspended' },
-            ]}
-            value={formData.status}
-            onChange={(val) => handleSelectChange('status', val)}
-          />
-        </div>
+        {isAdmin ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
+            <Select 
+              options={[
+                { label: 'Activo', value: 'active' },
+                { label: 'Pendiente', value: 'pending' },
+                { label: 'Suspendido', value: 'suspended' },
+              ]}
+              value={formData.status}
+              onChange={(val) => handleSelectChange('status', val)}
+            />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
+            <div style={{ padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)', fontSize: 'var(--text-sm)', color: 'var(--color-ink-secondary)' }}>
+              {formData.status === 'active' ? 'Marca activa' : formData.status === 'pending' ? 'Pendiente de aprobación por el administrador' : 'Suspendida'}
+            </div>
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>

@@ -4,6 +4,7 @@ import { join } from 'path'
 import sharp from 'sharp'
 import { auth } from '@/lib/auth'
 import { uploadToCloudinary, deleteFromCloudinary, cloudinaryConfigured } from '@/lib/cloudinary'
+import { prisma } from '@/server/db/client'
 
 const IMAGE_CONFIGS: Record<string, { width: number; height: number; quality: number }> = {
   product: { width: 1080, height: 1080, quality: 80 },
@@ -111,10 +112,33 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
     }
 
+    const isAdmin = session.user.role === 'admin'
+
+    /**
+     * Verificación de propiedad (IDOR):
+     * - Admin: siempre permitido.
+     * - Vendor: solo si TODOS los productos que referencian esta imagen le
+     *   pertenecen. Una imagen recién subida (aún sin producto asociado) es
+     *   huérfana y puede borrarse: es el flujo normal de creación de producto.
+     */
+    const assertOwnership = async (match: { contains?: string; equals?: string }): Promise<boolean> => {
+      if (isAdmin) return true
+      const images = await prisma.productImage.findMany({
+        where: { url: match },
+        select: { product: { select: { createdById: true } } },
+      })
+      if (images.length === 0) return true
+      return images.every((img) => img.product.createdById === session.user.id)
+    }
+
     if (cloudinaryConfigured) {
-      const publicIdMatch = url.match(/\/cafe\/(.+?)(?:-thumb)?\.(?:jpg|jpeg|png|webp|gif)$/)
+      const publicIdMatch = url.match(/\/cafe\/(.+?)(?:-thumb)?\.(?:jpg|jpeg|png|webp|gif)(?:\?.*)?$/)
       if (publicIdMatch) {
         const base = `cafe/${publicIdMatch[1]}`
+        const owned = await assertOwnership({ contains: base })
+        if (!owned) {
+          return NextResponse.json({ error: 'No tienes permisos para eliminar esta imagen' }, { status: 403 })
+        }
         await Promise.all([
           deleteFromCloudinary(base),
           deleteFromCloudinary(`${base}-thumb`),
@@ -125,6 +149,12 @@ export async function DELETE(req: NextRequest) {
       if (!normalized.startsWith('/uploads/') || normalized.includes('..') || normalized.includes('~')) {
         return NextResponse.json({ error: 'URL invalida' }, { status: 400 })
       }
+
+      const owned = await assertOwnership({ equals: normalized })
+      if (!owned) {
+        return NextResponse.json({ error: 'No tienes permisos para eliminar esta imagen' }, { status: 403 })
+      }
+
       const filePath = join(process.cwd(), 'public', normalized)
       try { await unlink(filePath) } catch {}
       const thumbPath = filePath.replace('.webp', '-thumb.webp')

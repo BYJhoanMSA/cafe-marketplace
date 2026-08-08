@@ -9,7 +9,21 @@ import GoogleProvider from 'next-auth/providers/google'
 import ResendProvider from 'next-auth/providers/resend'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/server/db/client'
-import { LoginSchema } from '@/server/validators/user.schema'
+import { LoginSchema, OtpVerifySchema } from '@/server/validators/user.schema'
+import { consumeOtpCode } from '@/lib/otp'
+
+// URL base explícita de la aplicación. Al definirla, Auth.js deja de confiar en
+// el header Host (evita host-header injection en enlaces de email).
+const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || undefined
+
+// Seguridad: NUNCA confiar en el Host a ciegas en producción.
+// - trustHost=true solo si lo pide el operador (AUTH_TRUST_HOST=true) o en desarrollo.
+// - Si no hay AUTH_URL definida se mantiene el comportamiento legacy para no romper
+//   el despliegue actual; se recomienda definir AUTH_URL (ver .env.example).
+const trustHost =
+  process.env.AUTH_TRUST_HOST === 'true' ||
+  process.env.NODE_ENV === 'development' ||
+  !authUrl
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -71,13 +85,70 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
 
-    // 2. Google OAuth
+    // 2. Email + Código OTP (6 dígitos) — verificación y registro por correo
+    CredentialsProvider({
+      id: 'otp',
+      name: 'codigo',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        code: { label: 'Código', type: 'text' },
+      },
+      async authorize(credentials) {
+        const parsed = OtpVerifySchema.safeParse(credentials)
+        if (!parsed.success) return null
+
+        const { email, code } = parsed.data
+        const normalized = email.toLowerCase()
+
+        // Consumir el código (un solo uso, 10 min de expiración)
+        const valid = await consumeOtpCode(normalized, code)
+        if (!valid) return null
+
+        // Buscar o crear el usuario. Nuevos registros SIEMPRE inician como customer.
+        let user = await prisma.user.findUnique({ where: { email: normalized } })
+        if (user && user.deletedAt) return null
+
+        if (!user) {
+          const local = normalized.split('@')[0] ?? ''
+          const firstName =
+            local.charAt(0).toUpperCase() + local.slice(1).replace(/[._-]+/g, ' ').trim().slice(0, 50) ||
+            'Usuario'
+
+          user = await prisma.user.create({
+            data: {
+              email: normalized,
+              firstName,
+              lastName: '',
+              role: 'customer',
+              status: 'active',
+            },
+          })
+        }
+
+        if (user.status !== 'active') return null
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() },
+        })
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          image: user.avatarUrl,
+          role: user.role,
+        }
+      },
+    }),
+
+    // 3. Google OAuth
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
 
-    // 3. Magic Link via Resend
+    // 4. Magic Link via Resend
     ResendProvider({
       apiKey: process.env.RESEND_API_KEY ?? '',
       from: process.env.EMAIL_FROM ?? 'Cafe Seleccion <hola@cafemarket.place>',
@@ -119,13 +190,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Eventos
   // ============================================================
   events: {
-    // Cuando un usuario se registra via OAuth, creamos su perfil en nuestra tabla
+    // Cuando un usuario se registra via OAuth/magic-link, creamos su perfil.
+    // SIEMPRE inicia como customer; la aprobación de vendor es explícita.
     async createUser({ user }) {
       const [firstName = '', ...rest] = (user.name ?? '').split(' ')
       const lastName = rest.join(' ')
       await prisma.user.update({
         where: { id: user.id },
-        data: { firstName, lastName, role: 'vendor' },
+        data: { firstName, lastName, role: 'customer' },
       })
     },
   },
@@ -142,6 +214,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // ============================================================
   // Seguridad
   // ============================================================
+  // Auth.js lee AUTH_URL/NEXTAUTH_URL del entorno automáticamente; al definirlas
+  // deja de depender del header Host. trustHost solo se activa de forma segura.
+  trustHost,
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-  trustHost: true,
 })

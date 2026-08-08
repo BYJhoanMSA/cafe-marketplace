@@ -39,7 +39,7 @@ export default async function NewVendorPage() {
         </h1>
       </div>
 
-      <VendorForm />
+      <VendorForm isAdmin />
     </div>
   )
 }

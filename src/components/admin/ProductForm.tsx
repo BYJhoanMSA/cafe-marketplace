@@ -558,18 +558,27 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
 
       {/* SECCIÓN: ATRIBUTOS TÉCNICOS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 'var(--space-4)' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
-          <Select 
-            options={[
-              { label: 'Borrador', value: 'draft' },
-              { label: 'Activo', value: 'active' },
-              { label: 'Archivado', value: 'archived' },
-            ]}
-            value={formData.status}
-            onChange={(val) => handleSelectChange('status', val)}
-          />
-        </div>
+        {isAdmin ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
+            <Select 
+              options={[
+                { label: 'Borrador', value: 'draft' },
+                { label: 'Activo', value: 'active' },
+                { label: 'Archivado', value: 'archived' },
+              ]}
+              value={formData.status}
+              onChange={(val) => handleSelectChange('status', val)}
+            />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Estado</label>
+            <div style={{ padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)', fontSize: 'var(--text-sm)', color: 'var(--color-ink-secondary)' }}>
+              {isEditing ? 'El estado actual se conserva.' : 'Borrador — lo publica el administrador.'}
+            </div>
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Nivel de Tueste</label>
