@@ -3,8 +3,7 @@
 // src/components/auth/OtpCodeAuth.tsx
 // Acceso por código de 6 dígitos enviado al correo.
 // Maneja los dos pasos: pedir el código y verificarlo.
-// Sirve tanto para iniciar sesión como para registrarse (crea la cuenta
-// automáticamente si el correo no existe).
+// Solo funciona para cuentas existentes (el registro usa su propio flujo).
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
@@ -83,7 +82,7 @@ export function OtpCodeAuth({ onSuccess }: OtpCodeAuthProps) {
           </Button>
         </form>
         <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-ink-tertiary)', marginTop: 'var(--space-3)', textAlign: 'center' }}>
-          Te enviaremos un código de 6 dígitos. Si el correo no existe, crearemos tu cuenta automáticamente.
+          Te enviaremos un código de 6 dígitos a tu correo para iniciar sesión.
         </p>
       </>
     )
