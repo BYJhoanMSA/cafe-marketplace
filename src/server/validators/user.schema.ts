@@ -1,19 +1,26 @@
 // src/server/validators/user.schema.ts
 import { z } from 'zod'
 
-export const RegisterSchema = z.object({
-  email: z.string().email('Email inválido').max(255),
-  password: z
-    .string()
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .max(72, 'La contraseña es demasiado larga')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Debe contener al menos una mayúscula, una minúscula y un número'
-    ),
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-})
+export const RegisterSchema = z
+  .object({
+    email: z.string().email('Email inválido').max(255),
+    password: z
+      .string()
+      .min(8, 'La contraseña debe tener al menos 8 caracteres')
+      .max(72, 'La contraseña es demasiado larga')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Debe contener al menos una mayúscula, una minúscula y un número'
+      ),
+    confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
+    firstName: z.string().min(1).max(100),
+    lastName: z.string().min(1).max(100),
+    phone: z.string().min(7, 'Ingresa un número de celular válido').max(30),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Las contraseñas no coinciden',
+    path: ['confirmPassword'],
+  })
 
 export const LoginSchema = z.object({
   email: z.string().min(1, 'Usuario o correo es requerido'),

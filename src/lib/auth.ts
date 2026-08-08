@@ -110,26 +110,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const valid = await consumeOtpCode(normalized, code)
         if (!valid) return null
 
-        // Buscar o crear el usuario. Nuevos registros SIEMPRE inician como customer.
-        let user = await prisma.user.findUnique({ where: { email: normalized } })
-        if (user && user.deletedAt) return null
-
-        if (!user) {
-          const local = normalized.split('@')[0] ?? ''
-          const firstName =
-            local.charAt(0).toUpperCase() + local.slice(1).replace(/[._-]+/g, ' ').trim().slice(0, 50) ||
-            'Usuario'
-
-          user = await prisma.user.create({
-            data: {
-              email: normalized,
-              firstName,
-              lastName: '',
-              role: 'customer',
-              status: 'active',
-            },
-          })
-        }
+        // El código solo abre sesión en cuentas EXISTENTES. El registro crea la
+        // cuenta explícitamente tras verificar su propio código (no auto-crear).
+        const user = await prisma.user.findUnique({ where: { email: normalized } })
+        if (!user || user.deletedAt) return null
 
         if (user.status !== 'active') return null
 

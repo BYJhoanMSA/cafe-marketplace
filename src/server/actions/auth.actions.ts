@@ -7,7 +7,7 @@ import { RegisterSchema, LoginSchema, OtpRequestSchema, OtpVerifySchema, type Re
 import { AuthError as AuthJsError } from 'next-auth'
 import { rateLimit } from '@/server/cache/rate-limit'
 import { headers } from 'next/headers'
-import { generateOtpCode, storeOtpCode, sendOtpEmail } from '@/lib/otp'
+import { generateOtpCode, storeOtpCode, sendOtpEmail, consumeOtpCode } from '@/lib/otp'
 import { getUserVendor, ensureUserVendor } from '@/server/services/vendor.service'
 
 async function getClientIp(): Promise<string> {
@@ -87,36 +87,92 @@ export async function registerUser(data: RegisterInput) {
       return { success: false, error: 'Los datos ingresados no son válidos' }
     }
 
-    const { email, password, firstName, lastName } = parsed.data
+    const email = parsed.data.email
+    const normalized = email.toLowerCase()
 
-    // 2. Verificar existencia
+    // 2. Verificar que el correo no esté registrado
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: normalized },
     })
 
     if (existingUser) {
       return { success: false, error: 'El email ya está registrado' }
     }
 
-    // 3. Hash y creación. Todo usuario nuevo inicia como customer;
-    //    la aprobación de vendor es un proceso explícito y separado.
+    // 3. Enviar el código de 6 dígitos al correo. La cuenta NO se crea todavía:
+    //    solo se crea después de que el usuario verifique el código.
+    const code = generateOtpCode()
+
+    try {
+      await storeOtpCode(normalized, code)
+      await sendOtpEmail(normalized, code)
+    } catch (error) {
+      console.error('[REGISTER_OTP] Error enviando código:', error)
+      await prisma.verificationToken.deleteMany({ where: { identifier: normalized } }).catch(() => {})
+      return { success: false, error: 'No fue posible enviar el código. Intenta más tarde.' }
+    }
+
+    return { success: true, pendingVerification: true, message: 'Te enviamos un código de 6 dígitos a tu correo.' }
+  } catch (error) {
+    console.error('[REGISTER_ERROR]', error)
+    return { success: false, error: 'Ocurrió un error inesperado al registrar el usuario' }
+  }
+}
+
+// =============================================================================
+// Registro paso 2: verificar el código y crear la cuenta
+// =============================================================================
+
+export async function confirmRegistration(data: RegisterInput, code: string) {
+  const ip = await getClientIp()
+  if (!rateLimit(`register:verify:${ip}`, 5, 600)) {
+    return { success: false, error: 'Demasiados intentos. Espera 10 minutos.' }
+  }
+
+  try {
+    // 1. Volver a validar los datos (el cliente puede reenviarlos)
+    const parsed = RegisterSchema.safeParse(data)
+    if (!parsed.success) {
+      return { success: false, error: 'Los datos ingresados no son válidos' }
+    }
+
+    const { email, password, firstName, lastName, phone } = parsed.data
+    const normalized = email.toLowerCase()
+
+    // 2. Re-verificar que el correo siga libre (pudo registrarse en el ínterin)
+    const existingUser = await prisma.user.findUnique({
+      where: { email: normalized },
+    })
+    if (existingUser) {
+      return { success: false, error: 'El email ya está registrado' }
+    }
+
+    // 3. Validar el código (un solo uso, expira en 10 min) — prueba de que el
+    //    usuario es dueño del correo.
+    const valid = await consumeOtpCode(normalized, code)
+    if (!valid) {
+      return { success: false, error: 'Código incorrecto o expirado' }
+    }
+
+    // 4. Hash y creación. Todo usuario nuevo inicia como customer.
     const salt = await bcrypt.genSalt(12)
     const passwordHash = await bcrypt.hash(password, salt)
 
     const user = await prisma.user.create({
       data: {
-        email: email.toLowerCase(),
+        email: normalized,
         passwordHash,
         firstName,
         lastName,
+        phone,
         role: 'customer',
         status: 'active',
       },
     })
 
-    // 4. Iniciar sesión automáticamente después de registrarse
+    // 5. Iniciar sesión automáticamente después de registrarse
     const result = await signIn('credentials', {
-      email,
+      email: normalized,
       password,
       redirect: false,
     })
@@ -124,11 +180,11 @@ export async function registerUser(data: RegisterInput) {
     return { success: true, userId: user.id, autoLogin: !hasAuthError(result) }
   } catch (error) {
     if (error instanceof AuthJsError) {
-      // Ignoramos el error de signIn si ocurre porque el registro en sí fue exitoso
+      // Registro exitoso, pero el login automático no se pudo completar
       return { success: true }
     }
-    console.error('[REGISTER_ERROR]', error)
-    return { success: false, error: 'Ocurrió un error inesperado al registrar el usuario' }
+    console.error('[CONFIRM_REGISTER_ERROR]', error)
+    return { success: false, error: 'Ocurrió un error inesperado al crear tu cuenta' }
   }
 }
 
@@ -179,6 +235,13 @@ export async function requestLoginCode(email: string) {
   }
   if (!rateLimit(`otp:req:ip:${ip}`, 10, 3600)) {
     return { success: false, error: 'Demasiados códigos desde tu IP. Espera 1 hora.' }
+  }
+
+  // El código solo sirve para cuentas existentes: el registro usa su propio
+  // flujo con verificación (registerUser + confirmRegistration).
+  const existing = await prisma.user.findUnique({ where: { email: normalized } })
+  if (!existing || existing.deletedAt) {
+    return { success: false, error: 'No existe una cuenta con este correo. Regístrate primero.' }
   }
 
   const code = generateOtpCode()
