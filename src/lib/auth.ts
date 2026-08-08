@@ -6,7 +6,6 @@ import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import ResendProvider from 'next-auth/providers/resend'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/server/db/client'
 import { LoginSchema } from '@/server/validators/user.schema'
@@ -118,12 +117,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET ?? '',
-    }),
-
-    // 4. Magic Link via Resend
-    ResendProvider({
-      apiKey: process.env.RESEND_API_KEY ?? '',
-      from: process.env.EMAIL_FROM ?? 'Cafe Seleccion <hola@cafemarket.place>',
     }),
   ],
 

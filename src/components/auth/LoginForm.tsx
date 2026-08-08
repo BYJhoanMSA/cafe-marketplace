@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { loginUser, googleSignIn, magicLinkSignIn } from '@/server/actions/auth.actions'
+import { loginUser, googleSignIn } from '@/server/actions/auth.actions'
 import styles from '@/app/(public)/auth/layout.module.css'
 
 export function LoginForm({ showGoogle = false }: { showGoogle?: boolean }) {
@@ -16,9 +16,7 @@ export function LoginForm({ showGoogle = false }: { showGoogle?: boolean }) {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [magicLoading, setMagicLoading] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,31 +45,9 @@ export function LoginForm({ showGoogle = false }: { showGoogle?: boolean }) {
     // No reseteamos loading porque redirecciona
   }
 
-  const handleMagicLink = async () => {
-    if (!email) {
-      setError('Ingresa tu email para enviarte el enlace')
-      return
-    }
-    setMagicLoading(true)
-    setError('')
-    try {
-      const result = await magicLinkSignIn(email)
-      if (result.success) {
-        setSuccess('Enlace mágico enviado. Revisa tu bandeja de entrada.')
-      } else {
-        setError(result.error ?? 'Error al enviar enlace')
-      }
-    } catch {
-      setError('Error al conectar con el servidor')
-    } finally {
-      setMagicLoading(false)
-    }
-  }
-
   return (
     <>
       {error && <div className={styles.errorBox}>{error}</div>}
-      {success && <div className={styles.errorBox} style={{ backgroundColor: 'var(--forest-100)', color: 'var(--forest-700)', borderColor: 'var(--forest-300)' }}>{success}</div>}
 
       <form onSubmit={handleCredentialsSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
         <Input
@@ -117,14 +93,6 @@ export function LoginForm({ showGoogle = false }: { showGoogle?: boolean }) {
             Google
           </Button>
         )}
-        <Button
-          variant="secondary"
-          onClick={handleMagicLink}
-          isLoading={magicLoading}
-          type="button"
-        >
-          Enviar Magic Link
-        </Button>
       </div>
     </>
   )

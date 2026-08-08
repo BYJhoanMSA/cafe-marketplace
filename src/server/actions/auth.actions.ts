@@ -149,31 +149,6 @@ export async function googleSignIn() {
   await signIn('google', { redirectTo: '/' })
 }
 
-export async function magicLinkSignIn(email: string) {
-  if (!email) return { success: false, error: 'Email requerido' }
-
-  const ip = await getClientIp()
-  const normalized = email.toLowerCase()
-
-  if (!rateLimit(`magic:${normalized}`, 3, 900)) {
-    return { success: false, error: 'Demasiados enlaces enviados a este correo. Espera 15 minutos.' }
-  }
-  if (!rateLimit(`magic:ip:${ip}`, 10, 3600)) {
-    return { success: false, error: 'Demasiados enlaces desde tu IP. Espera 1 hora.' }
-  }
-
-  try {
-    await signIn('resend', {
-      email: normalized,
-      redirect: false,
-      callbackUrl: '/'
-    })
-    return { success: true }
-  } catch (error) {
-    throw error
-  }
-}
-
 // =============================================================================
 // Solicitud de marca (vendor) — requiere aprobación del administrador
 // =============================================================================
