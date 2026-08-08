@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/server/db/client'
-import { productCardInclude, mapToProductCard } from '@/server/db/queries'
+import { productCardInclude, mapToProductCard, type ProductCard } from '@/server/db/queries'
 import { getGrindTypes, getVariantSizes } from './settings.actions'
 import { withCache, invalidateCacheByPrefix, invalidateCache } from '@/server/cache/node-cache'
 import type { GrindTypeOption } from './settings.actions'
@@ -401,4 +401,223 @@ export async function getAvailableCatalogFilters() {
     }
   }
   }, 600) // Cache 10 min
+}
+
+// =============================================================================
+// Tostaderías / Marcas públicas
+// =============================================================================
+
+export interface PublicVendor {
+  id: string
+  storeName: string
+  slug: string
+  shortDescription: string | null
+  description: string | null
+  logoUrl: string | null
+  bannerUrl: string | null
+  city: string | null
+  country: string | null
+  website: string | null
+  instagram: string | null
+  certifications: string | null
+  avgRating: number
+  reviewCount: number
+  totalSold: number
+  productCount: number
+}
+
+const vendorPublicSelect = {
+  id: true,
+  storeName: true,
+  slug: true,
+  shortDescription: true,
+  description: true,
+  logoUrl: true,
+  bannerUrl: true,
+  city: true,
+  country: true,
+  website: true,
+  instagram: true,
+  certifications: true,
+  avgRating: true,
+  reviewCount: true,
+  totalSold: true,
+} as const
+
+function mapPublicVendor(v: {
+  id: string
+  storeName: string
+  slug: string
+  shortDescription: string | null
+  description: string | null
+  logoUrl: string | null
+  bannerUrl: string | null
+  city: string | null
+  country: string | null
+  website: string | null
+  instagram: string | null
+  certifications: string | null
+  avgRating: unknown
+  reviewCount: number
+  totalSold: number
+  _count: { products: number }
+}): PublicVendor {
+  return {
+    id: v.id,
+    storeName: v.storeName,
+    slug: v.slug,
+    shortDescription: v.shortDescription,
+    description: v.description,
+    logoUrl: v.logoUrl,
+    bannerUrl: v.bannerUrl,
+    city: v.city,
+    country: v.country,
+    website: v.website,
+    instagram: v.instagram,
+    certifications: v.certifications,
+    avgRating: Number(v.avgRating),
+    reviewCount: v.reviewCount,
+    totalSold: v.totalSold,
+    productCount: v._count.products,
+  }
+}
+
+export async function getPublicVendors(): Promise<PublicVendor[]> {
+  return withCache('vendors:public', async () => {
+    try {
+      const vendors = await prisma.vendor.findMany({
+        where: {
+          status: 'active',
+          products: {
+            some: {
+              status: 'active',
+              deletedAt: null,
+              variants: { some: { status: 'active' } },
+            },
+          },
+        },
+        select: {
+          ...vendorPublicSelect,
+          _count: {
+            select: {
+              products: {
+                where: {
+                  status: 'active',
+                  deletedAt: null,
+                  variants: { some: { status: 'active' } },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { storeName: 'asc' },
+      })
+      return vendors.map(mapPublicVendor)
+    } catch (error) {
+      console.error('Error fetching public vendors:', error)
+      return []
+    }
+  }, 600)
+}
+
+export async function getPublicVendorBySlug(slug: string): Promise<(PublicVendor & { products: ProductCard[] }) | null> {
+  return withCache(`vendor:${slug}`, async () => {
+    try {
+      const vendor = await prisma.vendor.findFirst({
+        where: { slug, status: 'active' },
+        select: {
+          ...vendorPublicSelect,
+          _count: {
+            select: {
+              products: {
+                where: {
+                  status: 'active',
+                  deletedAt: null,
+                  variants: { some: { status: 'active' } },
+                },
+              },
+            },
+          },
+          products: {
+            where: {
+              status: 'active',
+              deletedAt: null,
+              variants: { some: { status: 'active' } },
+            },
+            include: productCardInclude,
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      })
+
+      if (!vendor) return null
+
+      return {
+        ...mapPublicVendor(vendor),
+        products: vendor.products.map(mapToProductCard),
+      }
+    } catch (error) {
+      console.error('Error fetching public vendor by slug:', error)
+      return null
+    }
+  }, 600)
+}
+
+// =============================================================================
+// Detalle de un origen (región cafetera) con sus cafés activos
+// =============================================================================
+
+export interface OriginDetail {
+  id: string
+  slug: string
+  country: string
+  region: string | null
+  subregion: string | null
+  description: string | null
+  imageUrl: string | null
+  products: ProductCard[]
+}
+
+export async function getOriginBySlug(slug: string): Promise<OriginDetail | null> {
+  return withCache(`origin:${slug}`, async () => {
+    try {
+      const origin = await prisma.origin.findFirst({
+        where: { slug, isActive: true },
+        select: {
+          id: true,
+          slug: true,
+          country: true,
+          region: true,
+          subregion: true,
+          description: true,
+          imageUrl: true,
+          products: {
+            where: {
+              status: 'active',
+              deletedAt: null,
+              variants: { some: { status: 'active' } },
+            },
+            include: productCardInclude,
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      })
+
+      if (!origin) return null
+
+      return {
+        id: origin.id,
+        slug: origin.slug,
+        country: origin.country,
+        region: origin.region,
+        subregion: origin.subregion,
+        description: origin.description,
+        imageUrl: origin.imageUrl,
+        products: origin.products.map(mapToProductCard),
+      }
+    } catch (error) {
+      console.error('Error fetching origin by slug:', error)
+      return null
+    }
+  }, 600)
 }

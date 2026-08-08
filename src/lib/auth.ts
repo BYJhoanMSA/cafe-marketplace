@@ -9,8 +9,8 @@ import GoogleProvider from 'next-auth/providers/google'
 import ResendProvider from 'next-auth/providers/resend'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/server/db/client'
-import { LoginSchema, OtpVerifySchema } from '@/server/validators/user.schema'
-import { consumeOtpCode } from '@/lib/otp'
+import { LoginSchema } from '@/server/validators/user.schema'
+import { looksLikePhone, normalizeWhatsAppNumber } from '@/lib/utils'
 
 // AUTH_URL/NEXTAUTH_URL (si se definen) las usa Auth.js automáticamente para
 // enlaces de email y callbacks OAuth; no intervienen en la confianza del Host.
@@ -44,30 +44,53 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { email, password } = parsed.data
 
         // Normalizar el usuario/email:
+        // - Número de WhatsApp ("3001234567", "+57 300...") → "573001234567"
         // - "dkar"               → "dkar@cafemarketplace.com"
         // - "dkar@cafemarketplace"→ "dkar@cafemarketplace.com" (sin TLD)
         // - "dkar@cafemarketplace.com" → tal cual
         const raw = email.toLowerCase().trim()
-        const [localPart, domainPart] = raw.split('@')
-        const lookupEmail = !raw.includes('@')
-          ? `${raw}@cafemarketplace.com`
-          : domainPart && !domainPart.includes('.')
-            ? `${localPart}@${domainPart}.com`
-            : raw
 
-        const user = await prisma.user.findUnique({
-          where: { email: lookupEmail.toLowerCase(), deletedAt: null },
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            passwordHash: true,
-            role: true,
-            status: true,
-            avatarUrl: true,
-          },
-        })
+        let user = null
+        if (looksLikePhone(raw)) {
+          // Buscar por número de WhatsApp normalizado
+          const phone = normalizeWhatsAppNumber(raw)
+          if (phone) {
+            user = await prisma.user.findFirst({
+              where: { phone, deletedAt: null },
+              select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                passwordHash: true,
+                role: true,
+                status: true,
+                avatarUrl: true,
+              },
+            })
+          }
+        } else {
+          const [localPart, domainPart] = raw.split('@')
+          const lookupEmail = !raw.includes('@')
+            ? `${raw}@cafemarketplace.com`
+            : domainPart && !domainPart.includes('.')
+              ? `${localPart}@${domainPart}.com`
+              : raw
+
+          user = await prisma.user.findUnique({
+            where: { email: lookupEmail.toLowerCase(), deletedAt: null },
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              passwordHash: true,
+              role: true,
+              status: true,
+              avatarUrl: true,
+            },
+          })
+        }
 
         if (!user || !user.passwordHash) return null
         if (user.status !== 'active') return null
@@ -91,48 +114,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
 
-    // 2. Email + Código OTP (6 dígitos) — verificación y registro por correo
-    CredentialsProvider({
-      id: 'otp',
-      name: 'codigo',
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        code: { label: 'Código', type: 'text' },
-      },
-      async authorize(credentials) {
-        const parsed = OtpVerifySchema.safeParse(credentials)
-        if (!parsed.success) return null
-
-        const { email, code } = parsed.data
-        const normalized = email.toLowerCase()
-
-        // Consumir el código (un solo uso, 10 min de expiración)
-        const valid = await consumeOtpCode(normalized, code)
-        if (!valid) return null
-
-        // El código solo abre sesión en cuentas EXISTENTES. El registro crea la
-        // cuenta explícitamente tras verificar su propio código (no auto-crear).
-        const user = await prisma.user.findUnique({ where: { email: normalized } })
-        if (!user || user.deletedAt) return null
-
-        if (user.status !== 'active') return null
-
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() },
-        })
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: `${user.firstName} ${user.lastName}`.trim(),
-          image: user.avatarUrl,
-          role: user.role,
-        }
-      },
-    }),
-
-    // 3. Google OAuth
+    // 2. Google OAuth
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.AUTH_GOOGLE_SECRET ?? process.env.GOOGLE_CLIENT_SECRET ?? '',
@@ -198,7 +180,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: '/auth/login',
     error: '/auth/login',
-    verifyRequest: '/auth/verificar',
   },
 
   // ============================================================

@@ -190,8 +190,8 @@ export default function HomePage() {
                 personalizadas basadas en lo que ya amas tomar.
               </p>
             </div>
-            <Link href="/catalogo" className={styles.tasteProfileBannerCTA}>
-              Explorar variedades →
+            <Link href="/perfil-de-sabor" className={styles.tasteProfileBannerCTA}>
+              Descubrir mi perfil →
             </Link>
           </div>
         </div>

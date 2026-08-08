@@ -53,3 +53,4 @@ coverage/
 # Acceso a produccion (contiene credenciales - NUNCA subir)
 scratch/ACCESO_PRODUCCION.md
 scratch/auth/
+scratch/PENDIENTES.md

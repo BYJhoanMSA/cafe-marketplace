@@ -6,8 +6,9 @@ import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Rutas que requieren autenticación
-const PROTECTED_ROUTES = ['/cuenta', '/checkout', '/admin']
+// Rutas que requieren autenticación.
+// El pago se gestiona por WhatsApp (no existe ruta /checkout).
+const PROTECTED_ROUTES = ['/admin']
 
 // Área de administración: accesible solo para admin o vendor
 const ADMIN_AREA = '/admin'
@@ -62,9 +63,9 @@ export async function middleware(request: NextRequest) {
     return new NextResponse('Acceso denegado', { status: 403 })
   }
 
-  // Si ya está autenticado e intenta entrar a login/registro → redirigir a cuenta
+  // Si ya está autenticado e intenta entrar a login/registro → redirigir a inicio
   if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL('/cuenta', request.url))
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   return NextResponse.next()
@@ -73,8 +74,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // Aplicar el middleware solo a estas rutas (excluye _next, api, assets)
   matcher: [
-    '/cuenta/:path*',
-    '/checkout/:path*',
     '/admin/:path*',
     '/auth/login',
     '/auth/registro',

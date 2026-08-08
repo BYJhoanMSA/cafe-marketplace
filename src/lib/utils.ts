@@ -138,3 +138,36 @@ export function apiError(message: string, status: number = 400, details?: unknow
     { status }
   )
 }
+
+/**
+ * Normaliza un número de WhatsApp a formato internacional sin signo "+".
+ * Ejemplos:
+ *   "+57 300 123 4567"  → "573001234567"
+ *   "573001234567"       → "573001234567"
+ *   "3001234567"         → "573001234567" (asume código de Colombia si tiene 10 dígitos)
+ * Devuelve null si el número no es reconocible.
+ */
+export function normalizeWhatsAppNumber(input: string): string | null {
+  if (!input) return null
+  // Quitar todo lo que no sea dígito (incluye +, espacios, guiones, paréntesis)
+  let digits = input.replace(/\D/g, '')
+  if (!digits) return null
+  // Número local colombiano (10 dígitos) → anteponer código de país 57
+  if (digits.length === 10 && digits.startsWith('3')) {
+    digits = '57' + digits
+  }
+  // Número con código de país (11-15 dígitos) → tomar tal cual
+  if (digits.length >= 8 && digits.length <= 15) {
+    return digits
+  }
+  return null
+}
+
+/**
+ * Comprueba si un string parece un número de teléfono/WhatsApp
+ * (para distinguirlo de un email o usuario en el login).
+ */
+export function looksLikePhone(input: string): boolean {
+  const withoutPlus = input.replace(/^\+/, '')
+  return /^[\d][\d\s\-().]*$/.test(withoutPlus) && input.replace(/\D/g, '').length >= 8
+}

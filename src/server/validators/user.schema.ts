@@ -13,9 +13,12 @@ export const RegisterSchema = z
         'Debe contener al menos una mayúscula, una minúscula y un número'
       ),
     confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
-    firstName: z.string().min(1).max(100),
-    lastName: z.string().min(1).max(100),
-    phone: z.string().min(7, 'Ingresa un número de celular válido').max(30),
+    firstName: z.string().min(1, 'Ingresa tu nombre').max(100),
+    lastName: z.string().min(1, 'Ingresa tu apellido').max(100),
+    phone: z
+      .string()
+      .min(8, 'Ingresa un número de WhatsApp válido')
+      .max(20, 'Número de WhatsApp demasiado largo'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Las contraseñas no coinciden',
@@ -23,7 +26,8 @@ export const RegisterSchema = z
   })
 
 export const LoginSchema = z.object({
-  email: z.string().min(1, 'Usuario o correo es requerido'),
+  // Acepta email, usuario ("dkar") o número de WhatsApp ("573001234567")
+  email: z.string().min(1, 'Email o número de WhatsApp es requerido'),
   password: z.string().min(1),
 })
 
@@ -69,19 +73,8 @@ export const TasteProfileSchema = z.object({
     .default([]),
 })
 
-export const OtpRequestSchema = z.object({
-  email: z.string().email('Email inválido').max(255),
-})
-
-export const OtpVerifySchema = z.object({
-  email: z.string().email('Email inválido').max(255),
-  code: z.string().regex(/^\d{6}$/, 'El código debe tener 6 dígitos'),
-})
-
 export type RegisterInput = z.infer<typeof RegisterSchema>
 export type LoginInput = z.infer<typeof LoginSchema>
-export type OtpRequestInput = z.infer<typeof OtpRequestSchema>
-export type OtpVerifyInput = z.infer<typeof OtpVerifySchema>
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>
 export type AddressInput = z.infer<typeof AddressSchema>
 export type TasteProfileInput = z.infer<typeof TasteProfileSchema>
