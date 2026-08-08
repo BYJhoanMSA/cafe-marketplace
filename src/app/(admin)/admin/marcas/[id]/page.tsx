@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getAdminVendorById } from '@/server/actions/admin/vendor.actions'
+import { auth } from '@/lib/auth'
 import { VendorForm } from '@/components/admin/VendorForm'
 
 export const metadata = {
@@ -15,6 +16,8 @@ interface EditVendorPageProps {
 
 export default async function EditVendorPage({ params }: EditVendorPageProps) {
   const { id } = await params
+  const session = await auth()
+  const isAdmin = session?.user?.role === 'admin'
 
   const res = await getAdminVendorById(id)
   if (!res.success) {
@@ -46,7 +49,7 @@ export default async function EditVendorPage({ params }: EditVendorPageProps) {
         </h1>
       </div>
 
-      <VendorForm initialData={vendor} />
+      <VendorForm initialData={vendor} isAdmin={isAdmin} />
     </div>
   )
 }

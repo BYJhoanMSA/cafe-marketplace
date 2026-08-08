@@ -13,7 +13,8 @@ export async function getUserVendor(userId: string) {
 
 /**
  * Asegura que el usuario tenga una marca (vendor) para poder publicar productos.
- * Si no tiene, la crea con el nombre de perfil del usuario. Idempotente.
+ * Si no tiene, la crea en estado PENDING: la aprobación del administrador es
+ * obligatoria antes de poder publicar. Idempotente.
  */
 export async function ensureUserVendor(userId: string, userName?: string) {
   const existing = await getUserVendor(userId)
@@ -31,7 +32,7 @@ export async function ensureUserVendor(userId: string, userName?: string) {
       shortDescription: 'Tienda de café',
       country: 'CO',
       city: 'Bogotá',
-      status: 'active',
+      status: 'pending',
     },
     select: { id: true, storeName: true, slug: true, status: true },
   })

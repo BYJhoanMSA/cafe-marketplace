@@ -69,7 +69,11 @@ async function resolveVendorId(session: { user: { id: string; role?: string; nam
   }
 
   const own = await getUserVendor(session.user.id)
-  if (own) return { vendorId: own.id, storeName: own.storeName }
+  if (own) {
+    // Aprobación obligatoria: solo marcas ACTIVE pueden publicar
+    if (own.status !== 'active') return null
+    return { vendorId: own.id, storeName: own.storeName }
+  }
 
   if (session.user.role === 'admin') {
     const first = await prisma.vendor.findFirst({
@@ -81,6 +85,8 @@ async function resolveVendorId(session: { user: { id: string; role?: string; nam
   }
 
   const created = await ensureUserVendor(session.user.id, session.user.name ?? undefined)
+  // El vendor se crea como PENDING: no puede publicar hasta que el admin lo apruebe.
+  if (created.status !== 'active') return null
   return { vendorId: created.id, storeName: created.storeName }
 }
 
@@ -168,7 +174,7 @@ export async function createProduct(data: Record<string, unknown>) {
 
     const vendor = await resolveVendorId(session, parsed.data.vendorId)
     if (!vendor) {
-      return { success: false, error: 'No tienes una marca (vendor) asociada. Contacta al administrador.' }
+      return { success: false, error: 'Tu marca está pendiente de aprobación o no tienes una marca activa. Contacta al administrador.' }
     }
 
     const d = parsed.data as any
@@ -195,15 +201,18 @@ export async function createProduct(data: Record<string, unknown>) {
       originId = defaultOrigin?.id ?? ''
     }
 
-    // "Publicidad" es exclusivo del Administrador General
+    // "Publicidad" y "Destacado" son exclusivos del Administrador General
     const isPublicity = isAdmin ? (d.isPublicity ?? false) : false
+    const isFeatured = isAdmin ? (d.isFeatured ?? false) : false
+    // Solo el admin puede publicar directo; el resto crea borradores en moderación
+    const status = isAdmin ? (d.status || 'draft') : 'draft'
 
     const product = await prisma.product.create({
       data: {
         title: d.title,
         slug: d.slug ?? '',
         description: d.description,
-        status: d.status || 'draft',
+        status,
         roastLevel: d.roastLevel || 'medium',
         processingMethod: d.processingMethod || 'washed',
         farmName: d.farmName || null,
@@ -211,7 +220,7 @@ export async function createProduct(data: Record<string, unknown>) {
         altitudeMasl: d.altitudeMasl || null,
         varietal: d.varietal || null,
         cuppingScore: d.cuppingScore ? Number(d.cuppingScore) : null,
-        isFeatured: d.isFeatured ?? false,
+        isFeatured,
         isNew: d.isNew ?? false,
         isLimited: d.isLimited ?? false,
         isOrganic: d.isOrganic ?? false,
@@ -262,7 +271,7 @@ export async function updateProduct(id: string, data: any) {
   try {
     const existing = await prisma.product.findUnique({
       where: { id },
-      select: { id: true, createdById: true, vendorId: true, isPublicity: true },
+      select: { id: true, createdById: true, vendorId: true, isPublicity: true, isFeatured: true, status: true },
     })
 
     if (!existing) {
@@ -334,8 +343,12 @@ export async function updateProduct(id: string, data: any) {
       if (own) vendorId = own.id
     }
 
-    // "Publicidad": solo el admin puede activarla; los demás se fuerzan a false.
+    // "Publicidad" y "Destacado": solo el admin puede activarlas.
+    // El status también es exclusivo del admin (publicar/moderar): los vendors
+    // conservan el estado existente y no pueden auto-publicar.
     const isPublicity = isAdmin ? (data.isPublicity ?? existing.isPublicity) : false
+    const isFeatured = isAdmin ? (data.isFeatured ?? existing.isFeatured) : existing.isFeatured
+    const status = isAdmin ? data.status : existing.status
 
     const product = await prisma.product.update({
       where: { id },
@@ -343,7 +356,7 @@ export async function updateProduct(id: string, data: any) {
         title: data.title,
         slug: data.slug,
         description: data.description,
-        status: data.status,
+        status,
         roastLevel: data.roastLevel,
         processingMethod: data.processingMethod,
         farmName: data.farmName || null,
@@ -351,10 +364,7 @@ export async function updateProduct(id: string, data: any) {
         altitudeMasl: data.altitudeMasl || null,
         varietal: data.varietal || null,
         cuppingScore: data.cuppingScore ? parseFloat(data.cuppingScore) : null,
-        isFeatured: data.isFeatured ?? false,
-        isNew: data.isNew ?? false,
-        isLimited: data.isLimited ?? false,
-        isOrganic: data.isOrganic ?? false,
+        isFeatured,
         isPublicity,
         vendorId,
         categoryId: data.categoryId,

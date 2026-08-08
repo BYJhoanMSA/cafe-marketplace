@@ -124,7 +124,7 @@ export async function updateVendor(id: string, data: z.infer<typeof VendorSchema
   try {
     const existing = await prisma.vendor.findUnique({
       where: { id },
-      select: { id: true, userId: true },
+      select: { id: true, userId: true, status: true },
     })
 
     if (!existing) {
@@ -134,6 +134,12 @@ export async function updateVendor(id: string, data: z.infer<typeof VendorSchema
     if (!canAccessVendor(session.user, existing.userId)) {
       return forbiddenResponse()
     }
+
+    const isAdmin = session.user.role === 'admin'
+
+    // Solo el Administrador General puede aprobar/suspender marcas.
+    // Un vendor NO puede autopromoverse a "active" (aprobación).
+    const status = isAdmin ? data.status : existing.status
 
     const vendor = await prisma.vendor.update({
       where: { id },
@@ -145,9 +151,33 @@ export async function updateVendor(id: string, data: z.infer<typeof VendorSchema
         city: data.city,
         instagram: data.instagram,
         website: data.website,
-        status: data.status,
-      }
+        status,
+      },
     })
+
+    // Sincronizar el rol del usuario según el estado de su marca:
+    // - active   → rol "vendor" (puede acceder a su panel)
+    // - pending/suspended → rol "customer" (sin acceso al panel)
+    if (isAdmin && data.status && data.status !== existing.status) {
+      const owner = await prisma.user.findUnique({
+        where: { id: existing.userId },
+        select: { id: true, role: true },
+      })
+
+      if (owner) {
+        if (data.status === 'active' && owner.role === 'customer') {
+          await prisma.user.update({
+            where: { id: owner.id },
+            data: { role: 'vendor' },
+          })
+        } else if (data.status !== 'active' && owner.role === 'vendor') {
+          await prisma.user.update({
+            where: { id: owner.id },
+            data: { role: 'customer' },
+          })
+        }
+      }
+    }
 
     revalidatePath('/admin/marcas')
     return { success: true, vendor }

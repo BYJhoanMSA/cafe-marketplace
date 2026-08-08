@@ -62,8 +62,19 @@ export const TasteProfileSchema = z.object({
     .default([]),
 })
 
+export const OtpRequestSchema = z.object({
+  email: z.string().email('Email inválido').max(255),
+})
+
+export const OtpVerifySchema = z.object({
+  email: z.string().email('Email inválido').max(255),
+  code: z.string().regex(/^\d{6}$/, 'El código debe tener 6 dígitos'),
+})
+
 export type RegisterInput = z.infer<typeof RegisterSchema>
 export type LoginInput = z.infer<typeof LoginSchema>
+export type OtpRequestInput = z.infer<typeof OtpRequestSchema>
+export type OtpVerifyInput = z.infer<typeof OtpVerifySchema>
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>
 export type AddressInput = z.infer<typeof AddressSchema>
 export type TasteProfileInput = z.infer<typeof TasteProfileSchema>
