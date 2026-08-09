@@ -258,33 +258,24 @@ export function ProductCard({
         )}
 
         {/* Métrica Social */}
-        <div className={styles.rating} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <span>❤️</span>
-              <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--terra-500)' }}>{favorites}</span>
+        <div className={styles.socialMetrics}>
+          <div className={styles.metricGroup}>
+            <span className={styles.metric}>
+              <Heart size={12} fill="currentColor" strokeWidth={2} className={styles.metricFavorites} />
+              <span className={`${styles.metricValue} ${styles.metricFavorites}`}>{favorites}</span>
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <span>⭐</span>
-              <span style={{ fontWeight: 'var(--font-weight-semibold)', color: 'var(--gold-600)' }}>{shares}</span>
+            <span className={styles.metric}>
+              <Star size={12} fill="currentColor" strokeWidth={2} className={styles.metricShares} />
+              <span className={`${styles.metricValue} ${styles.metricShares}`}>{shares}</span>
             </span>
           </div>
 
           <button
             type="button"
             onClick={handleShare}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--color-ink-tertiary)',
-              padding: '2px 4px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              fontSize: 'var(--text-xs)',
-            }}
+            className={styles.shareButton}
             title="Compartir producto"
+            aria-label="Compartir producto"
           >
             <Share2 size={14} />
             {sharedToast ? '¡Copiado!' : ''}

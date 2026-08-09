@@ -118,9 +118,9 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid rgba(170, 214, 122, 0.30);
+  border: 1px solid rgba(230, 168, 23, 0.55);
   box-shadow:
-    0 0 18px rgba(90, 150, 60, 0.18);
+    0 0 18px rgba(230, 168, 23, 0.25);
   pointer-events: none;
 }
 

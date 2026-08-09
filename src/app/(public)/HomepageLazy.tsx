@@ -68,7 +68,7 @@ export async function HomeHero() {
         </p>
 
         <div className={styles.heroActions}>
-          <Link href="/catalogo" className={styles.heroCTASecondary}>
+          <Link href="/catalogo" className={styles.heroCTA}>
             Explorar catálogo →
           </Link>
           <Link href="/nosotros" className={styles.heroCTASecondary}>

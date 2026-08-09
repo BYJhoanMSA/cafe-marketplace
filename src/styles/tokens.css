@@ -5,8 +5,6 @@
    El modo oscuro se activa con: document.documentElement.dataset.theme = 'dark'
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap');
-
 /* =============================================================================
    TOKENS BASE — Paleta de colores (no usar directamente en componentes)
    ============================================================================= */
@@ -29,6 +27,7 @@
   --gold-100: #FDF3DC;
   --gold-300: #F5C842;
   --gold-500: #E6A817;
+  --gold-600: #CF9611;
   --gold-700: #B8840A;
   --gold-900: #7A5505;
 
@@ -79,7 +78,7 @@
   /* Texto */
   --color-ink-primary:   var(--neutral-800);
   --color-ink-secondary: var(--neutral-600);
-  --color-ink-tertiary:  var(--neutral-500);
+  --color-ink-tertiary:  var(--neutral-600);
   --color-ink-inverted:  var(--neutral-0);
   --color-ink-disabled:  var(--neutral-400);
 

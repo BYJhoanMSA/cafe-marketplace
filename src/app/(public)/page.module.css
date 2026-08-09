@@ -22,7 +22,19 @@
 .heroImage {
   object-fit: cover;
   object-position: center 30%;
-  transition: transform 8s var(--ease-out); /* Ken Burns suave */
+  animation: hero-kenburns 24s var(--ease-in-out) infinite;
+}
+
+@keyframes hero-kenburns {
+  0%   { transform: scale(1) translateY(0); }
+  50%  { transform: scale(1.08) translateY(-1.5%); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroImage {
+    animation: none;
+  }
 }
 
 /* Overlay gradiente — texto legible sobre imagen */
@@ -318,52 +330,6 @@
   .originGrid {
     grid-template-columns: repeat(3, 1fr);
   }
-}
-
-.originCard {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  text-decoration: none;
-  display: block;
-}
-
-.originCardImage {
-  object-fit: cover;
-  transition: transform var(--duration-deliberate) var(--ease-out);
-}
-
-.originCard:hover .originCardImage {
-  transform: scale(1.06);
-}
-
-.originCardOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%);
-}
-
-.originCardContent {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: var(--space-5);
-}
-
-.originCardCountry {
-  font-family: var(--font-primary);
-  font-size: var(--text-2xl);
-  color: white;
-  line-height: var(--leading-tight);
-}
-
-.originCardCount {
-  font-family: var(--font-secondary);
-  font-size: var(--text-sm);
-  color: rgba(255,255,255,0.7);
-  margin-top: var(--space-1);
 }
 
 /* ================================================================

@@ -4,7 +4,7 @@
 // Header desktop con glassmorphism + Tab bar mobile estilo iOS
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { X, Moon, Sun } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
@@ -81,6 +81,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
   const cartItemCount = externalCount ?? totalItemsCount
 
   const pathname = usePathname()
+  const router = useRouter()
   const scrolled = useScrolled()
   const { theme, toggleTheme } = useTheme()
   const [searchOpen, setSearchOpen] = useState(false)
@@ -156,6 +157,20 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
           <div className={styles.actions} role="group" aria-label="Acciones de usuario">
             {/* Búsqueda */}
             <div className={styles.searchWrapper}>
+              <input
+                ref={searchRef}
+                type="text"
+                className={`${styles.searchInput} ${searchOpen ? styles.open : ''}`}
+                placeholder="Buscar cafés..."
+                aria-label="Buscar productos"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                    router.push(`/buscar?q=${encodeURIComponent(e.currentTarget.value.trim())}`)
+                    e.currentTarget.value = ''
+                    setSearchOpen(false)
+                  }
+                }}
+              />
               <button
                 className={styles.actionButton}
                 onClick={() => setSearchOpen((o) => !o)}

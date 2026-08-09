@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import styles from './OriginCard.module.css'
 
 interface OriginCardProps {
   label: string
@@ -25,16 +26,8 @@ export function OriginCard({ label, slug, count, images }: OriginCardProps) {
 
   return (
     <Link
-      href="/catalogo"
-      style={{
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'flex-end',
-        height: '280px',
-        borderRadius: 'var(--radius-xl)',
-        overflow: 'hidden',
-        textDecoration: 'none',
-      }}
+      href={`/origenes/${slug}`}
+      className={styles.card}
       aria-label={`${label} — ${count} cafés disponibles`}
     >
       {hasImages && images[imgIndex] ? (
@@ -43,55 +36,15 @@ export function OriginCard({ label, slug, count, images }: OriginCardProps) {
           alt=""
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          style={{ objectFit: 'cover', transition: 'opacity 0.6s ease' }}
+          className={styles.image}
         />
       ) : (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(135deg, var(--neutral-700), var(--neutral-900))',
-          }}
-        />
+        <div className={styles.imageFallback} aria-hidden="true" />
       )}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(transparent 50%, rgba(15,12,10,0.9))',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          padding: 'var(--space-6)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-1)',
-        }}
-      >
-        <h3
-          style={{
-            fontFamily: 'var(--font-primary)',
-            fontSize: 'var(--text-xl)',
-            color: 'var(--neutral-0)',
-            margin: 0,
-          }}
-        >
-          {label}
-        </h3>
-        <p
-          style={{
-            fontSize: 'var(--text-sm)',
-            color: 'var(--gold-300)',
-            fontWeight: 'var(--font-weight-medium)',
-            margin: 0,
-          }}
-        >
-          {count} cafés
-        </p>
+      <div className={styles.overlay} aria-hidden="true" />
+      <div className={styles.content}>
+        <h3 className={styles.title}>{label}</h3>
+        <p className={styles.count}>{count} cafés</p>
       </div>
     </Link>
   )
