@@ -143,3 +143,12 @@ Resultado de la auditoría estética del index. Se divide en **bugs visuales/err
 - [x] Build verificado (`npm run build` OK, 29 rutas). Type-check y lint de archivos tocados limpios.
 
 > **Nota**: Chrome/Edge 115+, Safari 26+ y Firefox 120+ soportan scroll-driven; en navegadores antiguos no se anima pero nada se rompe ni se oculta.
+
+### 🛒 5.7 Estado Fase 3 — Conversión
+
+- [x] Barra de anuncio fija (desktop) sobre el header: "Tueste a pedido · Envío garantizado a todo Colombia" (`Navbar` + `--announcement-height`; header y spacer reubicados con la altura variable).
+- [x] Trust badges tras "Destacados": pago seguro (Stripe), envío a Colombia, tueste a pedido, atención humana — con iconos lucide sobre círculo dorado.
+- [x] Testimonios reales: sección "Lo que dice nuestra comunidad" con hasta 3 reseñas aprobadas (`prisma.review` status `approved`, con body), estrellas doradas, autor y enlace al producto. Empty-state y fallback de Suspense incluidos.
+- [x] Quick view en el catálogo desktop: botón "ojo" en cada card abre `ProductQuickView` (modal con imagen, badges, precio, notas, descripción y CTA de carrito reutilizando `onAddToCart`), sin salir de la página.
+- [ ] Sticky CTA móvil (buy box fija en el slide vertical) — pendiente, no priorizado en esta fase.
+- [x] Build verificado (`npm run build` OK). Type-check y lint de archivos tocados limpios.

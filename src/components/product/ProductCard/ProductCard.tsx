@@ -7,13 +7,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Heart, ShoppingBag, Star, Share2 } from 'lucide-react'
+import { Heart, ShoppingBag, Star, Share2, Eye } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice, truncate, getImageUrl } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { incrementSocialCount } from '@/server/actions/social.actions'
+import { ProductQuickView } from '@/components/product/ProductQuickView'
 import styles from './ProductCard.module.css'
 
 // ================================================================
@@ -104,6 +105,7 @@ export function ProductCard({
   const [favorites, setFavorites] = useState(product.favoritesCount ?? 0)
   const [shares, setShares] = useState(product.sharesCount ?? 0)
   const [sharedToast, setSharedToast] = useState(false)
+  const [quickViewOpen, setQuickViewOpen] = useState(false)
 
   useEffect(() => {
     setFavorites(product.favoritesCount ?? 0)
@@ -299,15 +301,38 @@ export function ProductCard({
           </span>
         </div>
 
-        <button
-          className={styles.addToCartButton}
-          onClick={handleAddToCart}
-          disabled={isAddingToCart}
-          aria-label={`Agregar ${product.title} al carrito`}
-        >
-          <ShoppingBag size={18} />
-        </button>
+        <div className={styles.footerActions}>
+          <button
+            type="button"
+            className={styles.quickViewButton}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setQuickViewOpen(true)
+            }}
+            aria-label={`Vista rápida de ${product.title}`}
+            title="Vista rápida"
+          >
+            <Eye size={16} />
+          </button>
+
+          <button
+            className={styles.addToCartButton}
+            onClick={handleAddToCart}
+            disabled={isAddingToCart}
+            aria-label={`Agregar ${product.title} al carrito`}
+          >
+            <ShoppingBag size={18} />
+          </button>
+        </div>
       </div>
+
+      <ProductQuickView
+        product={product}
+        isOpen={quickViewOpen}
+        onClose={() => setQuickViewOpen(false)}
+        onAddToCart={onAddToCart}
+      />
     </Link>
   )
 }

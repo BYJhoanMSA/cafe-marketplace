@@ -422,6 +422,179 @@
 }
 
 /* ================================================================
+   TRUST BAR — Garantías de compra
+   ================================================================ */
+.trustBar {
+  padding: var(--space-8) 0 var(--space-12);
+  background-color: var(--color-bg-elevated);
+  border-block: 1px solid var(--color-border-default);
+}
+
+.trustGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .trustGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .trustGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.trustIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background-color: var(--gold-100);
+  color: var(--gold-700);
+  transition: background-color var(--duration-normal) var(--ease-out);
+}
+
+[data-theme="dark"] .trustIcon {
+  background-color: rgba(230, 168, 23, 0.14);
+  color: var(--gold-400);
+}
+
+.trustItem:hover .trustIcon {
+  background-color: var(--gold-200);
+}
+
+.trustText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trustTitle {
+  font-family: var(--font-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+}
+
+.trustDesc {
+  font-size: var(--text-xs);
+  color: var(--color-ink-tertiary);
+}
+
+/* ================================================================
+   TESTIMONIOS — Reseñas verificadas
+   ================================================================ */
+.testimonialGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .testimonialGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .testimonialGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.testimonialCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  transition:
+    box-shadow var(--duration-moderate) var(--ease-out),
+    border-color var(--duration-moderate) var(--ease-out);
+}
+
+.testimonialCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-strong);
+}
+
+.testimonialStars {
+  display: flex;
+  gap: 3px;
+}
+
+.testimonialStar {
+  width: 14px;
+  height: 14px;
+  background-color: var(--color-border-strong);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.testimonialStarFilled {
+  background-color: var(--gold-500);
+}
+
+.testimonialQuote {
+  margin: 0;
+}
+
+.testimonialQuote p {
+  margin: 0;
+  font-family: var(--font-quote);
+  font-size: var(--text-md);
+  font-style: italic;
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-primary);
+}
+
+.testimonialMeta {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.testimonialName {
+  font-family: var(--font-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+}
+
+.testimonialProduct {
+  font-size: var(--text-xs);
+  color: var(--color-accent-primary);
+  text-decoration: none;
+}
+
+.testimonialProduct:hover {
+  text-decoration: underline;
+}
+
+.emptyTestimonials {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-ink-tertiary);
+  font-size: var(--text-sm);
+}
+
+
+/* ================================================================
    BANNER DE PERFIL DE SABOR
    ================================================================ */
 .tasteProfileBanner {
@@ -628,7 +801,8 @@
 
   .productGrid > *,
   .originGrid > *,
-  .valueGrid > * {
+  .valueGrid > *,
+  .testimonialGrid > * {
     animation: reveal-fade var(--duration-slow) var(--ease-out) both;
     animation-timeline: view();
     animation-range: entry 6% entry 40%;
@@ -636,11 +810,13 @@
 
   .productGrid > *:nth-child(2),
   .originGrid > *:nth-child(2),
-  .valueGrid > *:nth-child(2) { animation-range: entry 13% entry 47%; }
+  .valueGrid > *:nth-child(2),
+  .testimonialGrid > *:nth-child(2) { animation-range: entry 13% entry 47%; }
 
   .productGrid > *:nth-child(3),
   .originGrid > *:nth-child(3),
-  .valueGrid > *:nth-child(3) { animation-range: entry 20% entry 54%; }
+  .valueGrid > *:nth-child(3),
+  .testimonialGrid > *:nth-child(3) { animation-range: entry 20% entry 54%; }
 
   .productGrid > *:nth-child(4),
   .originGrid > *:nth-child(4),

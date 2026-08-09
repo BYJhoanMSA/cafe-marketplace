@@ -165,3 +165,73 @@ export async function HomepageValues() {
     </div>
   )
 }
+
+export async function HomepageTestimonials() {
+  const testimonials = await getApprovedTestimonials()
+
+  if (testimonials.length === 0) {
+    return (
+      <p className={styles.emptyTestimonials}>
+        Todavía no hay reseñas públicas. Sé el primero en compartir tu experiencia.
+      </p>
+    )
+  }
+
+  return (
+    <div className={styles.testimonialGrid}>
+      {testimonials.map((t) => (
+        <figure key={t.id} className={styles.testimonialCard}>
+          <div className={styles.testimonialStars} aria-label={`Calificación ${t.rating} de 5`}>
+            {Array.from({ length: 5 }, (_, i) => (
+              <span
+                key={i}
+                className={`${styles.testimonialStar}${i < t.rating ? ` ${styles.testimonialStarFilled}` : ''}`}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+          <blockquote className={styles.testimonialQuote}>
+            <p>{t.body}</p>
+          </blockquote>
+          <figcaption className={styles.testimonialMeta}>
+            <span className={styles.testimonialName}>{t.author}</span>
+            <Link href={`/productos/${t.productSlug}`} className={styles.testimonialProduct}>
+              {t.productTitle}
+            </Link>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  )
+}
+
+async function getApprovedTestimonials() {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: {
+        status: 'approved',
+        body: { not: null },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+      select: {
+        id: true,
+        rating: true,
+        body: true,
+        product: { select: { slug: true, title: true } },
+        user: { select: { firstName: true, lastName: true } },
+      },
+    })
+
+    return reviews.map((review) => ({
+      id: review.id,
+      rating: review.rating,
+      body: review.body as string,
+      author: [review.user.firstName, review.user.lastName].filter(Boolean).join(' '),
+      productTitle: review.product.title,
+      productSlug: review.product.slug,
+    }))
+  } catch {
+    return []
+  }
+}

@@ -123,6 +123,13 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
   return (
     <>
       {/* ============================================================
+          ANUNCIO SUPERIOR (desktop) — barra de utilidad
+          ============================================================ */}
+      <div className={styles.announcement} role="status">
+        Tueste a pedido · Envío garantizado a todo Colombia
+      </div>
+
+      {/* ============================================================
           HEADER DESKTOP
           ============================================================ */}
       <header

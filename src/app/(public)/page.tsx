@@ -6,12 +6,13 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ShieldCheck, Truck, Coffee, MessageCircleHeart } from 'lucide-react'
 import { ProductCardSkeleton } from '@/components/product/ProductCard'
 import { Suspense } from 'react'
 import { PillBarWrapper } from '@/components/ui/PillSelector/PillBarWrapper'
 import { Ornament } from '@/components/ui/Ornament'
 import { FLAVOR_ITEMS } from '@/components/ui/PillSelector/PillSelector.data'
-import { HomeHero, FeaturedProducts, HomepageOrigins, HomepageValues } from './HomepageLazy'
+import { HomeHero, FeaturedProducts, HomepageOrigins, HomepageValues, HomepageTestimonials } from './HomepageLazy'
 import styles from './page.module.css'
 
 // ================================================================
@@ -147,6 +148,44 @@ export default function HomePage() {
       </section>
 
       {/* ============================================================
+          3.1 TRUST BADGES — garantías de compra
+          ============================================================ */}
+      <section className={styles.trustBar} aria-label="Garantías de compra">
+        <div className={styles.sectionInner}>
+          <div className={styles.trustGrid}>
+            <div className={styles.trustItem}>
+              <span className={styles.trustIcon}><ShieldCheck size={22} strokeWidth={1.8} /></span>
+              <div className={styles.trustText}>
+                <p className={styles.trustTitle}>Pago 100% seguro</p>
+                <p className={styles.trustDesc}>Procesado por Stripe</p>
+              </div>
+            </div>
+            <div className={styles.trustItem}>
+              <span className={styles.trustIcon}><Truck size={22} strokeWidth={1.8} /></span>
+              <div className={styles.trustText}>
+                <p className={styles.trustTitle}>Envío a todo Colombia</p>
+                <p className={styles.trustDesc}>Entregas protegidas</p>
+              </div>
+            </div>
+            <div className={styles.trustItem}>
+              <span className={styles.trustIcon}><Coffee size={22} strokeWidth={1.8} /></span>
+              <div className={styles.trustText}>
+                <p className={styles.trustTitle}>Tueste a pedido</p>
+                <p className={styles.trustDesc}>Frescura garantizada</p>
+              </div>
+            </div>
+            <div className={styles.trustItem}>
+              <span className={styles.trustIcon}><MessageCircleHeart size={22} strokeWidth={1.8} /></span>
+              <div className={styles.trustText}>
+                <p className={styles.trustTitle}>Atención humana</p>
+                <p className={styles.trustDesc}>Te ayudamos a elegir</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
           4. ORÍGENES DEL MUNDO
           ============================================================ */}
       <section className={styles.originBanner} aria-labelledby="origins-title">
@@ -197,6 +236,27 @@ export default function HomePage() {
 
           <Suspense fallback={<ValuesFallback />}>
             <HomepageValues />
+          </Suspense>
+        </div>
+      </section>
+
+      {/* ============================================================
+          5.1 TESTIMONIOS — reseñas reales aprobadas
+          ============================================================ */}
+      <section className={styles.section} aria-labelledby="testimonials-title">
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <p className={styles.sectionEyebrow}>Experiencias verificadas</p>
+              <h2 className={styles.sectionTitle} id="testimonials-title">
+                Lo que dice nuestra comunidad
+              </h2>
+              <Ornament className={styles.sectionOrnament} />
+            </div>
+          </div>
+
+          <Suspense fallback={null}>
+            <HomepageTestimonials />
           </Suspense>
         </div>
       </section>
