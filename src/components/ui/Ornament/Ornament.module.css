@@ -50,14 +50,14 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--gold-300) 14%,
-    var(--gold-300) 86%,
+    var(--ornament-light, var(--gold-300)) 14%,
+    var(--ornament-light, var(--gold-300)) 86%,
     transparent
   );
 }
 
 .rule[data-tone='light'] .diamond {
-  background-color: var(--gold-300);
+  background-color: var(--ornament-light, var(--gold-300));
 }
 
 @media (prefers-reduced-motion: reduce) {

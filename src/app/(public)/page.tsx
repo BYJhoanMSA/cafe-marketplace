@@ -192,23 +192,15 @@ export default function HomePage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeader}>
             <div>
-              <p className={`${styles.sectionEyebrow}`} style={{ color: 'var(--gold-300)' }}>
+              <p className={styles.sectionEyebrow}>
                 Viaja sin salir de casa
               </p>
-              <h2
-                className={styles.sectionTitle}
-                id="origins-title"
-                style={{ color: 'var(--neutral-0)' }}
-              >
+              <h2 className={styles.sectionTitle} id="origins-title">
                 Orígenes de Colombia
               </h2>
               <Ornament tone="light" className={styles.sectionOrnament} />
             </div>
-            <Link
-              href="/catalogo"
-              className={styles.sectionLink}
-              style={{ color: 'var(--neutral-400)' }}
-            >
+            <Link href="/catalogo" className={styles.sectionLink}>
               Ver todos →
             </Link>
           </div>

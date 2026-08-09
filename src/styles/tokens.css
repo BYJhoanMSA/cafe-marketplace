@@ -99,6 +99,55 @@
   --shadow-md: 0 4px 12px rgba(15, 12, 10, 0.12);
   --shadow-lg: 0 8px 24px rgba(15, 12, 10, 0.16);
   --shadow-xl: 0 16px 48px rgba(15, 12, 10, 0.20);
+
+  /* Placa heráldica (escudo) — Light: pergamino claro estilo Carta del Tostador */
+  --escudo-bg: linear-gradient(115deg, #FFFFFF, var(--neutral-100) 60%, var(--neutral-200));
+  --escudo-bg-solid: linear-gradient(180deg, #FFFFFF, var(--neutral-100));
+  --escudo-text: var(--neutral-800);
+  --escudo-label: var(--gold-700);
+  --escudo-border: color-mix(in srgb, var(--gold-700) 55%, transparent);
+  --escudo-rule: color-mix(in srgb, var(--gold-700) 25%, transparent);
+  --escudo-shade-strong: var(--neutral-800);
+  --escudo-shade-soft: var(--gold-900);
+
+  /* Banner de marca (selector de sabor / orígenes) — Light: pergamino claro */
+  --banner-bg: linear-gradient(135deg, var(--neutral-100), var(--neutral-200));
+  --banner-glow: radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--gold-500) 22%, transparent) 0%, transparent 60%),
+                 radial-gradient(ellipse at 80% 50%, color-mix(in srgb, var(--terra-500) 22%, transparent) 0%, transparent 60%);
+  --banner-title: var(--neutral-800);
+  --banner-title-gold: var(--neutral-800);
+  --banner-text: var(--neutral-600);
+  --banner-eyebrow: var(--gold-700);
+  --banner-link: var(--neutral-600);
+  --banner-steam: color-mix(in srgb, var(--gold-500) 45%, transparent);
+
+  /* Selector de sabores (PillBar) — Light: pergamino claro */
+  --pillbar-bg: linear-gradient(180deg, var(--neutral-100), var(--neutral-200));
+  --pillbar-border: var(--color-border-default);
+  --pill-bg: linear-gradient(180deg, #FFFFFF 0%, var(--neutral-100) 60%, var(--neutral-200) 100%);
+  --pill-border: color-mix(in srgb, var(--neutral-800) 14%, transparent);
+  --pill-label: var(--neutral-700);
+  --pill-shine: linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.05));
+  --pill-shadow: inset 0 1px 0 rgba(255,255,255,0.6),
+                 inset 0 -18px 30px color-mix(in srgb, var(--gold-500) 12%, transparent),
+                 0 10px 22px color-mix(in srgb, var(--neutral-900) 12%, transparent);
+  --pill-shadow-hover: inset 0 1px 0 rgba(255,255,255,0.7),
+                       inset 0 -18px 30px color-mix(in srgb, var(--gold-500) 16%, transparent),
+                       0 14px 28px color-mix(in srgb, var(--neutral-900) 16%, transparent);
+  --pill-active-border: rgba(230, 168, 23, 0.55);
+  --pill-active-glow: 0 0 18px rgba(230, 168, 23, 0.25);
+  --pillbar-input-bg: rgba(255, 255, 255, 0.6);
+  --pillbar-input-border: color-mix(in srgb, var(--neutral-800) 20%, transparent);
+  --pillbar-input-text: var(--neutral-800);
+  --pillbar-input-placeholder: var(--neutral-500);
+  --pillbar-input-focus-border: var(--gold-700);
+  /* Selector de sabores mobile (flotante) — Light: crema translúcido */
+  --pillbar-mobile-bg: rgba(253, 250, 246, 0.95);
+  --pillbar-input-mobile-bg: rgba(0, 0, 0, 0.04);
+  --pillbar-input-mobile-text: var(--color-ink-primary);
+  --pillbar-input-mobile-border: var(--color-border-default);
+  --pillbar-input-mobile-placeholder: var(--color-ink-tertiary);
+  --pillbar-input-mobile-focus: var(--color-ink-primary);
 }
 
 /* =============================================================================
@@ -140,6 +189,60 @@
   --shadow-md: none;
   --shadow-lg: none;
   --shadow-xl: none;
+
+  /* Placa heráldica (escudo) — Dark: placa negra estilo Características */
+  --escudo-bg: linear-gradient(115deg, var(--neutral-800), var(--neutral-900) 60%, var(--neutral-950));
+  --escudo-bg-solid: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
+  --escudo-text: var(--neutral-100);
+  --escudo-label: var(--gold-300);
+  --escudo-border: color-mix(in srgb, var(--gold-500) 50%, transparent);
+  --escudo-rule: color-mix(in srgb, var(--gold-500) 22%, transparent);
+  --escudo-shade-strong: var(--neutral-0);
+  --escudo-shade-soft: var(--gold-300);
+
+  /* Banner de marca (selector de sabor / orígenes) — Dark: fondo negro */
+  --banner-bg: linear-gradient(135deg, var(--neutral-900) 0%, var(--neutral-950) 100%);
+  --banner-glow: radial-gradient(ellipse at 20% 50%, var(--gold-900) 0%, transparent 60%),
+                 radial-gradient(ellipse at 80% 50%, var(--terra-900) 0%, transparent 60%);
+  --banner-title: var(--neutral-0);
+  --banner-title-gold: var(--gold-100);
+  --banner-text: var(--neutral-400);
+  --banner-eyebrow: var(--gold-300);
+  --banner-link: var(--neutral-400);
+  --banner-steam: color-mix(in srgb, #FFFFFF 55%, transparent);
+
+  /* Selector de sabores (PillBar) — Dark: cristal ahumado */
+  --pillbar-bg: radial-gradient(circle at top, #2b241d, #14110f 60%, #0d0b09);
+  --pillbar-border: var(--color-border-default);
+  --pill-bg: linear-gradient(
+    180deg,
+    rgba(70, 58, 48, 0.28) 0%,
+    rgba(35, 28, 22, 0.42) 45%,
+    rgba(18, 14, 11, 0.65) 100%
+  );
+  --pill-border: rgba(255, 245, 225, 0.12);
+  --pill-label: rgba(255, 245, 225, 0.7);
+  --pill-shine: linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+  --pill-shadow: inset 0 1px 0 rgba(255,255,255,0.08),
+                 inset 0 -18px 30px rgba(0,0,0,0.45),
+                 0 10px 22px rgba(0,0,0,0.35);
+  --pill-shadow-hover: inset 0 1px 0 rgba(255,255,255,0.12),
+                       inset 0 -18px 30px rgba(0,0,0,0.42),
+                       0 14px 28px rgba(0,0,0,0.40);
+  --pill-active-border: rgba(230, 168, 23, 0.55);
+  --pill-active-glow: 0 0 18px rgba(230, 168, 23, 0.25);
+  --pillbar-input-bg: rgba(255, 255, 255, 0.06);
+  --pillbar-input-border: rgba(255, 245, 225, 0.2);
+  --pillbar-input-text: rgba(255, 245, 225, 0.85);
+  --pillbar-input-placeholder: rgba(255, 245, 225, 0.4);
+  --pillbar-input-focus-border: rgba(255, 245, 225, 0.4);
+  /* Selector de sabores mobile (flotante) — Dark: negro translúcido */
+  --pillbar-mobile-bg: rgba(15, 12, 10, 0.95);
+  --pillbar-input-mobile-bg: rgba(0, 0, 0, 0.04);
+  --pillbar-input-mobile-text: var(--color-ink-primary);
+  --pillbar-input-mobile-border: var(--color-border-default);
+  --pillbar-input-mobile-placeholder: var(--color-ink-tertiary);
+  --pillbar-input-mobile-focus: var(--color-ink-primary);
 }
 
 /* =============================================================================

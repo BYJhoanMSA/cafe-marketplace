@@ -2,6 +2,9 @@
    ESCUDO DE DATOS — replicado de styledk/producto.html (Casa del Cafeto)
    Placa heráldica con los datos del café.
    Tipografía de la maqueta (Cinzel / EB Garamond), colores del proyecto.
+   Los colores usan los tokens semánticos --escudo-* que se adaptan al tema:
+   - Light: pergamino claro (referencia: Carta del Tostador)
+   - Dark:  placa negra (referencia: Características)
    ===================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
@@ -10,13 +13,8 @@
 .escudoCompra {
   margin-top: 1.6rem;
   padding: 1.6rem 1.8rem;
-  background: linear-gradient(
-    115deg,
-    var(--neutral-800),
-    var(--neutral-900) 60%,
-    var(--neutral-950)
-  );
-  border: 1px solid color-mix(in srgb, var(--gold-500) 50%, transparent);
+  background: var(--escudo-bg);
+  border: 1px solid var(--escudo-border);
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--gold-500) 22%, transparent),
     inset 0 0 0 4px color-mix(in srgb, var(--neutral-0) 4%, transparent),
@@ -35,7 +33,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--gold-300);
+  color: var(--escudo-label);
   padding-bottom: 0.45rem;
 }
 
@@ -43,8 +41,8 @@
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 1.1rem;
   line-height: 1.5;
-  color: var(--neutral-100);
-  border-bottom: 1px solid color-mix(in srgb, var(--gold-500) 22%, transparent);
+  color: var(--escudo-text);
+  border-bottom: 1px solid var(--escudo-rule);
   padding-bottom: 0.9rem;
   margin-bottom: 0.9rem;
 }
@@ -125,7 +123,7 @@
   letter-spacing: 0.28em;
   text-transform: uppercase;
   text-align: center;
-  color: var(--gold-300);
+  color: var(--escudo-label);
 }
 
 .tondosRow {
@@ -170,7 +168,7 @@
 .tondoActive,
 .tondo:focus-visible {
   border-color: var(--gold-300);
-  background: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
+  background: var(--escudo-bg-solid);
   box-shadow:
     inset 0 0 0 3px color-mix(in srgb, var(--gold-500) 30%, transparent),
     inset 0 0 0 4px color-mix(in srgb, var(--neutral-0) 10%, transparent),
@@ -180,17 +178,17 @@
 
 .tondoActive .tondoGlyph,
 .tondo:focus-visible .tondoGlyph {
-  color: var(--gold-300);
+  color: var(--escudo-shade-soft);
 }
 
 .tondo.tondoActive strong,
 .tondo:focus-visible strong {
-  color: var(--neutral-0);
+  color: var(--escudo-shade-strong);
 }
 
 .tondo.tondoActive span,
 .tondo:focus-visible span {
-  color: var(--gold-300);
+  color: var(--escudo-shade-soft);
 }
 
 .tondoGlyph {
@@ -256,7 +254,7 @@
   font-size: 0.62rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--gold-300);
+  color: var(--escudo-label);
 }
 
 .reservaCantidad {
@@ -267,19 +265,19 @@
   min-height: 42px;
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 0.9rem;
-  color: var(--neutral-0);
-  background: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
-  border: 1px solid color-mix(in srgb, var(--gold-700) 50%, transparent);
+  color: var(--escudo-text);
+  background: var(--escudo-bg-solid);
+  border: 1px solid var(--escudo-border);
   border-radius: 2px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 color-mix(in srgb, var(--neutral-0) 8%, transparent),
     0 2px 0 rgba(0, 0, 0, 0.45);
 }
 
 .reservaCantidad button {
   background: none;
   border: none;
-  color: var(--gold-300);
+  color: var(--escudo-label);
   font-size: 0.95rem;
   padding: 0.4rem 0.7rem;
   cursor: pointer;
@@ -304,12 +302,12 @@
   padding: 0.5rem 1rem;
   font-family: 'EB Garamond', Georgia, serif;
   font-size: 1.1rem;
-  color: var(--gold-300);
-  background: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
-  border: 1px solid color-mix(in srgb, var(--gold-700) 50%, transparent);
+  color: var(--escudo-label);
+  background: var(--escudo-bg-solid);
+  border: 1px solid var(--escudo-border);
   border-radius: 2px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 color-mix(in srgb, var(--neutral-0) 8%, transparent),
     0 2px 0 rgba(0, 0, 0, 0.45);
 }
 

@@ -326,19 +326,51 @@
 }
 
 /* ================================================================
-   BANNER DE ORIGEN — Fondo oscuro, texto claro
+   BANNER DE ORIGEN — Fondo de marca (pergamino claro / negro)
    ================================================================ */
 .originBanner {
-  background-color: var(--neutral-900);
+  position: relative;
+  background: var(--banner-bg);
   padding: var(--space-20) 0;
   overflow: hidden;
+  /* Rombo decorativo con el tono adecuado al fondo del banner */
+  --ornament-light: var(--banner-eyebrow);
 }
 
-[data-theme="dark"] .originBanner {
-  background-color: var(--neutral-950);
+.originBanner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--banner-glow);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Textos del encabezado adaptados al fondo del banner */
+.originBanner .sectionHeader {
+  position: relative;
+  z-index: 1;
+}
+
+.originBanner .sectionEyebrow {
+  color: var(--banner-eyebrow);
+}
+
+.originBanner .sectionTitle {
+  color: var(--banner-title);
+}
+
+.originBanner .sectionLink {
+  color: var(--banner-link);
+}
+
+.originBanner .sectionLink:hover {
+  color: var(--banner-title);
 }
 
 .originGrid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
@@ -630,7 +662,7 @@
    BANNER DE PERFIL DE SABOR
    ================================================================ */
 .tasteProfileBanner {
-  background: linear-gradient(135deg, var(--neutral-900) 0%, var(--neutral-950) 100%);
+  background: var(--banner-bg);
   border-radius: var(--radius-2xl);
   padding: var(--space-12) var(--space-8);
   display: flex;
@@ -646,8 +678,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 20% 50%, var(--gold-900) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 50%, var(--terra-900) 0%, transparent 60%);
+  background: var(--banner-glow);
   opacity: 0.4;
   pointer-events: none;
 }
@@ -672,13 +703,13 @@
 .tasteProfileBannerTitle {
   font-family: var(--font-primary);
   font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
-  color: var(--gold-100);
+  color: var(--banner-title-gold);
   line-height: var(--leading-tight);
 }
 
 .tasteProfileBannerDesc {
   font-size: var(--text-base);
-  color: var(--neutral-400);
+  color: var(--banner-text);
   line-height: var(--leading-relaxed);
   max-width: 480px;
 }
@@ -798,7 +829,7 @@
   width: 16px;
   height: 64px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.55) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, var(--banner-steam) 0%, transparent 70%);
   filter: blur(6px);
   animation: steam-rise var(--duration-lazy) var(--ease-in-out) infinite;
 }
