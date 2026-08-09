@@ -42,11 +42,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { email, password } = parsed.data
 
-        // Normalizar el usuario/email:
+        // Normalizar el identificador:
         // - Número de WhatsApp ("3001234567", "+57 300...") → "573001234567"
-        // - "dkar"               → "dkar@cafemarketplace.com"
-        // - "dkar@cafemarketplace"→ "dkar@cafemarketplace.com" (sin TLD)
-        // - "dkar@cafemarketplace.com" → tal cual
+        // - Correo electrónico → tal cual (minúsculas, sin espacios)
         const raw = email.toLowerCase().trim()
 
         let user = null
@@ -69,15 +67,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             })
           }
         } else {
-          const [localPart, domainPart] = raw.split('@')
-          const lookupEmail = !raw.includes('@')
-            ? `${raw}@cafemarketplace.com`
-            : domainPart && !domainPart.includes('.')
-              ? `${localPart}@${domainPart}.com`
-              : raw
-
           user = await prisma.user.findUnique({
-            where: { email: lookupEmail.toLowerCase(), deletedAt: null },
+            where: { email: raw, deletedAt: null },
             select: {
               id: true,
               email: true,

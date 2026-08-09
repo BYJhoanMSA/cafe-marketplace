@@ -26,7 +26,7 @@ export const RegisterSchema = z
   })
 
 export const LoginSchema = z.object({
-  // Acepta email, usuario ("dkar") o número de WhatsApp ("573001234567")
+  // Acepta email o número de WhatsApp ("573001234567")
   email: z.string().min(1, 'Email o número de WhatsApp es requerido'),
   password: z.string().min(1),
 })
