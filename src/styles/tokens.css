@@ -144,11 +144,12 @@
    TIPOGRAFÍA
    ============================================================================= */
 :root {
-  /* Tipografía de styledk (Casa del Cafeto) — VERSIÓN PREVIEW (reversible) */
+  /* Tipografía de styledk (Casa del Cafeto). Fuentes cargadas con next/font.
+     --font-sub y --font-quote quedaron como fallback (no se cargan como webfont). */
   --font-primary:   'Cinzel', 'Times New Roman', serif;      /* inscripciones / display */
   --font-secondary: 'EB Garamond', Georgia, serif;           /* cuerpo */
-  --font-sub:       'Cormorant Garamond', Georgia, serif;    /* subtítulos elegantes */
-  --font-quote:     'Libre Baskerville', Georgia, serif;     /* citas grabadas */
+  --font-sub:       'EB Garamond', Georgia, serif;           /* subtítulos elegantes */
+  --font-quote:     'EB Garamond', Georgia, serif;           /* citas grabadas */
   --font-mono:      'DM Mono', 'Courier New', monospace;
 
   /* Pesos */

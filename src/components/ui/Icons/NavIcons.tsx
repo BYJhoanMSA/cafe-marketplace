@@ -79,6 +79,30 @@ export function LogoCafeIcon({ size = 40, strokeWidth = 1, stroke = 'currentColo
 }
 
 // -------------------------------------------
+// BrandIcon — Escudo heráldico con grano de café
+// (sello de marca, adaptado de styledk "Casa del Cafeto")
+// -------------------------------------------
+export function BrandIcon({ size = 34, strokeWidth = 1.6, stroke = 'currentColor' }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={Math.round(size * 1.22)}
+      viewBox="0 0 64 78"
+      fill="none"
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M32 4 L56 12 L52 52 Q32 74 12 52 L8 12 Z" />
+      <path d="M13 22 L51 22 M15 33 L49 33" />
+      <ellipse cx="32" cy="49" rx="8" ry="11" />
+      <path d="M32 40 Q27 48 32 58" />
+    </svg>
+  )
+}
+
+// -------------------------------------------
 // Heart / Favorito (icon-svg/favorite.svg)
 // -------------------------------------------
 export function HeartIcon({ size = 24, strokeWidth = 2, stroke = 'currentColor' }: IconProps) {

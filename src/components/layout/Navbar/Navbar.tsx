@@ -10,7 +10,7 @@ import { X, Moon, Sun } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { usePillBar } from '@/components/ui/PillSelector/PillBarContext'
-import { LogoCafeIcon, SearchIcon, HeartIcon, CartIcon, UserIcon, HomeIcon, CatalogIcon } from '@/components/ui/Icons/NavIcons'
+import { SearchIcon, HeartIcon, CartIcon, UserIcon, HomeIcon, CatalogIcon, BrandIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './Navbar.module.css'
 
 // ================================================================
@@ -149,7 +149,7 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
 
           {/* Logo centrado */}
           <Link href="/" className={styles.logo} aria-label="Cafe Seleccion — Inicio">
-            <span className={styles.logoIcon} aria-hidden="true"><LogoCafeIcon size={40} strokeWidth={1} /></span>
+            <span className={styles.logoIcon} aria-hidden="true"><BrandIcon size={30} strokeWidth={1.6} /></span>
             <span className={styles.logoText}>Cafe Seleccion</span>
           </Link>
 

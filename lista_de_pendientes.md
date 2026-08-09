@@ -116,3 +116,17 @@ Resultado de la auditoría estética del index. Se divide en **bugs visuales/err
 - [x] Eliminar CSS muerto (`.originCard*` de `page.module.css`)
 
 > **Nota Fase 0**: Build de producción verificado (`npm run build` OK, 29 rutas). Lint y type-check pasan sin errores nuevos.
+
+### ✨ 5.5 Estado Fase 1 — Identidad visual
+
+**Decisión de marca**: se mantiene el nombre **"Cafe Seleccion"** (ya consolidado en nav, footer, metadata, auth y manifest). La maqueta `styledk` ("Casa del Cafeto") se adopta como **lenguaje visual**, no como nombre.
+
+- [x] Reducir stack de fuentes a 3 (Cinzel + EB Garamond + DM Mono); Cormorant y Libre Baskerville retiradas de `next/font` (sin uso real). Tokens `--font-sub`/`--font-quote` apuntan a EB Garamond como fallback.
+- [x] `BrandIcon` (escudo heráldico con grano) en `NavIcons.tsx`; usado en logos de Navbar y Footer.
+- [x] Componente `Ornament` (doble regla dorada con rombo, variante light/dark) en `src/components/ui/Ornament/`.
+- [x] Ornament integrado en hero (bajo el h1) y en los 3 títulos de sección del index.
+- [x] Textura de grano procedimental (feTurbulence, SVG data-URI) sobre el hero + fallback.
+- [x] Ornament superior en el Footer.
+- [x] Build verificado (`npm run build` OK, 29 rutas). Lint de archivos tocados sin warnings nuevos.
+
+> **Pendiente Fase 1 (decisión comercial)**: evaluar si se adopta la rama de cafeto (`--sprig-h`) como divisor de secciones y si se reutiliza el escudo en favicon/PWA.

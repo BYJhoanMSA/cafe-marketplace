@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { ProductCardSkeleton } from '@/components/product/ProductCard'
 import { Suspense } from 'react'
 import { PillBarWrapper } from '@/components/ui/PillSelector/PillBarWrapper'
+import { Ornament } from '@/components/ui/Ornament'
 import { FLAVOR_ITEMS } from '@/components/ui/PillSelector/PillSelector.data'
 import { HomeHero, FeaturedProducts, HomepageOrigins, HomepageValues } from './HomepageLazy'
 import styles from './page.module.css'
@@ -33,6 +34,7 @@ function HomeHeroFallback() {
     <section className={styles.hero} aria-label="Cargando bienvenida" aria-busy="true">
       <div className={styles.heroBackground} style={{ backgroundColor: 'var(--neutral-800)' }} />
       <div className={styles.heroOverlay} aria-hidden="true" />
+      <div className={styles.heroGrain} aria-hidden="true" />
       <div className={styles.heroContent}>
         <div className="skeleton" style={{ height: 12, width: 180 }} />
         <div className="skeleton" style={{ height: 56, width: 'min(85%, 640px)' }} />
@@ -106,6 +108,7 @@ export default function HomePage() {
               <h2 className={styles.sectionTitle} id="featured-title">
                 Destacados
               </h2>
+              <Ornament className={styles.sectionOrnament} />
             </div>
             <Link href="/catalogo" className={styles.sectionLink}>
               Ver todos →
@@ -135,6 +138,7 @@ export default function HomePage() {
               >
                 Orígenes de Colombia
               </h2>
+              <Ornament tone="light" className={styles.sectionOrnament} />
             </div>
             <Link
               href="/catalogo"
@@ -162,6 +166,7 @@ export default function HomePage() {
               <h2 className={styles.sectionTitle} id="values-title">
                 Café como debe ser
               </h2>
+              <Ornament className={styles.sectionOrnament} />
             </div>
           </div>
 

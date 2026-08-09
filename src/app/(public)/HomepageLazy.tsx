@@ -5,6 +5,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { Ornament } from '@/components/ui/Ornament'
 import { OriginCard } from '@/components/home/OriginCard'
 import { ValueIcon } from '@/components/home/ValueIcon'
 import { ProductCard } from '@/components/product/ProductCard'
@@ -51,6 +52,7 @@ export async function HomeHero() {
         </picture>
       </div>
       <div className={styles.heroOverlay} aria-hidden="true" />
+      <div className={styles.heroGrain} aria-hidden="true" />
 
       {/* Contenido */}
       <div className={styles.heroContent}>
@@ -62,6 +64,8 @@ export async function HomeHero() {
         <h1 className={styles.heroTitle} style={{ whiteSpace: 'pre-line' }}>
           {config.heroTitle}
         </h1>
+
+        <Ornament tone="light" className={styles.heroOrnament} />
 
         <p className={styles.heroSubtitle}>
           {config.heroSubtitle}

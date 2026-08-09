@@ -1,0 +1,1 @@
+export { Ornament } from './Ornament'

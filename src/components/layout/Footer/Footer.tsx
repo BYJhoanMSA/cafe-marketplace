@@ -3,7 +3,8 @@
 // src/components/layout/Footer/Footer.tsx
 import Link from 'next/link'
 import { useState } from 'react'
-import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
+import { Ornament } from '@/components/ui/Ornament'
+import { BrandIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './Footer.module.css'
 
 const FOOTER_LINKS = [
@@ -45,12 +46,14 @@ export function Footer() {
   return (
     <footer className={styles.footer} role="contentinfo">
       <div className={styles.inner}>
+        <Ornament tone="light" className={styles.footerOrnament} />
+
         {/* ---- TOP ---- */}
         <div className={styles.top}>
           {/* Brand */}
           <div className={styles.brand}>
             <Link href="/" className={styles.logo} aria-label="Cafe Seleccion — Inicio">
-              <span className={styles.logoIcon} aria-hidden="true"><LogoCafeIcon size={40} strokeWidth={1} /></span>
+              <span className={styles.logoIcon} aria-hidden="true"><BrandIcon size={34} strokeWidth={1.6} /></span>
               <span className={styles.logoText}>Cafe Seleccion</span>
             </Link>
             <p className={styles.tagline}>

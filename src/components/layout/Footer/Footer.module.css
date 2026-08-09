@@ -24,6 +24,12 @@
   }
 }
 
+/* ---- Ornamento superior (doble regla dorada) ---- */
+.footerOrnament {
+  width: 100%;
+  margin-bottom: var(--space-10);
+}
+
 /* ---- Top: Logo + Descripción + Newsletter ---- */
 .top {
   display: grid;
