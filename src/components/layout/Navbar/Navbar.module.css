@@ -457,6 +457,18 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.mobileThemeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--space-3);
+  color: var(--gold-600);
+}
+
+[data-theme="dark"] .mobileThemeIcon {
+  color: var(--gold-300);
+}
+
 .mobileMenuDivider {
   height: 1px;
   margin: var(--space-2) 0;

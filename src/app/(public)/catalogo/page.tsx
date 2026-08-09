@@ -33,6 +33,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     altitude: getParam('altitud'),
     flavorNote: getParam('nota'),
     process: getParam('proceso'),
+    roast: getParam('tueste'),
   }
 
   const products = await getActiveProducts(filters)

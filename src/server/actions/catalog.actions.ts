@@ -4,6 +4,7 @@ import { prisma } from '@/server/db/client'
 import { productCardInclude, mapToProductCard, type ProductCard } from '@/server/db/queries'
 import { getGrindTypes, getVariantSizes } from './settings.actions'
 import { withCache, invalidateCacheByPrefix, invalidateCache } from '@/server/cache/node-cache'
+import { getFlavorAliases } from '@/lib/flavor-notes'
 import type { GrindTypeOption } from './settings.actions'
 import type { Prisma } from '@prisma/client'
 
@@ -12,6 +13,7 @@ export interface CatalogFilters {
   altitude?: string
   flavorNote?: string
   process?: string
+  roast?: string
 }
 
 export interface ProductSizeOption {
@@ -98,7 +100,7 @@ function altitudeMatchesFilter(altitudeMasl: string | null, filterRange: string)
 
 export async function getActiveProducts(filters?: CatalogFilters, options?: { take?: number; skip?: number }) {
   const cacheKey = filters
-    ? `products:${filters.origin ?? ''}:${filters.altitude ?? ''}:${filters.flavorNote ?? ''}:${filters.process ?? ''}`
+    ? `products:${filters.origin ?? ''}:${filters.altitude ?? ''}:${filters.flavorNote ?? ''}:${filters.process ?? ''}:${filters.roast ?? ''}`
     : 'products:all'
 
   return withCache(cacheKey, async () => {
@@ -118,11 +120,16 @@ export async function getActiveProducts(filters?: CatalogFilters, options?: { ta
       }
 
       if (filters?.flavorNote) {
-        where.flavorNotes = { some: { note: { equals: filters.flavorNote } } }
+        const aliases = getFlavorAliases(filters.flavorNote)
+        where.flavorNotes = { some: { note: { in: aliases } } }
       }
 
       if (filters?.process) {
         where.processingMethod = filters.process
+      }
+
+      if (filters?.roast) {
+        where.roastLevel = filters.roast
       }
 
       let products = await prisma.product.findMany({

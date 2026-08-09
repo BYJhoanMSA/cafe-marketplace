@@ -8,6 +8,4 @@ export const FLAVOR_ITEMS: PillItem[] = [
   { id: 'citrico',   icon: '/icons/sabor-lemon.svg',      label: 'Cítrico',     value: 'citrico',   href: '/catalogo?nota=citrico' },
   { id: 'avellanado', icon: '/icons/sabor-hazelnut.svg',  label: 'Avellanado',  value: 'avellanado', href: '/catalogo?nota=avellanado' },
   { id: 'caramelo',  icon: '/icons/sabor-candy.svg',      label: 'Caramelo',    value: 'caramelo',  href: '/catalogo?nota=caramelo' },
-  { id: 'ligero',    icon: '/icons/sabor-light.svg',      label: 'Ligero',      value: 'ligero',    href: '/catalogo?tueste=light' },
-  { id: 'oscuro',    icon: '/icons/sabor-dark.svg',       label: 'Oscuro',      value: 'oscuro',    href: '/catalogo?tueste=dark' },
 ]

@@ -585,6 +585,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           <Select 
             options={[
               { label: 'Claro (Light)', value: 'light' },
+              { label: 'Medio-Ligero', value: 'medium-light' },
               { label: 'Medio (Medium)', value: 'medium' },
               { label: 'Medio-Oscuro', value: 'medium-dark' },
               { label: 'Oscuro (Dark)', value: 'dark' },
@@ -602,6 +603,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
               { label: 'Natural', value: 'natural' },
               { label: 'Honey', value: 'honey' },
               { label: 'Anaeróbico', value: 'anaerobic' },
+              { label: 'Wet-Hulled', value: 'wet-hulled' },
             ]}
             value={formData.processingMethod}
             onChange={(val) => handleSelectChange('processingMethod', val)}

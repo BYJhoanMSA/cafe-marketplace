@@ -133,6 +133,22 @@ export function CatalogFilterBar({ initialFilters = {} }: CatalogFilterBarProps)
           <option value="natural">Natural</option>
           <option value="honey">Honey</option>
           <option value="anaerobic">Anaeróbico</option>
+          <option value="wet-hulled">Wet-Hulled</option>
+        </select>
+
+        {/* 5. TUESTE */}
+        <select
+          className={styles.filterSelect}
+          value={selectedTueste}
+          onChange={(e) => setSelectedTueste(e.target.value)}
+          aria-label="Filtrar por Nivel de Tueste"
+        >
+          <option value="">🌗 Cualquier Tueste</option>
+          <option value="light">Claro (Light)</option>
+          <option value="medium-light">Medio-Ligero</option>
+          <option value="medium">Medio (Medium)</option>
+          <option value="medium-dark">Medio-Oscuro</option>
+          <option value="dark">Oscuro (Dark)</option>
         </select>
 
         {/* LIMPIAR FILTROS */}

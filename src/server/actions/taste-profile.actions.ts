@@ -13,6 +13,7 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/server/db/client'
 import { TasteProfileSchema } from '@/server/validators/user.schema'
+import { flavorNoteMatchesGroup } from '@/lib/flavor-notes'
 import type { Prisma } from '@prisma/client'
 
 export interface TasteProfileInput {
@@ -133,7 +134,8 @@ function scoreProduct(product: RecommendationProduct, profile: TasteProfileInput
     fn.note.toLowerCase()
   )
   for (const note of notes) {
-    if (productNoteList.includes(note)) {
+    const matchedSpecific = productNoteList.find((pn) => flavorNoteMatchesGroup(note, pn))
+    if (matchedSpecific) {
       score += 12
       matchedNotes.push(note)
     }

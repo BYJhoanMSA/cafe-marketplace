@@ -417,6 +417,22 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
               </li>
             </>
           )}
+
+          {/* Cambiar modo claro/oscuro */}
+          <li className={styles.mobileMenuDivider} aria-hidden="true" />
+          <li>
+            <button
+              type="button"
+              className={styles.mobileMenuLink}
+              onClick={toggleTheme}
+              aria-label={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
+            >
+              <span className={styles.mobileThemeIcon} aria-hidden="true">
+                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              </span>
+              {theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
+            </button>
+          </li>
         </ul>
       </div>
     </>
