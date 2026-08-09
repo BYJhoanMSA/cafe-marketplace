@@ -445,10 +445,15 @@ model ProductImage {
 
 // Reviews de productos
 // status: "pending" | "approved" | "rejected"
+// Límite de 1 reseña por producto por persona:
+//  - Usuario autenticado → userId (unique compuesto [productId, userId])
+//  - Visitante anónimo  → guestId (identificador persistente en cookie; unique [productId, guestId])
 model Review {
   id               String   @id @default(uuid()) @db.VarChar(36)
   productId        String   @db.VarChar(36)
-  userId           String   @db.VarChar(36)
+  userId           String?  @db.VarChar(36) // null si la reseña es de un visitante anónimo
+  guestId          String?  @db.VarChar(64) // hash de cookie del visitante anónimo
+  authorName       String?  @db.VarChar(50) // nombre mostrado (anónimo o alias del autor)
   orderId          String?  @db.VarChar(36) // Para verificar compra
   rating           Int      // 1-5
   title            String?  @db.VarChar(255)
@@ -460,10 +465,11 @@ model Review {
   updatedAt        DateTime @updatedAt
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
   order   Order?  @relation(fields: [orderId], references: [id])
 
-  @@unique([productId, userId]) // 1 review por usuario por producto
+  @@unique([productId, userId]) // 1 review por producto por usuario autenticado
+  @@unique([productId, guestId]) // 1 review por producto por visitante anónimo
   @@index([productId, status])
   @@index([userId])
   @@index([orderId])

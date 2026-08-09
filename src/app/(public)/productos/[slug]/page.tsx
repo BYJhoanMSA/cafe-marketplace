@@ -4,7 +4,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, useCallback, use } from 'react'
-import { Star, Heart, Share2, ArrowLeft } from 'lucide-react'
+import { Star, Heart, Share2, ArrowLeft, MessageCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
 import { formatPrice } from '@/lib/utils'
@@ -13,6 +13,7 @@ import { incrementSocialCount } from '@/server/actions/social.actions'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
 import type { ProductDetail, ProductGrindOption, ProductVariant } from '@/server/actions/catalog.actions'
 import { EscudoDatos, CartaTostador, EscudoCompra } from '@/components/product/EscudoDatos'
+import { ReviewDrawer } from '@/components/product/MobileFeed/ReviewDrawer'
 import styles from './page.module.css'
 
 interface SelectedVariant {
@@ -72,6 +73,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [quantity, setQuantity] = useState(1)
   const [favorites, setFavorites] = useState(product?.favoritesCount ?? 0)
   const [shares, setShares] = useState(product?.sharesCount ?? 0)
+  const [reviewsOpen, setReviewsOpen] = useState(false)
 
   useEffect(() => {
     if (!product) return
@@ -271,6 +273,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               >
                 <Share2 size={14} />
               </button>
+              <button
+                onClick={() => setReviewsOpen(true)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '6px',
+                  background: 'none', border: '1px solid var(--color-border-default)',
+                  borderRadius: 'var(--radius-pill)', padding: '4px 12px', cursor: 'pointer',
+                  color: 'var(--color-ink-secondary)',
+                  fontFamily: 'var(--font-secondary)', fontSize: 'var(--text-sm)',
+                  fontWeight: 'var(--font-weight-medium)',
+                  transition: 'all var(--duration-normal) var(--ease-out)',
+                }}
+                title="Ver reseñas"
+                aria-label="Ver reseñas"
+              >
+                <MessageCircle size={14} />
+                Reseñas{product.reviewCount ? ` (${product.reviewCount})` : ''}
+              </button>
             </div>
           </div>
 
@@ -392,6 +411,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
       </section>
+
+      <ReviewDrawer
+        isOpen={reviewsOpen}
+        onClose={() => setReviewsOpen(false)}
+        productName={product.title}
+        productId={product.id}
+        position="right"
+      />
     </div>
   )
 }

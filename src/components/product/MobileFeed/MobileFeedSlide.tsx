@@ -369,6 +369,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
         isOpen={reviewsOpen}
         onClose={() => setReviewsOpen(false)}
         productName={product.title}
+        productId={product.id}
       />
     </div>
   )

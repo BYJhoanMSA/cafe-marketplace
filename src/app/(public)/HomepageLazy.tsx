@@ -194,10 +194,25 @@ export async function HomepageTestimonials() {
             <p>{t.body}</p>
           </blockquote>
           <figcaption className={styles.testimonialMeta}>
-            <span className={styles.testimonialName}>{t.author}</span>
-            <Link href={`/productos/${t.productSlug}`} className={styles.testimonialProduct}>
-              {t.productTitle}
-            </Link>
+            <div className={styles.testimonialProductRow}>
+              {t.productImage && (
+                <Link href={`/productos/${t.productSlug}`} className={styles.testimonialThumbWrap} aria-label={`Ver ${t.productTitle}`}>
+                  <Image
+                    src={t.productImage}
+                    alt=""
+                    fill
+                    sizes="48px"
+                    className={styles.testimonialThumb}
+                  />
+                </Link>
+              )}
+              <div className={styles.testimonialMetaText}>
+                <span className={styles.testimonialName}>{t.author}</span>
+                <Link href={`/productos/${t.productSlug}`} className={styles.testimonialProduct}>
+                  {t.productTitle}
+                </Link>
+              </div>
+            </div>
           </figcaption>
         </figure>
       ))}
@@ -218,7 +233,19 @@ async function getApprovedTestimonials() {
         id: true,
         rating: true,
         body: true,
-        product: { select: { slug: true, title: true } },
+        authorName: true,
+        product: {
+          select: {
+            slug: true,
+            title: true,
+            images: {
+              where: { mediaType: 'image' },
+              orderBy: { position: 'asc' },
+              take: 1,
+              select: { url: true },
+            },
+          },
+        },
         user: { select: { firstName: true, lastName: true } },
       },
     })
@@ -227,9 +254,13 @@ async function getApprovedTestimonials() {
       id: review.id,
       rating: review.rating,
       body: review.body as string,
-      author: [review.user.firstName, review.user.lastName].filter(Boolean).join(' '),
+      author:
+        review.authorName?.trim() ||
+        [review.user?.firstName, review.user?.lastName].filter(Boolean).join(' ') ||
+        'Anónimo',
       productTitle: review.product.title,
       productSlug: review.product.slug,
+      productImage: review.product.images[0]?.url ?? null,
     }))
   } catch {
     return []
