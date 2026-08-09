@@ -2,6 +2,7 @@
 
 import clsx from 'clsx'
 import type { PillItem, PillSelectorProps } from './PillSelector.types'
+import { FlavorIcon } from './FlavorIcon'
 import styles from './PillSelector.module.css'
 
 export function PillSelector({ items, activeId, onSelect, className }: PillSelectorProps) {
@@ -27,7 +28,7 @@ export function PillSelector({ items, activeId, onSelect, className }: PillSelec
             disabled={item.disabled}
             type="button"
           >
-            <img src={item.icon} alt={item.label} width={50} height={50} />
+            <FlavorIcon icon={item.icon} size={50} className={styles.icon} />
             <span className={styles.label}>{item.label}</span>
           </button>
         )
