@@ -6,6 +6,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Ornament } from '@/components/ui/Ornament'
+import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
 import { OriginCard } from '@/components/home/OriginCard'
 import { ValueIcon } from '@/components/home/ValueIcon'
 import { ProductCard } from '@/components/product/ProductCard'
@@ -83,11 +84,11 @@ export async function HomeHero() {
         {/* Stats */}
         <div className={styles.heroStats} role="list" aria-label="Estadísticas">
           <div className={styles.heroStat} role="listitem">
-            <span className={styles.heroStatNumber}>{totalProducts ?? '--'}</span>
+            <span className={styles.heroStatNumber}><AnimatedNumber value={totalProducts} /></span>
             <span className={styles.heroStatLabel}>Cafés disponibles</span>
           </div>
           <div className={styles.heroStat} role="listitem">
-            <span className={styles.heroStatNumber}>{organicProducts ?? '--'}</span>
+            <span className={styles.heroStatNumber}><AnimatedNumber value={organicProducts} /></span>
             <span className={styles.heroStatLabel}>Orgánicos certificados</span>
           </div>
         </div>

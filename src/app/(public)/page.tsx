@@ -26,6 +26,16 @@ export const metadata: Metadata = {
 // Caching: Revalidar la página cada hora (ISR) para no saturar MySQL.
 export const revalidate = 3600
 
+// Marquesina decorativa de marca (solo visual)
+const MARQUEE_ITEMS = [
+  'Especialidad',
+  'Directo al tostador',
+  'Origen único',
+  'Tueste artesanal',
+  'Lotes pequeños',
+  'Frescura certificada',
+]
+
 // ================================================================
 // Fallbacks (skeletons) — mismo layout que el contenido real para evitar CLS
 // ================================================================
@@ -96,6 +106,21 @@ export default function HomePage() {
         items={FLAVOR_ITEMS}
         activeId="coffee"
       />
+
+      {/* ============================================================
+          2.1 MARQUESINA DE MARCA (decorativa)
+          ============================================================ */}
+      <section className={styles.marquee} aria-hidden="true">
+        <div className={styles.marqueeTrack}>
+          {[0, 1].map((dup) => (
+            <div key={dup} className={styles.marqueeGroup}>
+              {MARQUEE_ITEMS.map((item) => (
+                <span key={item} className={styles.marqueeItem}>{item}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* ============================================================
           3. PRODUCTOS DESTACADOS
@@ -186,6 +211,11 @@ export default function HomePage() {
       >
         <div className={styles.sectionInner}>
           <div className={styles.tasteProfileBanner}>
+            <div className={styles.steam} aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
             <div className={styles.tasteProfileBannerText}>
               <h2 className={styles.tasteProfileBannerTitle} id="taste-profile-title">
                 ¿No sabes por dónde empezar?

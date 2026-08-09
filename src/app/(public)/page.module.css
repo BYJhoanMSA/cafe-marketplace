@@ -400,6 +400,12 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  color: var(--color-ink-secondary);
+  transition: color var(--duration-moderate) var(--ease-out);
+}
+
+.valueCard:hover .valueIcon {
+  color: var(--gold-600);
 }
 
 .valueTitle {
@@ -503,4 +509,162 @@
   padding: var(--space-16) 0;
   color: var(--color-ink-tertiary);
   font-size: var(--text-lg);
+}
+
+/* ================================================================
+   MARQUESINA DE MARCA — ticker decorativo
+   ================================================================ */
+.marquee {
+  overflow: hidden;
+  padding: var(--space-6) 0;
+  background-color: var(--color-bg-secondary);
+  border-block: 1px solid var(--color-border-default);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 36s var(--ease-linear) infinite;
+}
+
+.marqueeTrack:hover {
+  animation-play-state: paused;
+}
+
+.marqueeGroup {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marqueeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding-inline: var(--space-6);
+  font-family: var(--font-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  white-space: nowrap;
+}
+
+.marqueeItem::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background-color: var(--gold-500);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    display: none;
+  }
+}
+
+/* ================================================================
+   VAPOR — Banner de perfil de sabor (copa humeante)
+   ================================================================ */
+.steam {
+  position: absolute;
+  bottom: 10%;
+  left: 10%;
+  width: 130px;
+  height: 170px;
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.steam span {
+  position: absolute;
+  bottom: 0;
+  width: 16px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.55) 0%, transparent 70%);
+  filter: blur(6px);
+  animation: steam-rise var(--duration-lazy) var(--ease-in-out) infinite;
+}
+
+.steam span:nth-child(1) { left: 0; }
+.steam span:nth-child(2) { left: 44px; animation-delay: 0.5s; }
+.steam span:nth-child(3) { left: 88px; animation-delay: 1s; }
+
+@keyframes steam-rise {
+  0%   { transform: translateY(12px) translateX(0) scaleX(0.8); opacity: 0; }
+  25%  { opacity: 0.7; }
+  100% { transform: translateY(-120px) translateX(10px) scaleX(1.5); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .steam {
+    display: none;
+  }
+}
+
+/* ================================================================
+   REVELADO AL HACER SCROLL — scroll-driven animations nativas
+   Solo se aplica donde el navegador lo soporta (degradación: sin animación)
+   ================================================================ */
+@supports (animation-timeline: view()) {
+  .sectionHeader,
+  .tasteProfileBanner {
+    animation: reveal-up var(--duration-deliberate) var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  .productGrid > *,
+  .originGrid > *,
+  .valueGrid > * {
+    animation: reveal-fade var(--duration-slow) var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 6% entry 40%;
+  }
+
+  .productGrid > *:nth-child(2),
+  .originGrid > *:nth-child(2),
+  .valueGrid > *:nth-child(2) { animation-range: entry 13% entry 47%; }
+
+  .productGrid > *:nth-child(3),
+  .originGrid > *:nth-child(3),
+  .valueGrid > *:nth-child(3) { animation-range: entry 20% entry 54%; }
+
+  .productGrid > *:nth-child(4),
+  .originGrid > *:nth-child(4),
+  .valueGrid > *:nth-child(4) { animation-range: entry 27% entry 61%; }
+
+  /* Parallax sutil del fondo del hero (misma feature: scroll(root)) */
+  .heroBackground {
+    animation: hero-parallax var(--duration-lazy) var(--ease-linear) backwards;
+    animation-timeline: scroll(root);
+    animation-range: 0px 700px;
+  }
+}
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reveal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes hero-parallax {
+  from { transform: scale(1.04) translateY(0); }
+  to { transform: scale(1.10) translateY(4%); }
 }

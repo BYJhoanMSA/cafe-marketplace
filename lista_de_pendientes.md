@@ -130,3 +130,16 @@ Resultado de la auditoría estética del index. Se divide en **bugs visuales/err
 - [x] Build verificado (`npm run build` OK, 29 rutas). Lint de archivos tocados sin warnings nuevos.
 
 > **Pendiente Fase 1 (decisión comercial)**: evaluar si se adopta la rama de cafeto (`--sprig-h`) como divisor de secciones y si se reutiliza el escudo en favicon/PWA.
+
+### 🎬 5.6 Estado Fase 2 — Movimiento y profundidad
+
+- [x] Reveals scroll-driven nativos (`animation-timeline: view()`) con stagger por `nth-child` en cards de producto, orígenes y valor; cabeceras de sección y banner de perfil suben con fade.
+- [x] Parallax sutil del fondo del hero (`animation-timeline: scroll(root)` + escala buffer para evitar huecos).
+- [x] Contador animado en las stats del hero (`AnimatedNumber` con IntersectionObserver, easing, respeta `prefers-reduced-motion`).
+- [x] Marquesina de marca (ticker decorativo con diamantes dorados, pausa al hover, máscara de desvanecido, oculta en reduced-motion).
+- [x] Vapor animado (copa humeante) en el banner de perfil de sabor.
+- [x] Micro-interacción: iconos de valor se tiñen de dorado al hover.
+- [x] Todo bajo `@supports (animation-timeline: view())` → degradación segura: sin soporte, contenido siempre visible.
+- [x] Build verificado (`npm run build` OK, 29 rutas). Type-check y lint de archivos tocados limpios.
+
+> **Nota**: Chrome/Edge 115+, Safari 26+ y Firefox 120+ soportan scroll-driven; en navegadores antiguos no se anima pero nada se rompe ni se oculta.
