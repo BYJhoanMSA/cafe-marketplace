@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
 import { saveTasteProfile, getRecommendations, type CoffeeRecommendation } from '@/server/actions/taste-profile.actions'
+import { describeTasteProfile } from '@/lib/taste-profile'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import styles from './TasteProfileQuiz.module.css'
 
@@ -101,6 +102,8 @@ export function TasteProfileQuiz() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [recommendations, setRecommendations] = useState<CoffeeRecommendation[]>([])
+  const [completed, setCompleted] = useState(false)
+  const [profileSummary, setProfileSummary] = useState('')
 
   const step = STEPS[stepIndex]
   const isLast = stepIndex === STEPS.length - 1
@@ -157,9 +160,15 @@ export function TasteProfileQuiz() {
         ...state,
         brewMethods: ['v60', 'espresso'],
       }
-      await saveTasteProfile(profile)
+      const result = await saveTasteProfile(profile)
+      if (!result.success) {
+        setError(result.error ?? 'Ocurrió un error al guardar tu perfil. Intenta nuevamente.')
+        return
+      }
+      setProfileSummary(describeTasteProfile(profile))
       const recs = await getRecommendations(profile)
       setRecommendations(recs)
+      setCompleted(true)
     } catch {
       setError('Ocurrió un error al guardar tu perfil. Intenta nuevamente.')
     } finally {
@@ -170,13 +179,18 @@ export function TasteProfileQuiz() {
   // ============================================================
   // Resultado
   // ============================================================
-  if (recommendations.length > 0 || stepIndex === STEPS.length) {
+  if (completed || recommendations.length > 0) {
+    const summary =
+      profileSummary ||
+      describeTasteProfile({ ...state, brewMethods: ['v60', 'espresso'] })
+
     return (
       <div className={styles.result}>
         <div className={styles.resultIcon}>
           <Sparkles size={32} />
         </div>
         <h2 className={styles.resultTitle}>¡Este es tu café ideal!</h2>
+        <p className={styles.resultProfile}>{summary}</p>
         <p className={styles.resultText}>
           Basándonos en tu perfil, estos cafés de especialidad combinan perfecto con lo que amas.
         </p>
@@ -207,7 +221,7 @@ export function TasteProfileQuiz() {
           <Button as="link" href="/catalogo" variant="primary" size="lg">
             Explorar catálogo completo
           </Button>
-          <Button variant="ghost" onClick={() => { setState(INITIAL_STATE); setRecommendations([]); setStepIndex(0) }}>
+          <Button variant="ghost" onClick={() => { setState(INITIAL_STATE); setRecommendations([]); setCompleted(false); setProfileSummary(''); setStepIndex(0) }}>
             Repetir quiz
           </Button>
         </div>
