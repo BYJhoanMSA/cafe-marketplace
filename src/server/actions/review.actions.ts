@@ -34,6 +34,8 @@ export interface ReviewsResult {
   reviews: ReviewItem[]
   hasReviewed: boolean
   myReviewStatus?: 'approved' | 'pending' | 'rejected'
+  /** Nombre del usuario logueado (para prellenar el formulario) */
+  sessionName?: string | null
 }
 
 function formatDateLabel(date: Date): string {
@@ -45,10 +47,14 @@ function formatDateLabel(date: Date): string {
   return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-async function getVisitorId(): Promise<{ userId: string | null; guestId: string | null }> {
+async function getVisitorId(): Promise<{
+  userId: string | null
+  guestId: string | null
+  sessionName: string | null
+}> {
   const session = await auth()
   if (session?.user?.id) {
-    return { userId: session.user.id, guestId: null }
+    return { userId: session.user.id, guestId: null, sessionName: session.user.name ?? null }
   }
 
   const cookieStore = await cookies()
@@ -62,7 +68,7 @@ async function getVisitorId(): Promise<{ userId: string | null; guestId: string 
       maxAge: 60 * 60 * 24 * 365, // 1 año
     })
   }
-  return { userId: null, guestId }
+  return { userId: null, guestId, sessionName: null }
 }
 
 function toReviewItem(review: {
@@ -83,7 +89,7 @@ function toReviewItem(review: {
 
 /** Reseñas aprobadas de un producto + si el visitante actual ya reseñó */
 export async function getProductReviews(productId: string): Promise<ReviewsResult> {
-  const { userId, guestId } = await getVisitorId()
+  const { userId, guestId, sessionName } = await getVisitorId()
 
   const [reviews, myReview] = await Promise.all([
     prisma.review.findMany({
@@ -109,6 +115,7 @@ export async function getProductReviews(productId: string): Promise<ReviewsResul
     reviews: reviews.map(toReviewItem),
     hasReviewed: Boolean(myReview),
     myReviewStatus: myReview?.status as 'approved' | 'pending' | 'rejected' | undefined,
+    sessionName,
   }
 }
 

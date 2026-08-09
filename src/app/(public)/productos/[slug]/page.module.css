@@ -18,6 +18,7 @@
 @media (min-width: 1024px) {
   .container {
     flex-direction: row;
+    flex-wrap: wrap;
     gap: var(--space-16);
     padding: var(--space-12) var(--space-10);
   }
@@ -345,4 +346,17 @@
   padding: var(--space-20) 0;
   color: var(--color-ink-tertiary);
   font-size: var(--text-lg);
+}
+
+/* ================================================================
+   RESEÑAS — sección de ancho completo al final de la página
+   ================================================================ */
+.reviewsWrap {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .reviewsWrap {
+    flex-basis: 100%;
+  }
 }

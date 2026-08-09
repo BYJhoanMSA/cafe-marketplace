@@ -3,7 +3,7 @@
 // src/app/(public)/productos/[slug]/page.tsx
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect, useCallback, use } from 'react'
+import { useState, useEffect, useCallback, use, useRef } from 'react'
 import { Star, Heart, Share2, ArrowLeft, MessageCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { LogoCafeIcon } from '@/components/ui/Icons/NavIcons'
@@ -13,7 +13,7 @@ import { incrementSocialCount } from '@/server/actions/social.actions'
 import { getProductBySlug } from '@/server/actions/catalog.actions'
 import type { ProductDetail, ProductGrindOption, ProductVariant } from '@/server/actions/catalog.actions'
 import { EscudoDatos, CartaTostador, EscudoCompra } from '@/components/product/EscudoDatos'
-import { ReviewDrawer } from '@/components/product/MobileFeed/ReviewDrawer'
+import { ReviewsSection } from '@/components/product/ReviewsSection'
 import styles from './page.module.css'
 
 interface SelectedVariant {
@@ -73,7 +73,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [quantity, setQuantity] = useState(1)
   const [favorites, setFavorites] = useState(product?.favoritesCount ?? 0)
   const [shares, setShares] = useState(product?.sharesCount ?? 0)
-  const [reviewsOpen, setReviewsOpen] = useState(false)
+  const reviewsSectionRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (!product) return
@@ -187,6 +187,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
+    <>
     <div key={product.id} className={styles.container}>
       <div style={{ marginBottom: 'var(--space-4)' }}>
         <Link 
@@ -274,7 +275,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <Share2 size={14} />
               </button>
               <button
-                onClick={() => setReviewsOpen(true)}
+                onClick={() => reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '6px',
                   background: 'none', border: '1px solid var(--color-border-default)',
@@ -411,14 +412,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
       </section>
+      </div>
 
-      <ReviewDrawer
-        isOpen={reviewsOpen}
-        onClose={() => setReviewsOpen(false)}
-        productName={product.title}
-        productId={product.id}
-        position="right"
-      />
-    </div>
+      {/* RESEÑAS */}
+      <div className={styles.reviewsWrap}>
+        <ReviewsSection
+          sectionRef={reviewsSectionRef}
+          productId={product.id}
+          productName={product.title}
+        />
+      </div>
+    </>
   )
 }

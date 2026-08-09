@@ -1,0 +1,206 @@
+/* src/components/product/ReviewsSection.module.css */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: var(--text-2xl);
+  color: var(--color-ink-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-xs);
+  color: var(--color-ink-tertiary);
+  margin: 0;
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.reviewCard {
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.reviewTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.reviewAuthor {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-ink-primary);
+}
+
+.reviewDate {
+  font-size: var(--text-xs);
+  color: var(--color-ink-tertiary);
+  white-space: nowrap;
+}
+
+.reviewStars {
+  display: flex;
+  gap: 2px;
+}
+
+.reviewBody {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.emptyBox {
+  text-align: center;
+  padding: var(--space-8) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.empty {
+  font-size: var(--text-sm);
+  color: var(--color-ink-tertiary);
+  margin: 0;
+}
+
+.alreadyReviewed {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.formLabel {
+  font-size: var(--text-xs);
+  color: var(--color-ink-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.input {
+  flex: 1;
+  min-width: 160px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-primary);
+  color: var(--color-ink-primary);
+  font-family: var(--font-secondary);
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+.starPicker {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.starButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.textareaWrap {
+  position: relative;
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-primary);
+  color: var(--color-ink-primary);
+  font-family: var(--font-secondary);
+  font-size: var(--text-sm);
+  resize: none;
+  outline: none;
+  line-height: var(--leading-relaxed);
+}
+
+.counter {
+  position: absolute;
+  bottom: var(--space-1);
+  right: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-ink-tertiary);
+}
+
+.error {
+  font-size: var(--text-xs);
+  color: var(--terra-600);
+  margin: 0;
+}
+
+.submitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  transition: var(--transition-normal);
+}
+
+.submitButton:disabled {
+  background-color: var(--color-bg-elevated-2);
+  color: var(--color-ink-tertiary);
+  cursor: not-allowed;
+}
+
+.submitButton:not(:disabled) {
+  background-color: var(--color-interactive);
+  color: var(--color-ink-inverted);
+}
