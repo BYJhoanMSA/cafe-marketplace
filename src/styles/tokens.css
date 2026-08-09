@@ -267,12 +267,13 @@
   --font-weight-semibold: 600;
   --font-weight-bold:     700;
 
-  /* Escala modular basada en los tamaños de styledk (1.25 Major Third) */
-  --text-xs:      0.75rem;    /* 12px */
-  --text-sm:      0.9rem;     /* 14.4px */
-  --text-base:    1.15rem;    /* 18.4px — cuerpo de styledk (NUNCA <16px en inputs) */
-  --text-md:      1.3rem;     /* 20.8px */
-  --text-lg:      1.45rem;    /* 23.2px */
+  /* Escala modular basada en los tamaños de styledk (1.25 Major Third)
+     Cuerpo desplazado un nivel hacia arriba; títulos (xl+) sin cambios. */
+  --text-xs:      0.9rem;     /* 14.4px */
+  --text-sm:      1.15rem;    /* 18.4px */
+  --text-base:    1.3rem;     /* 20.8px — cuerpo (NUNCA <16px en inputs) */
+  --text-md:      1.45rem;    /* 23.2px */
+  --text-lg:      1.55rem;    /* 24.8px — mantiene jerarquía bajo xl */
   --text-xl:      1.65rem;    /* 26.4px */
   --text-2xl:     2.1rem;     /* 33.6px */
   --text-3xl:     2.65rem;    /* 42.4px */

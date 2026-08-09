@@ -186,7 +186,7 @@
   border-radius: var(--radius-pill);
   background-color: var(--gold-500);
   color: var(--neutral-900);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: var(--font-weight-bold);
   display: flex;
   align-items: center;
@@ -321,7 +321,7 @@
 
 .tabLabel {
   font-family: var(--font-secondary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: var(--font-weight-medium);
   line-height: 1;
   letter-spacing: 0.02em;
@@ -363,7 +363,7 @@
 
 .tabCenterLabel {
   font-family: var(--font-secondary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-ink-primary);
   line-height: 1;
