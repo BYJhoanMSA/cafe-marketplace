@@ -2,7 +2,6 @@
 
 // src/components/layout/Footer/Footer.tsx
 import Link from 'next/link'
-import { useState } from 'react'
 import { Ornament } from '@/components/ui/Ornament'
 import { BrandIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './Footer.module.css'
@@ -14,12 +13,20 @@ const FOOTER_LINKS = [
       { href: '/', label: 'Inicio' },
       { href: '/catalogo', label: 'Catálogo de Cafés' },
       { href: '/origenes', label: 'Orígenes' },
-      { href: '/envio', label: 'Estrategia de Envío' },
-      { href: '/pqr', label: 'Centro de Ayuda' },
+      { href: '/tostadores', label: 'Tostadores' },
     ],
   },
   {
-    title: 'Información',
+    title: 'Ayuda',
+    links: [
+      { href: '/envio', label: 'Estrategia de Envío' },
+      { href: '/pqr', label: 'Centro de Ayuda' },
+      { href: '/nosotros', label: 'Nosotros' },
+      { href: '/buscar', label: 'Buscar' },
+    ],
+  },
+  {
+    title: 'Catálogo',
     links: [
       { href: '/catalogo?tueste=light', label: 'Tueste Ligero' },
       { href: '/catalogo?tueste=medium', label: 'Tueste Medio' },
@@ -27,20 +34,18 @@ const FOOTER_LINKS = [
       { href: '/catalogo?nota=chocolatoso', label: 'Notas Chocolatosas' },
     ],
   },
+  {
+    title: 'Cuenta',
+    links: [
+      { href: '/auth/login', label: 'Iniciar sesión' },
+      { href: '/auth/registro', label: 'Crear cuenta' },
+      { href: '/favoritos', label: 'Favoritos' },
+      { href: '/perfil-de-sabor', label: 'Perfil de sabor' },
+    ],
+  },
 ]
 
 export function Footer() {
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
-
-  async function handleSubscribe(e: React.FormEvent) {
-    e.preventDefault()
-    if (!email) return
-    // TODO: conectar con Resend/lista de correos
-    setSubscribed(true)
-    setEmail('')
-  }
-
   const year = new Date().getFullYear()
 
   return (
@@ -93,37 +98,6 @@ export function Footer() {
                 X
               </a>
             </div>
-          </div>
-
-          {/* Newsletter */}
-          <div className={styles.newsletter}>
-            <h2 className={styles.newsletterTitle}>
-              El mundo del café, en tu bandeja
-            </h2>
-            <p className={styles.newsletterDesc}>
-              Nuevos orígenes, guías de preparación y ofertas exclusivas cada semana.
-              Sin spam, solo café.
-            </p>
-            {subscribed ? (
-              <p style={{ color: 'var(--forest-300)', fontSize: 'var(--text-sm)' }}>
-                ✓ ¡Suscrito! Revisa tu email para confirmar.
-              </p>
-            ) : (
-              <form className={styles.newsletterForm} onSubmit={handleSubscribe}>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@email.com"
-                  className={styles.newsletterInput}
-                  required
-                  aria-label="Tu dirección de email"
-                />
-                <button type="submit" className={styles.newsletterButton}>
-                  Suscribirse
-                </button>
-              </form>
-            )}
           </div>
         </div>
 
