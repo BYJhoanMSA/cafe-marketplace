@@ -107,8 +107,10 @@
   --escudo-label: var(--gold-700);
   --escudo-border: color-mix(in srgb, var(--gold-700) 55%, transparent);
   --escudo-rule: color-mix(in srgb, var(--gold-700) 25%, transparent);
-  --escudo-shade-strong: var(--neutral-800);
-  --escudo-shade-soft: var(--gold-900);
+  --escudo-active-bg: linear-gradient(180deg, var(--gold-500) 0%, var(--gold-700) 100%);
+  --escudo-active-border: var(--gold-900);
+  --escudo-shade-strong: var(--neutral-950);
+  --escudo-shade-soft: var(--neutral-950);
 
   /* Banner de marca (selector de sabor / orígenes) — Light: pergamino claro */
   --banner-bg: linear-gradient(135deg, var(--neutral-100), var(--neutral-200));
@@ -199,6 +201,8 @@
   --escudo-label: var(--gold-300);
   --escudo-border: color-mix(in srgb, var(--gold-500) 50%, transparent);
   --escudo-rule: color-mix(in srgb, var(--gold-500) 22%, transparent);
+  --escudo-active-bg: linear-gradient(180deg, var(--neutral-900), var(--neutral-950));
+  --escudo-active-border: var(--gold-300);
   --escudo-shade-strong: var(--neutral-0);
   --escudo-shade-soft: var(--gold-300);
 
