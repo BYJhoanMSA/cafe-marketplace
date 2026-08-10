@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { FavoritesProvider } from '@/context/FavoritesContext'
 import { CartDrawer } from '@/components/cart/CartDrawer'
+import { SessionProvider } from '@/components/providers/SessionProvider'
 
 // ============================================================
 // Fuentes — tipografía de styledk (Casa del Cafeto), cargadas
@@ -134,12 +135,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <FavoritesProvider>
-          <CartProvider>
-            {children}
-            <CartDrawer />
-          </CartProvider>
-        </FavoritesProvider>
+        <SessionProvider>
+          <FavoritesProvider>
+            <CartProvider>
+              {children}
+              <CartDrawer />
+            </CartProvider>
+          </FavoritesProvider>
+        </SessionProvider>
       </body>
     </html>
   )

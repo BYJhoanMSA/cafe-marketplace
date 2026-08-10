@@ -74,9 +74,11 @@ const nextConfig: NextConfig = {
 
   compress: true,
 
-  experimental: {
-    cpus: 1,
-  },
+  // Limitar CPUs a 1 ralentiza muchísimo el build en VPS con varios cores.
+  // Sin este ajuste Next usa todos los cores disponibles para compilar.
+  // experimental: {
+  //   cpus: 1,
+  // },
 
   logging: {
     fetches: {

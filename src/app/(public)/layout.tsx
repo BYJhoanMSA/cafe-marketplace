@@ -3,20 +3,18 @@
 // Las rutas de admin y auth tienen su propio layout
 
 import type { ReactNode } from 'react'
-import { Navbar } from '@/components/layout/Navbar'
+import { NavbarWithSession } from '@/components/layout/Navbar/NavbarWithSession'
 import { Footer } from '@/components/layout/Footer'
 import { PublicLayoutClient } from './PublicLayoutClient'
-import { auth } from '@/lib/auth'
 
-export default async function PublicLayout({ children }: { children: ReactNode }) {
-  // Obtener sesión del servidor para pasar datos al Navbar
-  const session = await auth()
-
+// NOTA: este layout es un Server Component sin ninguna lectura dinámica
+// (sin cookies()/auth()/headers()), por lo que las páginas públicas se
+// prerenderizan con ISR y se sirven desde caché en lugar de streamearse en
+// cada request. La sesión se lee en el cliente (NavbarWithSession).
+export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <PublicLayoutClient>
-      <Navbar
-        userName={session?.user?.name ?? null}
-      />
+      <NavbarWithSession />
       <main id="main-content" tabIndex={-1}>
         {children}
       </main>
