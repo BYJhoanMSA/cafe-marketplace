@@ -1,8 +1,11 @@
 /* src/app/(public)/envio/page.module.css */
 
+/* ================================================================
+   HERO
+   ================================================================ */
 .hero {
   position: relative;
-  min-height: 50vh;
+  min-height: 62vh;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -26,6 +29,18 @@
   pointer-events: none;
 }
 
+/* Grano procedimental sutil — materialidad tipo grabado */
+.heroGrain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
 .heroContent {
   position: relative;
   z-index: 2;
@@ -33,11 +48,21 @@
   margin-inline: auto;
   padding: var(--space-20) var(--space-6);
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
 }
 
 @media (min-width: 768px) {
   .heroContent {
     padding: var(--space-24) var(--space-10);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroContent {
+    padding: var(--space-32) var(--space-16);
   }
 }
 
@@ -51,7 +76,6 @@
   letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--gold-300);
-  margin-bottom: var(--space-4);
 }
 
 .heroEyebrowLine {
@@ -62,12 +86,11 @@
 
 .heroTitle {
   font-family: var(--font-primary);
-  font-size: clamp(2.2rem, 6vw, var(--text-5xl));
+  font-size: clamp(2.5rem, 7vw, var(--text-display));
   font-weight: var(--font-weight-regular);
   color: var(--neutral-0);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
-  margin-bottom: var(--space-4);
 }
 
 .heroSubtitle {
@@ -78,6 +101,15 @@
   max-width: 560px;
 }
 
+.heroOrnament {
+  max-width: 220px;
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+/* ================================================================
+   SECCIONES
+   ================================================================ */
 .section {
   padding: var(--padding-section);
 }
@@ -129,101 +161,17 @@
   font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
   color: var(--color-ink-primary);
   line-height: var(--leading-tight);
-  margin-bottom: var(--space-3);
 }
 
-.sectionSubtitle {
-  font-family: var(--font-primary);
-  font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
-  color: var(--color-accent-primary);
-  line-height: var(--leading-relaxed);
-  margin-top: var(--space-2);
+/* Ornamento bajo los títulos de sección (identidad "Casa del Cafeto") */
+.sectionOrnament {
+  width: 88px;
+  margin-top: var(--space-3);
 }
 
-.textContent {
-  max-width: 720px;
-}
-
-.textContent p {
-  font-size: var(--text-base);
-  color: var(--color-ink-secondary);
-  line-height: var(--leading-relaxed);
-  margin-bottom: var(--space-4);
-}
-
-.textContent h4 {
-  font-family: var(--font-secondary);
-  font-size: var(--text-md);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-primary);
-  margin-top: var(--space-6);
-  margin-bottom: var(--space-2);
-}
-
-.textContent p:last-child {
-  margin-bottom: 0;
-}
-
-.valueGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-6);
-}
-
-@media (min-width: 640px) {
-  .valueGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .valueGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.valueCard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-6);
-  background-color: var(--color-bg-elevated);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-xl);
-  transition: box-shadow var(--duration-moderate) var(--ease-out),
-              border-color var(--duration-moderate) var(--ease-out);
-}
-
-.valueCard:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-border-strong);
-}
-
-.valueIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-lg);
-  background-color: var(--gold-500);
-  color: var(--neutral-900);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.valueTitle {
-  font-family: var(--font-secondary);
-  font-size: var(--text-md);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-primary);
-}
-
-.valueDesc {
-  font-size: var(--text-sm);
-  color: var(--color-ink-secondary);
-  line-height: var(--leading-relaxed);
-}
-
-/* Alert banner */
+/* ================================================================
+   AVISO IMPORTANTE
+   ================================================================ */
 .alertBanner {
   background-color: var(--color-accent-primary);
   padding: var(--space-6) 0;
@@ -266,7 +214,9 @@
   }
 }
 
-/* Process steps */
+/* ================================================================
+   PROCESO LOGÍSTICO (paso a paso)
+   ================================================================ */
 .processList {
   display: flex;
   flex-direction: column;
@@ -333,4 +283,388 @@
   font-size: var(--text-sm);
   color: var(--color-ink-secondary);
   line-height: var(--leading-relaxed);
+}
+
+/* ================================================================
+   COBERTURA Y TRANSPORTADORAS
+   ================================================================ */
+.coverageRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .coverageRow {
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--space-12);
+  }
+}
+
+.coverageNote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.coverageNote p {
+  font-size: var(--text-base);
+  color: var(--color-ink-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.coverageIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background-color: var(--gold-500);
+  color: var(--neutral-900);
+}
+
+.carrierGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .carrierGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.carrierCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  transition:
+    box-shadow var(--duration-moderate) var(--ease-out),
+    border-color var(--duration-moderate) var(--ease-out);
+}
+
+.carrierCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-strong);
+}
+
+.carrierIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  background-color: var(--gold-100);
+  color: var(--gold-700);
+}
+
+[data-theme="dark"] .carrierIcon {
+  background-color: rgba(230, 168, 23, 0.14);
+  color: var(--gold-400);
+}
+
+.carrierTitle {
+  font-family: var(--font-secondary);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+}
+
+.carrierDesc {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ================================================================
+   TIEMPOS DE ENTREGA
+   ================================================================ */
+.timesCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 720px;
+  padding: var(--space-6);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-left: 3px solid var(--color-accent-primary);
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+}
+
+.timesCard p {
+  font-size: var(--text-base);
+  color: var(--color-ink-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-3);
+}
+
+.timesCard p:last-child {
+  margin-bottom: 0;
+}
+
+.timesIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background-color: var(--gold-500);
+  color: var(--neutral-900);
+}
+
+.timesClosing {
+  font-family: var(--font-primary);
+  font-size: var(--text-lg);
+  color: var(--color-ink-primary);
+  font-style: italic;
+  margin-top: var(--space-2);
+}
+
+/* ================================================================
+   GARANTÍAS DEL ENVÍO
+   ================================================================ */
+.valueGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .valueGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .valueGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.valueCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  transition:
+    box-shadow var(--duration-moderate) var(--ease-out),
+    border-color var(--duration-moderate) var(--ease-out);
+}
+
+.valueCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-strong);
+}
+
+.valueIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background-color: var(--gold-500);
+  color: var(--neutral-900);
+}
+
+.valueTitle {
+  font-family: var(--font-secondary);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+}
+
+.valueDesc {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ================================================================
+   BANNER CTA
+   ================================================================ */
+.banner {
+  position: relative;
+  background: var(--banner-bg);
+  padding: var(--padding-section);
+  text-align: center;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .banner {
+    padding: var(--padding-section-sm);
+  }
+}
+
+.bannerBg {
+  position: absolute;
+  inset: 0;
+  background: var(--banner-glow);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.bannerInner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-width-content);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .bannerInner {
+    padding-inline: var(--space-10);
+  }
+}
+
+.bannerTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+  color: var(--banner-title);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-4);
+}
+
+.bannerText {
+  font-size: var(--text-lg);
+  color: var(--banner-text);
+  line-height: var(--leading-relaxed);
+  max-width: 640px;
+  margin-inline: auto;
+  margin-bottom: var(--space-8);
+}
+
+.bannerCTA {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--padding-button-lg);
+  background-color: var(--gold-500);
+  color: var(--neutral-950);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-base);
+  text-decoration: none;
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+.bannerCTA:hover {
+  background-color: var(--gold-300);
+  transform: translateY(-1px);
+}
+
+/* ================================================================
+   MARQUESINA DE MARCA — ticker decorativo
+   ================================================================ */
+.marquee {
+  overflow: hidden;
+  padding: var(--space-6) 0;
+  background-color: var(--color-bg-secondary);
+  border-block: 1px solid var(--color-border-default);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 36s var(--ease-linear) infinite;
+}
+
+.marqueeTrack:hover {
+  animation-play-state: paused;
+}
+
+.marqueeGroup {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marqueeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding-inline: var(--space-6);
+  font-family: var(--font-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+  white-space: nowrap;
+}
+
+.marqueeItem::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background-color: var(--gold-500);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    display: none;
+  }
+}
+
+/* ================================================================
+   REVELADO AL HACER SCROLL — scroll-driven animations nativas
+   ================================================================ */
+@supports (animation-timeline: view()) {
+  .sectionHeader,
+  .banner {
+    animation: reveal-up var(--duration-deliberate) var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  .valueGrid > *,
+  .carrierGrid > * {
+    animation: reveal-fade var(--duration-slow) var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 6% entry 40%;
+  }
+
+  .valueGrid > *:nth-child(2),
+  .carrierGrid > *:nth-child(2) { animation-range: entry 13% entry 47%; }
+
+  .valueGrid > *:nth-child(3),
+  .carrierGrid > *:nth-child(3) { animation-range: entry 20% entry 54%; }
+
+  .valueGrid > *:nth-child(4) { animation-range: entry 27% entry 61%; }
+}
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reveal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

@@ -1,18 +1,16 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import {
   Heart,
-  Users,
-  Leaf,
-  Package,
-  Camera,
+  Clock,
   Truck,
   MessageSquare,
-  Clock,
   Shield,
   Mail,
   Phone,
-  CheckCircle,
+  Users,
 } from 'lucide-react'
+import { Ornament } from '@/components/ui/Ornament'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -20,6 +18,16 @@ export const metadata: Metadata = {
   description:
     'Bienvenido a nuestro Centro de Ayuda. Resuelve tus dudas sobre compras, envios, tiempos y mas.',
 }
+
+// Marquesina decorativa de marca (solo visual)
+const MARQUEE_ITEMS = [
+  'Cómo funciona la compra',
+  'Compras transparentes',
+  'Pagos confirmados',
+  'Envíos con seguimiento',
+  'Atención humana',
+  'Resolvemos tus dudas',
+]
 
 const PROCESS_STEPS = [
   {
@@ -49,7 +57,7 @@ const PROCESS_STEPS = [
   {
     number: 5,
     title: 'Realizamos el envio',
-    desc: 'Despachamos tu pedido mediante empresas transportadoras reconocidas como Servientrega, Envia o Inter Rapidisimo. Te enviaremos una fotografia de la guia para que puedas realizar el seguimiento.',
+    desc: 'Despachamos tu pedido mediante empresas transportadoras reconocidas. Te enviaremos una fotografia de la guia para que puedas realizar el seguimiento.',
     image: 'truck',
   },
   {
@@ -98,6 +106,21 @@ const CONTACT_CHANNELS = [
   },
 ]
 
+const RELATED_LINKS = [
+  {
+    icon: Truck,
+    href: '/envio',
+    title: 'Cómo llega tu pedido',
+    desc: 'Transportadoras, cobertura y tiempos de entrega.',
+  },
+  {
+    icon: Users,
+    href: '/nosotros',
+    title: 'Quiénes somos',
+    desc: 'Nuestra visión, valores y compromiso con el café.',
+  },
+]
+
 export default function AyudaPage() {
   return (
     <>
@@ -105,6 +128,7 @@ export default function AyudaPage() {
       <section className={styles.hero}>
         <div className={styles.heroBg} />
         <div className={styles.heroDecor} />
+        <div className={styles.heroGrain} aria-hidden="true" />
         <div className={styles.heroContent}>
           <p className={styles.heroEyebrow}>
             <span className={styles.heroEyebrowLine} />
@@ -113,10 +137,22 @@ export default function AyudaPage() {
           <h1 className={styles.heroTitle}>Centro de Ayuda</h1>
           <p className={styles.heroGratitude}>Gracias por confiar en nosotros.</p>
           <p className={styles.heroSubtitle}>
-            Sabemos que comprar por internet puede generar preguntas,
-            especialmente cuando se trata de cafe artesanal y de pequenos
-            productores. Por eso hemos creado este Centro de Ayuda.
+            Aquí resuelves tus dudas sobre cómo funciona una compra, pagos,
+            envíos y lo que puedes esperar en cada etapa.
           </p>
+        </div>
+      </section>
+
+      {/* MARQUESINA DE MARCA (decorativa) */}
+      <section className={styles.marquee} aria-hidden="true">
+        <div className={styles.marqueeTrack}>
+          {[0, 1].map((dup) => (
+            <div key={dup} className={styles.marqueeGroup}>
+              {MARQUEE_ITEMS.map((item) => (
+                <span key={item} className={styles.marqueeItem}>{item}</span>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -130,64 +166,28 @@ export default function AyudaPage() {
             <div className={styles.welcomeText}>
               <h2 className={styles.welcomeTitle}>Bienvenido</h2>
               <p>
-                Aqui encontraras como funciona nuestra tienda, como realizamos los
-                envios, como procesamos los pedidos y que puedes esperar durante
-                cada etapa de tu compra.
+                Aquí encontrarás cómo funciona nuestra tienda, cómo procesamos
+                los pedidos y qué puedes esperar durante cada etapa de tu compra.
               </p>
               <p>
-                Nuestro objetivo es que siempre sepas que esta ocurriendo con tu
-                pedido. Porque creemos que la confianza se construye con informacion
-                clara y una comunicacion cercana.
+                Nuestro objetivo es que siempre sepas qué está ocurriendo con tu
+                pedido. Porque creemos que la confianza se construye con
+                información clara y una comunicación cercana.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* PHILOSOPHY */}
-      <section className={styles.philosophySection}>
-        <div className={styles.sectionInner}>
-          <div className={styles.splitLayout}>
-            <div className={styles.splitImage}>
-              <div className={styles.philosophyIllustration} />
-            </div>
-            <div className={styles.splitText}>
-              <p className={styles.sectionEyebrow}>Nuestra filosofia</p>
-              <h2 className={styles.sectionTitle}>
-                Por que nuestra tienda funciona diferente?
-              </h2>
-              <p>
-                No somos un almacen con miles de productos esperando en una bodega.
-              </p>
-              <p>
-                Somos un puente entre personas que aman el cafe y pequenos
-                productores que han construido su propia marca.
-              </p>
-              <div className={styles.highlight}>
-                Cada cafe tiene una historia. Cada productor tiene sus propios
-                tiempos. Y nosotros respetamos ese proceso.
-              </div>
-              <p>
-                Por eso verificamos personalmente la disponibilidad de cada producto
-                antes de solicitar cualquier pago. Puede parecer un paso adicional,
-                pero preferimos confirmar primero y cobrar despues.
-              </p>
-              <p className={styles.boldText}>
-                Creemos que esa es la forma mas honesta de hacer comercio.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PROCESS */}
+      {/* PROCESO DE COMPRA */}
       <section className={`${styles.section} ${styles.sectionAlt}`}>
         <div className={styles.sectionInner}>
-          <div className={styles.sectionHeader}>
+          <div className={styles.sectionHeaderCentered}>
             <p className={styles.sectionEyebrow}>Proceso</p>
             <h2 className={styles.sectionTitle}>
-              Como funciona una compra?
+              Cómo funciona una compra?
             </h2>
+            <Ornament className={styles.sectionOrnamentCentered} />
           </div>
           <div className={styles.processGrid}>
             {PROCESS_STEPS.map((step) => (
@@ -205,6 +205,33 @@ export default function AyudaPage() {
         </div>
       </section>
 
+      {/* TEMAS RELACIONADOS */}
+      <section className={styles.section}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>También te puede interesar</p>
+            <h2 className={styles.sectionTitle}>
+              Encuentra más información
+            </h2>
+            <Ornament className={styles.sectionOrnament} />
+          </div>
+          <div className={styles.relatedGrid}>
+            {RELATED_LINKS.map((link) => (
+              <Link key={link.href} href={link.href} className={styles.relatedCard}>
+                <span className={styles.relatedIcon}>
+                  <link.icon size={22} strokeWidth={1.8} />
+                </span>
+                <div className={styles.relatedText}>
+                  <h3 className={styles.relatedTitle}>{link.title}</h3>
+                  <p className={styles.relatedDesc}>{link.desc}</p>
+                </div>
+                <span className={styles.relatedArrow} aria-hidden="true">→</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className={styles.section}>
         <div className={styles.sectionInner}>
@@ -213,6 +240,7 @@ export default function AyudaPage() {
             <h2 className={styles.sectionTitle}>
               Todo lo que necesitas saber
             </h2>
+            <Ornament className={styles.sectionOrnamentCentered} />
           </div>
           <div className={styles.faqGrid}>
             {FAQ_ITEMS.map((item) => (
@@ -228,7 +256,7 @@ export default function AyudaPage() {
         </div>
       </section>
 
-      {/* PROMISE */}
+      {/* PROMESA */}
       <section className={styles.promiseSection}>
         <div className={styles.promiseBg} />
         <div className={styles.sectionInner}>
@@ -236,19 +264,15 @@ export default function AyudaPage() {
             <Heart size={32} className={styles.promiseHeart} />
             <h2 className={styles.promiseTitle}>Nuestra promesa</h2>
             <p>
-              Queremos que disfrutes un excelente cafe, pero tambien una
+              Queremos que disfrutes un excelente café, pero también una
               excelente experiencia.
             </p>
             <p>
-              No buscamos ser la tienda mas rapida de internet. Queremos ser una
-              de las mas transparentes, cercanas y confiables.
-            </p>
-            <p>
-              Porque detras de cada paquete hay un productor, una historia y
-              personas comprometidas con hacer las cosas bien.
+              No buscamos ser la tienda más rápida de internet. Queremos ser una
+              de las más transparentes, cercanas y confiables.
             </p>
             <p className={styles.promiseClosing}>
-              Gracias por apoyar el cafe colombiano y por permitirnos acompanarte
+              Gracias por apoyar el café colombiano y por permitirnos acompañarte
               en este recorrido.
             </p>
           </div>
@@ -260,7 +284,8 @@ export default function AyudaPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHeaderCentered}>
             <p className={styles.sectionEyebrow}>Contacto</p>
-            <h2 className={styles.sectionTitle}>Escribenos cuando quieras</h2>
+            <h2 className={styles.sectionTitle}>Escríbenos cuando quieras</h2>
+            <Ornament className={styles.sectionOrnamentCentered} />
           </div>
           <div className={styles.contactGrid}>
             {CONTACT_CHANNELS.map((ch) => (
