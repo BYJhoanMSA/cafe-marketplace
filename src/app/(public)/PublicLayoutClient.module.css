@@ -1,0 +1,10 @@
+/* Contenedor del buscador global — solo visible en la versión móvil */
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobileOnly {
+    display: block;
+  }
+}
