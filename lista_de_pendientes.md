@@ -48,9 +48,9 @@ En la consola de desarrollo del servidor se observaron peticiones fallidas (404)
 
 De la lista original de módulos del panel administrativo, quedan pendientes por programar:
 
-- [ ] **Módulo 6: Clientes** (Gestión de usuarios consumidores y compras acumuladas).
-- [ ] **Módulo 7: Usuarios Staff** (Cuentas de administradores y operadores).
-- [ ] **Módulo 8: Roles** (Permisos y control de acceso RBAC).
+- [x] **Módulo 6: Clientes** (Gestión de usuarios consumidores y compras acumuladas). — Implementado: `/admin/clientes` (+ detalle `[id]`).
+- [x] **Módulo 7: Usuarios Staff** (Cuentas de administradores y operadores). — Implementado: `/admin/usuarios` (+ nuevo/editar y resetear contraseña).
+- [x] **Módulo 8: Roles** (Permisos y control de acceso RBAC). — Implementado: `/admin/roles` (matriz desde `src/server/auth/roles.ts` + conteos de `users.role`). *(Pendiente de revisión: sin tablas nuevas en la DB.)*
 - [ ] **Módulo 9: Reportes** (Analíticas de ventas, productos más vendidos).
 - [ ] **Módulo 10: Configuraciones** (Ajustes de tienda, teléfono de WhatsApp, textos globales).
 - [ ] **Módulo 11: Logs** (Registro de auditoría de cambios del sistema).

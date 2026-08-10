@@ -182,7 +182,7 @@ Tipos compartidos en `src/types` (interfaces de recorrido y datos de entrada).
 
 ## Pendientes
 
-- [ ] **Dashboard de clientes, usuarios y roles**: no existe página en el panel de administración para gestionar **clientes** (consumidores y compras), **usuarios** (staff) ni **roles** (RBAC). Corresponde a los Módulos 6–8 del roadmap (ver `lista_de_pendientes.md`).
+- [x] **Dashboard de clientes, usuarios y roles** — implementado (pendiente de revisión): `/admin/clientes` (clientes + agregados de compra), `/admin/usuarios` (staff admin/vendor + resetear contraseña) y `/admin/roles` (matriz RBAC derivada de `src/server/auth/roles.ts` + conteos reales de `users.role`). Sin cambios de schema en producción.
 
 ---
 
