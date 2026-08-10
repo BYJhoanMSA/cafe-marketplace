@@ -689,3 +689,58 @@ model StoreSettings {
   @@index([group])
   @@map("store_settings")
 }
+
+// =============================================================================
+// TURISMO — Recorridos turísticos (independientes del catálogo de café)
+// =============================================================================
+// Los recorridos los sube únicamente el rol admin. El contacto de reserva es
+// un único número de WhatsApp del negocio (NEXT_PUBLIC_WHATSAPP_NUMBER).
+
+// status/activo: activo (true) | inactivo (false)
+model RecorridoTuristico {
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  nombre           String    @db.VarChar(160)
+  slug             String    @unique @db.VarChar(180)
+  descripcionCorta String    @db.VarChar(140)
+  descripcion      String    @db.Text
+  precio           Int // pesos (sin centavos)
+  precioOriginal   Int? // pesos (para mostrar descuento, sin centavos)
+  region           String    @db.VarChar(80)
+  municipio        String    @db.VarChar(120)
+  vereda           String?   @db.VarChar(120)
+  duracion         String?   @db.VarChar(60)
+  dificultad       String?   @db.VarChar(20) // baja | media | alta
+  capacidad        Int? // personas
+  incluye          String?   @db.Text // JSON array de strings
+  noIncluye        String?   @db.Text // JSON array de strings
+  itinerario       String?   @db.Text // JSON array de pasos
+  imagen           String    @db.VarChar(500) // URL principal (Cloudinary)
+  destacado        Boolean   @default(false)
+  activo           Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  imagenes RecorridoImagen[]
+
+  @@index([activo])
+  @@index([region])
+  @@index([municipio])
+  @@index([destacado])
+  @@index([deletedAt])
+  @@map("recorridos_turisticos")
+}
+
+// Imágenes de la galería del recorrido (posición 0 = principal)
+model RecorridoImagen {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  recorridoId String   @db.VarChar(36)
+  url         String   @db.VarChar(500)
+  orden       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  recorrido RecorridoTuristico @relation(fields: [recorridoId], references: [id], onDelete: Cascade)
+
+  @@index([recorridoId, orden])
+  @@map("recorridos_imagenes")
+}

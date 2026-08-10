@@ -21,6 +21,15 @@ export function formatPrice(amountInCents: number, _currency?: string): string {
 }
 
 /**
+ * Formatea un monto en PESOS colombianos (sin centavos, sin decimales).
+ * El valor ya está en pesos: ej. 185000 → "$185.000".
+ * Para el módulo de turismo, cuyos precios se almacenan en pesos.
+ */
+export function formatPesos(amountInPesos: number): string {
+  return '$' + Math.round(amountInPesos).toLocaleString('es-CO')
+}
+
+/**
  * Genera un slug limpio a partir de un texto.
  * Ej: "Colombia Huila Natural" → "colombia-huila-natural"
  */

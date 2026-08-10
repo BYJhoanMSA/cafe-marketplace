@@ -1,0 +1,490 @@
+/* src/app/(public)/turismo/[slug]/page.module.css */
+
+/* ================================================================
+   HERO — imagen a sangre + overlay
+   ================================================================ */
+.hero {
+  position: relative;
+  min-height: 58vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background-color: var(--neutral-900);
+}
+
+.heroImageWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 12, 10, 0.35) 0%, rgba(15, 12, 10, 0.62) 70%, var(--neutral-950) 100%);
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: var(--max-width-content);
+  margin-inline: auto;
+  padding: var(--space-10) var(--space-6) var(--space-14);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .heroContent {
+    padding-inline: var(--space-10);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroContent {
+    padding-inline: var(--space-16);
+  }
+}
+
+/* Migas de pan */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--neutral-300);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.breadcrumbLink {
+  color: var(--neutral-200);
+  text-decoration: none;
+  transition: color var(--duration-normal) var(--ease-out);
+}
+
+.breadcrumbLink:hover {
+  color: var(--forest-300);
+}
+
+.breadcrumbCurrent {
+  color: var(--neutral-400);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.heroBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.heroTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(2rem, 6vw, var(--text-display));
+  font-weight: var(--font-weight-regular);
+  color: var(--neutral-0);
+  line-height: var(--leading-tight);
+  max-width: 760px;
+}
+
+.heroSubtitle {
+  font-family: var(--font-secondary);
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-lg));
+  color: var(--neutral-300);
+  line-height: var(--leading-relaxed);
+  max-width: 560px;
+}
+
+.heroFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.heroFact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  color: var(--neutral-200);
+}
+
+.heroFact svg {
+  color: var(--forest-300);
+}
+
+/* ================================================================
+   LAYOUT GENERAL
+   ================================================================ */
+.layout {
+  max-width: var(--max-width-content);
+  margin-inline: auto;
+  padding: var(--space-10) var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-10);
+}
+
+@media (min-width: 768px) {
+  .layout {
+    padding-inline: var(--space-10);
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    padding-inline: var(--space-16);
+    grid-template-columns: 1fr 380px;
+    gap: var(--space-14);
+  }
+}
+
+/* ================================================================
+   SECCIONES
+   ================================================================ */
+.section {
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.section:first-child {
+  padding-top: 0;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionEyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--forest-500);
+  margin-bottom: var(--space-2);
+}
+
+.sectionTitle {
+  font-family: var(--font-primary);
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+  color: var(--color-ink-primary);
+  line-height: var(--leading-tight);
+}
+
+.sectionOrnament {
+  width: 88px;
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.bodyText {
+  font-size: var(--text-base);
+  color: var(--color-ink-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 720px;
+}
+
+/* Galería */
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.galleryItem {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--neutral-100);
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Qué incluye / no incluye */
+.checkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 640px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-base);
+  color: var(--color-ink-primary);
+  line-height: var(--leading-relaxed);
+}
+
+.checkMark {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-circle);
+  background-color: var(--forest-500);
+  color: var(--neutral-0);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.crossMark {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-circle);
+  background-color: var(--neutral-200);
+  color: var(--neutral-600);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.checkItemMuted {
+  color: var(--color-ink-secondary);
+}
+
+.subTitle {
+  font-family: var(--font-secondary);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+/* Itinerario */
+.itinerario {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+}
+
+.itinerarioItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  position: relative;
+}
+
+.itinerarioItem::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 34px;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--color-border-default);
+}
+
+.itinerarioItem:last-child::before {
+  display: none;
+}
+
+.itinerarioItem:last-child {
+  padding-bottom: 0;
+}
+
+.itinerarioNumber {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-circle);
+  background-color: var(--forest-500);
+  color: var(--neutral-0);
+  font-family: var(--font-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.itinerarioText {
+  padding-top: var(--space-1);
+  font-size: var(--text-base);
+  color: var(--color-ink-primary);
+  line-height: var(--leading-relaxed);
+}
+
+/* Recorridos relacionados */
+.relatedGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .relatedGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ================================================================
+   SIDEBAR
+   ================================================================ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  align-self: start;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: var(--space-6);
+  }
+}
+
+.resumeCard,
+.formCard {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+/* Resumen de precio */
+.priceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.price {
+  font-family: var(--font-secondary);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-ink-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.comparePrice {
+  font-size: var(--text-sm);
+  color: var(--color-ink-tertiary);
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Lista de hechos */
+.factList {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-5);
+  border-top: 1px solid var(--color-border-default);
+  padding-top: var(--space-4);
+}
+
+.factTerm {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-ink-tertiary);
+}
+
+.factValue {
+  font-size: var(--text-sm);
+  color: var(--color-ink-primary);
+  text-align: right;
+  text-transform: capitalize;
+}
+
+.locationLine {
+  display: block;
+}
+
+/* Botón WhatsApp */
+.waButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--padding-button-lg);
+  background-color: var(--forest-500);
+  color: var(--neutral-0);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-base);
+  text-decoration: none;
+  transition: background-color var(--duration-normal) var(--ease-out);
+}
+
+.waButton:hover {
+  background-color: var(--forest-700);
+}
+
+[data-theme="dark"] .waButton {
+  color: var(--neutral-950);
+}
+
+/* Formulario */
+.formTitle {
+  font-family: var(--font-primary);
+  font-size: var(--text-xl);
+  color: var(--color-ink-primary);
+  margin-bottom: var(--space-1);
+}
+
+.formSubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-ink-secondary);
+  margin-bottom: var(--space-5);
+  line-height: var(--leading-relaxed);
+}

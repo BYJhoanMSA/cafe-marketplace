@@ -50,6 +50,9 @@ export const PERMISSIONS = {
   USER_MANAGE: 'users:manage',
   SETTINGS_MANAGE: 'settings:manage',
   DASHBOARD_VIEW: 'dashboard:view',
+
+  // Turismo (recorridos) — SOLO administrador general
+  TURISMO_MANAGE: 'turismo:manage',
 } as const
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
