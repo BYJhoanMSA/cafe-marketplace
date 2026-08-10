@@ -6,8 +6,7 @@ import { notFound } from 'next/navigation'
 import { MapPin, Clock, Users, ChevronRight, MessageCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { Ornament } from '@/components/ui/Ornament'
-import { RecorridoCard } from '@/components/turismo/RecorridoCard'
-import { SolicitarInfoForm } from '@/components/turismo/SolicitarInfoForm'
+import { RecorridoGallery } from '@/components/turismo/RecorridoGallery'
 import { getRecorridoBySlug, getRecorridosRelacionados } from '@/server/actions/turismo.actions'
 import { formatPesos, getImageUrl, normalizeWhatsAppNumber } from '@/lib/utils'
 import styles from './page.module.css'
@@ -131,19 +130,7 @@ export default async function RecorridoDetailPage({ params }: PageProps) {
               <p className={styles.sectionEyebrow}>Imágenes</p>
               <h2 className={styles.sectionTitle} id="galeria-title">Galería</h2>
               <Ornament className={styles.sectionOrnament} />
-              <div className={styles.gallery}>
-                {galeria.map((url, i) => (
-                  <div key={i} className={styles.galleryItem}>
-                    <Image
-                      src={getImageUrl(url, { width: 800 })}
-                      alt={`${recorrido.nombre} — imagen ${i + 1}`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                      className={styles.galleryImage}
-                    />
-                  </div>
-                ))}
-              </div>
+              <RecorridoGallery imagenes={galeria} nombre={recorrido.nombre} />
             </section>
           )}
 
@@ -195,20 +182,6 @@ export default async function RecorridoDetailPage({ params }: PageProps) {
                   </li>
                 ))}
               </ol>
-            </section>
-          )}
-
-          {/* Recorridos relacionados */}
-          {relacionados.length > 0 && (
-            <section className={styles.section} aria-labelledby="relacionados-title">
-              <p className={styles.sectionEyebrow}>También en {recorrido.region}</p>
-              <h2 className={styles.sectionTitle} id="relacionados-title">Recorridos relacionados</h2>
-              <Ornament className={styles.sectionOrnament} />
-              <div className={styles.relatedGrid}>
-                {relacionados.map((r) => (
-                  <RecorridoCard key={r.id} recorrido={r} />
-                ))}
-              </div>
             </section>
           )}
         </div>
@@ -264,17 +237,36 @@ export default async function RecorridoDetailPage({ params }: PageProps) {
             </a>
           </div>
 
-          {/* Formulario de solicitud */}
-          <div className={styles.formCard}>
-            <h3 className={styles.formTitle}>Solicitar información</h3>
-            <p className={styles.formSubtitle}>
-              Cuéntanos tu interés y te respondemos por WhatsApp.
-            </p>
-            <SolicitarInfoForm
-              recorridoNombre={recorrido.nombre}
-              recorridoSlug={recorrido.slug}
-            />
-          </div>
+          {/* Otras experiencias */}
+          {relacionados.length > 0 && (
+            <div className={styles.sideCard}>
+              <h3 className={styles.sideCardTitle}>Otras experiencias</h3>
+              <ul className={styles.sideList} role="list">
+                {relacionados.map((r) => (
+                  <li key={r.id}>
+                    <Link href={`/turismo/${r.slug}`} className={styles.sideLink}>
+                      <span className={styles.sideThumb}>
+                        <Image
+                          src={getImageUrl(r.imagen, { width: 160 })}
+                          alt=""
+                          fill
+                          sizes="64px"
+                          className={styles.sideThumbImage}
+                        />
+                      </span>
+                      <span className={styles.sideInfo}>
+                        <span className={styles.sideName}>{r.nombre}</span>
+                        <span className={styles.sideMeta}>
+                          {r.municipio} · {r.region}
+                        </span>
+                      </span>
+                      <span className={styles.sidePrice}>{formatPesos(r.precio)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </aside>
       </div>
     </>

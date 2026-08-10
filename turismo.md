@@ -12,10 +12,12 @@
   - Seed: `prisma/seed.ts` ampliado con 4 recorridos (Andina, Cafetera, Caribe, Pacífico). Aplicado a producción.
 - **F2 (9/ago)**: capa de datos `src/server/actions/turismo.actions.ts` (públicas + admin con guard `role === 'admin'`), permiso `TURISMO_MANAGE` añadido a `src/server/auth/roles.ts`. Type-check OK.
 - **F3 (9/ago)**: página pública `/turismo` (hero terra/forest, marquesina, filtros región/municipio, grid, estados vacíos) + `RecorridoCard` y `TurismoFilterBar`. Type-check OK.
-- **F4 (9/ago)**: detalle `/turismo/[slug]` (hero a sangre, galería, qué incluye/no incluye, itinerario, relacionados, sidebar con precio + WhatsApp `wa.me` + formulario `SolicitarInfoForm`) + `page.module.css`. Type-check OK.
+- **F4 (9/ago)**: detalle `/turismo/[slug]` (hero a sangre, **carrusel de fotos con auto-roll** [crossfade + Ken Burns, flechas, miniaturas] en `RecorridoGallery`, qué incluye/no incluye, itinerario, sidebar con precio + WhatsApp `wa.me`). `page.module.css`.
+  - **Cambio de diseño (9/ago)**: se eliminó el formulario `SolicitarInfoForm`; su espacio en el sidebar se usa para **"Otras experiencias"** (recorridos de la misma región con miniatura y precio). Los recorridos relacionados pasaron del grid de la columna principal al sidebar.
   - **Precios en pesos**: los precios de turismo se almacenan y muestran en **pesos colombianos sin centavos** (185000 → `$185.000`), con el formateador propio `formatPesos` en `src/lib/utils.ts` (NO se usa `formatPrice`, que asume centavos). Aplicado en card, detalle y admin. Producción sincronizada con `scratch/fix-turismo-precios.js`.
+  - **Imágenes reales en Cloudinary (9/ago)**: el seed usaba URLs placeholder inexistentes (404). Se generaron imágenes placeholder reales y se subieron a Cloudinary (`turismo/<slug>`), actualizando la BD. Las credenciales de Cloudinary pasaron a variables de entorno globales del hosting (ya no se pierden). *(El script temporal `scratch/upload-turismo-imagenes.js` se eliminó para no dejar herramienta de credenciales de producción en el repo.)*
 - **F5 (9/ago)**: CRUD admin `/admin/turismo` (listado, `nuevo`, `[id]`) con guard extra `role === 'admin'` en cada página + entrada `adminOnly: true` en `AdminShell.tsx`. Formulario `src/components/admin/RecorridoForm.tsx` (precios en pesos, galería con `ImageUploader` tipo `feature`, listas incluye/no incluye/itinerario por líneas, flags destacado/activo) y botón soft-delete `RecorridoDeleteButton.tsx`. Type-check OK.
-- **F6 (9/ago)**: enlace `{ href: '/turismo', label: 'Turismo' }` añadido a `NAV_LINKS` del Navbar desktop (y menú mobile).
+- **F6 (9/ago)**: el enlace "Turismo" se añadió a `NAV_LINKS`. Por el exceso de enlaces en el header de escritorio, se **sustituyeron los enlaces visibles por un botón hamburguesa** (icono `MenuIcon` en el estilo de `NavIcons.tsx`, botón redondeado tipo "Catálogo") que abre un panel desplegable con Catálogo, Envío, Nosotros, Turismo y Centro de Ayuda. Se cierra con Esc, clic fuera o al navegar. El menú mobile (tab bar) no cambia.
 
 **QA ejecutado (F7, parcial):**
 - `npm run type-check` ✅
@@ -26,7 +28,7 @@
 
 ## Decisiones confirmadas (9/ago/2026)
 
-1. **CTA de reserva** en el detalle: **WhatsApp + formulario de "solicitar información"**.
+1. **CTA de reserva** en el detalle: **WhatsApp** (botón "Reservar por WhatsApp" con `wa.me` y mensaje predefinido). Se descartó el formulario "solicitar información"; su espacio en el sidebar se usa para "Otras experiencias".
 2. **SIN modelo Prestador** (no existe en la base real, que usa modelos en inglés): la comunicación se hace a un **único número de WhatsApp del negocio** (`NEXT_PUBLIC_WHATSAPP_NUMBER`). Todos los recorridos los sube directamente el admin.
 3. **Seed de ejemplo**: 4 recorridos (regiones Andina, Cafetera, Caribe y Pacífico), con imágenes placeholder y precios.
 4. **Gestión SOLO admin**: únicamente el rol `admin` puede subir/crear/editar/eliminar recorridos. Ningún otro rol (ni `vendor`, ni usuarios normales) tiene acceso. Se integra en el dashboard de admin.
@@ -135,13 +137,13 @@ Tipos compartidos en `src/types` (interfaces de recorrido y datos de entrada).
 
 ## Fase 4 — Página detalle `/turismo/[slug]`
 
-- Galería de imágenes (`RecorridoImagen[]` + principal).
+- **Carrusel de fotos animado** (auto-roll con crossfade + Ken Burns, flechas, miniaturas clicables; pausa al pasar el mouse).
 - Descripción amplia.
 - Secciones: **"Qué incluye" / "Qué no incluye"**, **Itinerario**.
 - Ubicación escalonada: región → municipio → vereda.
 - Precio (y original tachado).
-- **CTA: botón WhatsApp** (`wa.me` con `NEXT_PUBLIC_WHATSAPP_NUMBER` y mensaje predefinido) + **formulario de "solicitar información"**.
-- Recorridos relacionados (misma región).
+- **CTA: botón WhatsApp** (`wa.me` con `NEXT_PUBLIC_WHATSAPP_NUMBER` y mensaje predefinido).
+- Sidebar: resumen (precio, datos, WhatsApp) + **"Otras experiencias"** (recorridos de la misma región).
 - `Metadata` SEO por slug.
 
 ---
@@ -163,9 +165,8 @@ Tipos compartidos en `src/types` (interfaces de recorrido y datos de entrada).
 
 ## Fase 6 — Navegación pública
 
-- **Navbar desktop** (`src/components/layout/Navbar/Navbar.tsx`): añadir enlace `{ href: '/turismo', label: 'Turismo' }` a `NAV_LINKS` (header desktop). Al estar en `NAV_LINKS`, también aparece en el menú mobile (`MOBILE_MENU_LINKS`).
-- **Solo un enlace pequeño**, sin icono central ni tab nuevo en la barra mobile (la tab bar se mantiene igual).
-- Comprobar que el enlace queda activo con `isActive('/turismo')`.
+- **Header desktop** (`src/components/layout/Navbar/Navbar.tsx`): se sustituyen los enlaces visibles (eran muchos: Catálogo, Envío, Nosotros, Turismo, Centro de Ayuda) por un **botón hamburguesa** (icono `MenuIcon` de `NavIcons.tsx`, botón redondeado adaptado del botón "Catálogo"). Al hacer clic se abre un panel desplegable (`desktopMenu`) con todos los enlaces; se cierra con Esc, clic fuera o al navegar.
+- **Mobile**: sin cambios — se mantiene la tab bar inferior (Inicio, Buscar, Catálogo, Favoritos, Carrito). Los enlaces del header siguen en el menú mobile (`MOBILE_MENU_LINKS`).
 
 ---
 
@@ -175,7 +176,13 @@ Tipos compartidos en `src/types` (interfaces de recorrido y datos de entrada).
 - `npm run build` (verificar script de build en package.json)
 - Lint del proyecto si existe (ver scripts en package.json)
 - Revisión visual: página principal, detalle, responsive móvil/tablet/desktop, filtros, estados vacíos, admin CRUD completo, protección de roles (vendor NO ve ni accede a `/admin/turismo`).
-- Prueba de flujo: crear recorrido desde admin → aparece en `/turismo` → detalle con CTA WhatsApp + formulario.
+- Prueba de flujo: crear recorrido desde admin → aparece en `/turismo` → detalle con CTA WhatsApp y carrusel.
+
+---
+
+## Pendientes
+
+- [ ] **Dashboard de clientes, usuarios y roles**: no existe página en el panel de administración para gestionar **clientes** (consumidores y compras), **usuarios** (staff) ni **roles** (RBAC). Corresponde a los Módulos 6–8 del roadmap (ver `lista_de_pendientes.md`).
 
 ---
 

@@ -68,6 +68,19 @@ export function CatalogIcon({ size = 36, strokeWidth = 2, stroke = 'currentColor
 }
 
 // -------------------------------------------
+// Menú (hamburguesa) — estilo línea del set de navegación
+// -------------------------------------------
+export function MenuIcon({ size = 24, strokeWidth = 2, stroke = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4.5 7h15"/>
+      <path d="M4.5 12h15"/>
+      <path d="M4.5 17h15"/>
+    </svg>
+  )
+}
+
+// -------------------------------------------
 // Logo Café (mismo diseño, defaults distintos) — Header emoji replacement
 // -------------------------------------------
 export function LogoCafeIcon({ size = 40, strokeWidth = 1, stroke = 'currentColor' }: IconProps) {

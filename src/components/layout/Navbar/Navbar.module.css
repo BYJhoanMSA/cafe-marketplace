@@ -105,18 +105,96 @@
   line-height: 1;
 }
 
-/* ---- Navegación principal ---- */
-.nav {
+/* ---- Menú hamburguesa (izquierda) ---- */
+.leftNav {
+  justify-self: start;
   display: flex;
   align-items: center;
+}
+
+.menuButton {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-elevated-2);
+  color: var(--color-ink-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+.menuButton:hover {
+  color: var(--color-ink-primary);
+  border-color: var(--color-border-strong, var(--color-border-default));
+}
+
+.menuButton:active {
+  transform: scale(0.94);
+}
+
+.menuButton:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.menuButtonOpen {
+  color: var(--color-ink-primary);
+  background-color: var(--color-bg-elevated-2);
+}
+
+/* ---- Menu desplegable desktop ---- */
+.desktopMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 280px;
+  padding: var(--space-3);
+  background-color: rgba(253, 250, 246, 0.97);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--color-border-default);
+  border-bottom: 1px solid var(--color-border-default);
+  border-bottom-right-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: menuDrop var(--duration-moderate) var(--ease-out) both;
+  z-index: 99;
+}
+
+[data-theme="dark"] .desktopMenu {
+  background-color: rgba(15, 12, 10, 0.97);
+}
+
+@keyframes menuDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.desktopMenuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-1);
 }
 
-.navLink {
-  display: inline-flex;
+.desktopMenuLink {
+  display: flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   font-family: var(--font-secondary);
   font-size: var(--text-sm);
@@ -126,17 +204,22 @@
   transition:
     color var(--duration-normal) var(--ease-out),
     background-color var(--duration-normal) var(--ease-out);
-  white-space: nowrap;
 }
 
-.navLink:hover {
+.desktopMenuLink:hover {
   color: var(--color-ink-primary);
   background-color: var(--color-bg-elevated-2);
 }
 
-.navLink.active {
+.desktopMenuLink.active {
   color: var(--color-ink-primary);
   font-weight: var(--font-weight-semibold);
+}
+
+@media (max-width: 767px) {
+  .desktopMenu {
+    display: none;
+  }
 }
 
 /* ---- Acciones (derecha) ---- */

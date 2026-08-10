@@ -1,16 +1,20 @@
 // scratch/smoke-web-node.mjs
 // Verificación UTF-8 de las páginas públicas de turismo contra un dev server.
-// Uso: node scratch/smoke-web-node.mjs http://localhost:3210
+// Uso: node scratch/smoke-web-node.mjs http://localhost:PORT
 
 const base = process.argv[2] || 'http://localhost:3210'
 const checks = [
   {
     path: '/turismo',
-    needle: ['Avistamiento', 'Ruta del Café', 'Selva del Pacífico', 'Parque del Café', 'Turismo', 'Filtros'],
+    needle: ['Avistamiento', 'Ruta del Café', 'Selva del Pacífico', 'Parque del Café', 'Turismo', 'Filtros', 'res.cloudinary.com'],
   },
   {
     path: '/turismo/ruta-del-cafe-tico',
-    needle: ['185.000', '220.000', 'Ruta del Café Tico', 'WhatsApp', 'Solicitar información', '¿Qué incluye?', 'Itinerario', 'No incluye', 'Pereira', 'Andina'],
+    needle: ['185.000', '220.000', 'Ruta del Café Tico', 'WhatsApp', 'Otras experiencias', 'Itinerario', 'No incluye', 'Pereira', 'Andina', 'thumbnail', 'res.cloudinary.com'],
+  },
+  {
+    path: '/',
+    needle: ['Turismo', 'MenuIcon', 'Cafe Seleccion'],
   },
 ]
 

@@ -10,7 +10,7 @@ import { X, Moon, Sun } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { usePillBar } from '@/components/ui/PillSelector/PillBarContext'
-import { SearchIcon, HeartIcon, CartIcon, UserIcon, HomeIcon, CatalogIcon, BrandIcon } from '@/components/ui/Icons/NavIcons'
+import { SearchIcon, HeartIcon, CartIcon, UserIcon, HomeIcon, CatalogIcon, BrandIcon, MenuIcon } from '@/components/ui/Icons/NavIcons'
 import styles from './Navbar.module.css'
 
 // ================================================================
@@ -88,6 +88,8 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
   const [searchOpen, setSearchOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
 
   // Enfocar el input de búsqueda al abrirse
   useEffect(() => {
@@ -96,10 +98,30 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
     }
   }, [searchOpen])
 
-  // Cerrar el menú mobile al navegar
+  // Cerrar los menús al navegar
   useEffect(() => {
     setMenuOpen(false)
+    setDesktopMenuOpen(false)
   }, [pathname])
+
+  // Cerrar el menú desktop con Escape o al hacer clic fuera
+  useEffect(() => {
+    if (!desktopMenuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDesktopMenuOpen(false)
+    }
+    const onClick = (e: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setDesktopMenuOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('mousedown', onClick)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('mousedown', onClick)
+    }
+  }, [desktopMenuOpen])
 
   function isActive(href: string) {
     if (href === '/') return pathname === '/'
@@ -134,26 +156,24 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
           HEADER DESKTOP
           ============================================================ */}
       <header
+        ref={headerRef}
         className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}
         role="banner"
       >
         <div className={styles.headerInner}>
-          {/* Navegación izquierda */}
-          <nav aria-label="Navegación principal">
-            <ul className={styles.nav} role="list">
-              {NAV_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`${styles.navLink} ${isActive(link.href) ? styles.active : ''}`}
-                    aria-current={isActive(link.href) ? 'page' : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {/* Menú hamburguesa (izquierda) — agrupa los enlaces del header */}
+          <div className={styles.leftNav}>
+            <button
+              type="button"
+              className={`${styles.menuButton} ${desktopMenuOpen ? styles.menuButtonOpen : ''}`}
+              onClick={() => setDesktopMenuOpen((o) => !o)}
+              aria-label={desktopMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={desktopMenuOpen}
+              aria-controls="desktop-menu"
+            >
+              {desktopMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}
+            </button>
+          </div>
 
           {/* Logo centrado */}
           <Link href="/" className={styles.logo} aria-label="Cafe Seleccion — Inicio">
@@ -237,6 +257,30 @@ export function Navbar({ cartItemCount: externalCount, userName }: NavbarProps) 
             </Link>
           </div>
         </div>
+
+        {/* MENU DESPLEGABLE DESKTOP — agrupa los enlaces del header */}
+        {desktopMenuOpen && (
+          <nav
+            id="desktop-menu"
+            className={styles.desktopMenu}
+            aria-label="Navegación principal"
+          >
+            <ul className={styles.desktopMenuList} role="list">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={`${styles.desktopMenuLink} ${isActive(link.href) ? styles.active : ''}`}
+                    onClick={() => setDesktopMenuOpen(false)}
+                    aria-current={isActive(link.href) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </header>
 
       {/* Espaciador para el contenido debajo del header fijo */}

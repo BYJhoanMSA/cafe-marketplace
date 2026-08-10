@@ -197,33 +197,6 @@
   max-width: 720px;
 }
 
-/* Galería */
-.gallery {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-}
-
-@media (min-width: 640px) {
-  .gallery {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.galleryItem {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background-color: var(--neutral-100);
-}
-
-.galleryImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 /* Qué incluye / no incluye */
 .checkList {
   list-style: none;
@@ -346,25 +319,6 @@
   line-height: var(--leading-relaxed);
 }
 
-/* Recorridos relacionados */
-.relatedGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .relatedGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 900px) {
-  .relatedGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 /* ================================================================
    SIDEBAR
    ================================================================ */
@@ -382,8 +336,7 @@
   }
 }
 
-.resumeCard,
-.formCard {
+.resumeCard {
   background-color: var(--color-bg-elevated);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xl);
@@ -474,17 +427,87 @@
   color: var(--neutral-950);
 }
 
-/* Formulario */
-.formTitle {
+/* Otras experiencias */
+.sideCard {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.sideCardTitle {
   font-family: var(--font-primary);
   font-size: var(--text-xl);
   color: var(--color-ink-primary);
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-5);
 }
 
-.formSubtitle {
+.sideList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sideLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.sideLink:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.sideThumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--neutral-100);
+}
+
+.sideThumbImage {
+  object-fit: cover;
+}
+
+.sideInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sideName {
   font-size: var(--text-sm);
-  color: var(--color-ink-secondary);
-  margin-bottom: var(--space-5);
-  line-height: var(--leading-relaxed);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sideMeta {
+  font-size: var(--text-xs);
+  color: var(--color-ink-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidePrice {
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--forest-500);
+  font-variant-numeric: tabular-nums;
 }
