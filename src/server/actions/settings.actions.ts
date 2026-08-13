@@ -143,3 +143,53 @@ export async function updateHomepageSettings(data: HomepageConfig) {
     return { success: false, error: 'Failed to update homepage settings' }
   }
 }
+
+// =============================================================================
+// Feed del catálogo — cadencia de intercalado de recorridos de turismo
+// =============================================================================
+
+export type FeedTurismoCadence = '3' | '4' | '5' | 'random'
+
+const DEFAULT_FEED_TURISMO_CADENCE: FeedTurismoCadence = '4'
+const VALID_CADENCES: FeedTurismoCadence[] = ['3', '4', '5', 'random']
+
+export async function getFeedTurismoCadence(): Promise<FeedTurismoCadence> {
+  try {
+    const setting = await prisma.storeSettings.findUnique({
+      where: { key: 'feed_turismo_cadence' }
+    })
+    if (setting && (VALID_CADENCES as string[]).includes(setting.value)) {
+      return setting.value as FeedTurismoCadence
+    }
+    return DEFAULT_FEED_TURISMO_CADENCE
+  } catch (error) {
+    console.error('Error fetching feed turismo cadence:', error)
+    return DEFAULT_FEED_TURISMO_CADENCE
+  }
+}
+
+export async function updateFeedTurismoCadence(formData: FormData): Promise<void> {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'admin') {
+    return
+  }
+
+  const value = formData.get('cadence') as string
+  if (!(VALID_CADENCES as string[]).includes(value)) {
+    return
+  }
+
+  try {
+    await prisma.storeSettings.upsert({
+      where: { key: 'feed_turismo_cadence' },
+      update: { value, group: 'catalogo' },
+      create: { key: 'feed_turismo_cadence', value, group: 'catalogo' },
+    })
+
+    // Refrescar el catálogo y la propia página de configuración
+    revalidatePath('/catalogo')
+    revalidatePath('/admin/catalogo')
+  } catch (error) {
+    console.error('Error updating feed turismo cadence:', error)
+  }
+}

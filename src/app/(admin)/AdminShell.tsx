@@ -8,7 +8,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
-import { Menu, X, Package, Tags, Box, ShoppingCart, LogOut, Home, MapPin } from 'lucide-react'
+import { Menu, X, Package, Tags, Box, ShoppingCart, LogOut, Home, MapPin, Coffee } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import styles from './AdminShell.module.css'
 
@@ -27,6 +27,7 @@ const NAV_LINKS = [
   { href: '/admin/marcas', label: 'Marcas', icon: Tags, adminOnly: false },
   { href: '/admin/inventario', label: 'Inventario', icon: Box, adminOnly: false },
   { href: '/admin/turismo', label: 'Turismo', icon: MapPin, adminOnly: true },
+  { href: '/admin/catalogo', label: 'Catálogo', icon: Coffee, adminOnly: true },
   { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingCart, adminOnly: true },
   { href: '/admin/clientes', label: 'Clientes', icon: ShoppingCart, adminOnly: true },
   { href: '/admin/usuarios', label: 'Usuarios', icon: Box, adminOnly: true },

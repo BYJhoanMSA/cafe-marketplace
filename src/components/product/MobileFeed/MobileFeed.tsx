@@ -4,12 +4,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { MobileFeedSlide } from './MobileFeedSlide'
+import { TurismoFeedSlide } from './TurismoFeedSlide'
 import { getImageUrl } from '@/lib/utils'
-import type { ProductCardData } from '../ProductCard'
+import type { FeedItem } from '@/lib/catalog-feed'
 import styles from './MobileFeed.module.css'
 
 interface MobileFeedProps {
-  products: ProductCardData[]
+  products: FeedItem[]
   onAddToCart?: (productId: string) => void
 }
 
@@ -26,7 +27,7 @@ const SCROLL_POS_KEY = 'catalogo-scroll-pos'
 const TAPPED_INDEX_KEY = 'catalogo-tapped-index'
 
 /** Lista de ids montados (ventana activa + vistos), ordenada por índice de producto */
-function buildMountedList(prev: string[], activeIndex: number, products: ProductCardData[]): string[] {
+function buildMountedList(prev: string[], activeIndex: number, products: FeedItem[]): string[] {
   const valid = new Set(products.map((p) => p.id))
   const indexOf = (id: string) => products.findIndex((p) => p.id === id)
 
@@ -89,10 +90,10 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
     [products]
   )
 
-  const openProduct = useCallback(
-    (slug: string) => {
-      saveTappedProduct(slug)
-      router.push(`/productos/${slug}`)
+  const openItem = useCallback(
+    (item: FeedItem) => {
+      saveTappedProduct(item.slug)
+      router.push(item.kind === 'turismo' ? `/turismo/${item.slug}` : `/productos/${item.slug}`)
     },
     [saveTappedProduct, router]
   )
@@ -236,8 +237,10 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
 
   // Precargar portada a alta calidad de los slides vecinos para el upgrade instantáneo
   useEffect(() => {
-    const preload = (product: ProductCardData) => {
-      const src = getImageUrl(product.imageUrl, { width: 1000 })
+    const preload = (item: FeedItem) => {
+      const src = item.kind === 'turismo'
+        ? getImageUrl(item.data.imagen, { width: 1000 })
+        : getImageUrl(item.data.imageUrl, { width: 1000 })
       const img = new Image()
       img.src = src
     }
@@ -271,19 +274,29 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
       <div style={{ height: `${firstIndex * 100}%` }} />
       {mountedIds.map((id) => {
         const realIndex = indexOf(id)
-        const product = products[realIndex]
-        if (!product) return null
+        const item = products[realIndex]
+        if (!item) return null
         return (
           <div key={id} className={styles.slide}>
-            <MobileFeedSlide
-              product={product}
-              isActive={realIndex === activeIndex}
-              settled={settled}
-              seen={seen.has(id)}
-              onAddToCart={onAddToCart}
-              onOpenProduct={openProduct}
-              onSaveTapped={saveTappedProduct}
-            />
+            {item.kind === 'turismo' ? (
+              <TurismoFeedSlide
+                recorrido={item.data}
+                isActive={realIndex === activeIndex}
+                settled={settled}
+                seen={seen.has(id)}
+                onOpenTurismo={() => openItem(item)}
+              />
+            ) : (
+              <MobileFeedSlide
+                product={item.data}
+                isActive={realIndex === activeIndex}
+                settled={settled}
+                seen={seen.has(id)}
+                onAddToCart={onAddToCart}
+                onOpenProduct={() => openItem(item)}
+                onSaveTapped={saveTappedProduct}
+              />
+            )}
           </div>
         )
       })}

@@ -266,6 +266,86 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ----------------------------------------------------------------
+   SLIDE DE TURISMO — precio con descuento, facts y botones
+   ---------------------------------------------------------------- */
+.comparePrice {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: line-through;
+}
+
+.turismoFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.turismoFact {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.turismoBuySection {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.turismoActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.waButton {
+  background-color: #25d366;
+  color: var(--neutral-900);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--padding-button-md);
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.waButton:active {
+  transform: scale(0.95);
+}
+
+.detailsButton {
+  background-color: rgba(255, 255, 255, 0.92);
+  color: var(--neutral-900);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--padding-button-md);
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.detailsButton:active {
+  transform: scale(0.95);
+}
+
 .buyButton {
   background-color: var(--color-interactive);
   color: var(--color-ink-inverted);
