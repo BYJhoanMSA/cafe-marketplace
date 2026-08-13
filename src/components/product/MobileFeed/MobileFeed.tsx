@@ -206,20 +206,24 @@ export function MobileFeed({ products, onAddToCart }: MobileFeedProps) {
     const handleScroll = () => {
       const step = container.clientHeight
       if (step <= 0) return
-      const index = Math.round(container.scrollTop / step)
-      setActiveIndex(Math.min(Math.max(index, 0), products.length - 1))
+      const rawIndex = Math.round(container.scrollTop / step)
+      const targetIndex = Math.min(Math.max(rawIndex, 0), products.length - 1)
 
-      const now = Date.now()
-      if (now - lastScrollSaveRef.current > 150) {
-        lastScrollSaveRef.current = now
-        try {
-          sessionStorage.setItem(SCROLL_POS_KEY, String(container.scrollTop))
-        } catch {}
-      }
+      // Solo actualizar el estado si el índice del producto cambió de slide
+      setActiveIndex((prev) => (prev !== targetIndex ? targetIndex : prev))
 
-      setSettled(false)
+      // Solo desmarcar settled si previamente estaba marcado
+      setSettled((prev) => (prev ? false : prev))
+
       if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
-      settleTimerRef.current = setTimeout(() => setSettled(true), SETTLE_DELAY_MS)
+      settleTimerRef.current = setTimeout(() => {
+        setSettled(true)
+        if (containerRef.current) {
+          try {
+            sessionStorage.setItem(SCROLL_POS_KEY, String(containerRef.current.scrollTop))
+          } catch {}
+        }
+      }, SETTLE_DELAY_MS)
     }
 
     handleScroll()

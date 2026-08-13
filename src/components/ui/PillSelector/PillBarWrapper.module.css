@@ -41,9 +41,7 @@
     border-bottom: none;
     border-top: 1px solid var(--color-border-default);
     background: var(--pillbar-mobile-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    transform: translateY(0);
+    transform: translateZ(0);
     transition: transform 0.35s ease;
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
