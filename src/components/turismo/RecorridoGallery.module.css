@@ -155,3 +155,12 @@
     animation: none;
   }
 }
+
+/* Mobile: el Ken Burns reiniciado cada 5s por el auto-roll obliga a la GPU a
+   escalar la imagen a ancho completo durante el scroll (se siente "pegado").
+   Se deja solo el crossfade entre slides. */
+@media (max-width: 767px) {
+  .slideImageActive {
+    animation: none;
+  }
+}

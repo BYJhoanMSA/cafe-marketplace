@@ -360,3 +360,15 @@
     flex-basis: 100%;
   }
 }
+
+/* ================================================================
+   RENDERIZADO BAJO DEMANDA — content-visibility
+   El navegador solo pinta lo que está cerca del viewport al hacer
+   scroll, en lugar de repintar todo el árbol (mejora la fluidez).
+   contain-intrinsic-size: recuerda el tamaño real para evitar saltos.
+   ================================================================ */
+.details,
+.reviewsWrap {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}

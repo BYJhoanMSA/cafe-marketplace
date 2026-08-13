@@ -51,6 +51,14 @@
   background-size: 160px 160px;
 }
 
+/* Mobile: el grano SVG + mix-blend-mode a pantalla completa es una capa de
+   composición carísima que hace el scroll pesado. Se elimina en mobile. */
+@media (max-width: 767px) {
+  .heroGrain {
+    display: none;
+  }
+}
+
 .heroContent {
   position: relative;
   z-index: 2;
@@ -175,6 +183,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .marquee {
+    display: none;
+  }
+}
+
+/* Mobile: la marquesina en movimiento perpetuo suma carga de GPU al scrollear.
+   Se muestra solo en desktop. */
+@media (max-width: 767px) {
   .marquee {
     display: none;
   }
