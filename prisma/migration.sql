@@ -50,3 +50,8 @@ ALTER TABLE products MODIFY createdById VARCHAR(36) NOT NULL;
 -- =============================================================================
 ALTER TABLE products ADD COLUMN favoritesCount INT NOT NULL DEFAULT 0;
 ALTER TABLE products ADD COLUMN sharesCount INT NOT NULL DEFAULT 0;
+
+-- =============================================================================
+-- RENOMBRAR subregion -> municipio en origins (2.08.12.7)
+-- =============================================================================
+ALTER TABLE origins CHANGE COLUMN subregion municipio VARCHAR(100) NULL;

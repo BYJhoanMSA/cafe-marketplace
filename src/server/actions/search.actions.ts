@@ -33,7 +33,7 @@ export async function searchProducts(query: string) {
           { harvestDate: { contains: trimmed } },
           { origin: { country: { contains: trimmed } } },
           { origin: { region: { contains: trimmed } } },
-          { origin: { subregion: { contains: trimmed } } },
+          { origin: { municipio: { contains: trimmed } } },
           { vendor: { storeName: { contains: trimmed } } },
           { category: { name: { contains: trimmed } } },
           { flavorNotes: { some: { note: { contains: trimmed } } } },

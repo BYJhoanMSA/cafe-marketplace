@@ -72,6 +72,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
     processingMethod: initialData?.processingMethod || 'washed',
     // Ficha de Ubicación y Terruño (Origen Colombiano)
     regionName: initialData?.origin?.region || 'Huila',
+    municipioName: initialData?.origin?.municipio || '',
     farmName: initialData?.farmName || '',
     producerName: initialData?.producerName || '',
     altitudeMasl: initialData?.altitudeMasl || '1800',
@@ -548,6 +549,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
 
       <OriginTerroirSection
         regionName={formData.regionName}
+        municipioName={formData.municipioName}
         farmName={formData.farmName}
         producerName={formData.producerName}
         altitudeMasl={formData.altitudeMasl}

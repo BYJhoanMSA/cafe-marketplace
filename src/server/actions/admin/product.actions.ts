@@ -26,6 +26,7 @@ const ProductSchema = z.object({
   categoryId: z.string().optional(),
   originId: z.string().optional(),
   regionName: z.string().optional(),
+  municipioName: z.string().optional(),
   status: z.string().default('draft'),
   roastLevel: z.string().min(1),
   processingMethod: z.string().min(1),
@@ -132,7 +133,7 @@ export async function getAdminProductById(id: string) {
     include: {
       images: { orderBy: { position: 'asc' } },
       flavorNotes: { select: { note: true } },
-      origin: { select: { region: true } },
+      origin: { select: { region: true, municipio: true } },
       createdBy: { select: { id: true, email: true, firstName: true, lastName: true } },
     },
   })
@@ -181,14 +182,16 @@ export async function createProduct(data: Record<string, unknown>) {
     // Gestionar Origen por Región
     let originId = d.originId
     if (!originId && d.regionName) {
-      const regionSlug = slugify(`colombia-${d.regionName}`)
+      const municipio = d.municipioName?.trim() || ''
+      const regionSlug = slugify(`colombia-${d.regionName}${municipio ? `-${municipio}` : ''}`)
       const origin = await prisma.origin.upsert({
         where: { slug: regionSlug },
-        update: { region: d.regionName },
+        update: { region: d.regionName, municipio: municipio || null },
         create: {
           country: 'Colombia',
           countryCode: 'CO',
           region: d.regionName,
+          municipio: municipio || null,
           slug: regionSlug,
         }
       })
@@ -293,14 +296,16 @@ export async function updateProduct(id: string, data: any) {
 
     let originId = data.originId
     if (data.regionName) {
-      const regionSlug = slugify(`colombia-${data.regionName}`)
+      const municipio = data.municipioName?.trim() || ''
+      const regionSlug = slugify(`colombia-${data.regionName}${municipio ? `-${municipio}` : ''}`)
       const origin = await prisma.origin.upsert({
         where: { slug: regionSlug },
-        update: { region: data.regionName },
+        update: { region: data.regionName, municipio: municipio || null },
         create: {
           country: 'Colombia',
           countryCode: 'CO',
           region: data.regionName,
+          municipio: municipio || null,
           slug: regionSlug,
         }
       })

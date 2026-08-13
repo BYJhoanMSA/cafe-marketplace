@@ -2,10 +2,11 @@
 
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
-import { COLOMBIAN_REGIONS } from '@/lib/colombia'
+import { COLOMBIAN_REGIONS, MUNICIPIOS_ANTIOQUIA } from '@/lib/colombia'
 
 interface OriginTerroirSectionProps {
   regionName: string
+  municipioName: string
   farmName: string
   producerName: string
   altitudeMasl: string
@@ -16,7 +17,7 @@ interface OriginTerroirSectionProps {
 }
 
 export function OriginTerroirSection({
-  regionName, farmName, producerName, altitudeMasl, varietal, cuppingScore,
+  regionName, municipioName, farmName, producerName, altitudeMasl, varietal, cuppingScore,
   onFieldChange, onSelectChange
 }: OriginTerroirSectionProps) {
   return (
@@ -44,6 +45,27 @@ export function OriginTerroirSection({
             value={regionName}
             onChange={(val) => onSelectChange('regionName', val)}
           />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          {regionName === 'Antioquia' ? (
+            <>
+              <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Municipio</label>
+              <Select
+                options={MUNICIPIOS_ANTIOQUIA.map((m) => ({ label: m, value: m }))}
+                value={municipioName}
+                onChange={(val) => onSelectChange('municipioName', val)}
+              />
+            </>
+          ) : (
+            <Input
+              label="Municipio"
+              name="municipioName"
+              value={municipioName}
+              onChange={onFieldChange}
+              placeholder="Ej: Pitalito, Palestina"
+            />
+          )}
         </div>
 
         <Input

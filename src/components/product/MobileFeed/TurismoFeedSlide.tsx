@@ -277,7 +277,7 @@ export function TurismoFeedSlide({ recorrido, isActive, settled, seen, onOpenTur
         </a>
       </div>
 
-      <div className={styles.content}>
+      <div className={styles.contentTop}>
         <div className={styles.tags}>
           {recorrido.destacado && <span className={styles.tag}>Destacado</span>}
           {recorrido.dificultad && (
@@ -315,7 +315,9 @@ export function TurismoFeedSlide({ recorrido, isActive, settled, seen, onOpenTur
             </span>
           )}
         </div>
+      </div>
 
+      <div className={styles.content}>
         <div className={`${styles.buySection} ${styles.turismoBuySection}`}>
           <div className={styles.priceBlock}>
             {hasDiscount && (

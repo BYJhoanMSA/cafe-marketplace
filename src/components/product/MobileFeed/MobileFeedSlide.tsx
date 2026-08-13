@@ -327,7 +327,7 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
         </button>
       </div>
 
-      <div className={styles.content}>
+      <div className={styles.contentTop}>
         <div className={styles.tags}>
           {product.cuppingScore && (
             <span className={`${styles.tag} ${styles.score}`}>SCA {product.cuppingScore}</span>
@@ -349,7 +349,9 @@ export function MobileFeedSlide({ product, isActive, settled, seen, onAddToCart,
             {product.shortDescription || product.category || `Tueste ${product.roastLevel === 'light' ? 'ligero' : product.roastLevel === 'medium' ? 'medio' : 'oscuro'} perfecto para resaltar las notas de origen.`}
           </p>
         </Link>
+      </div>
 
+      <div className={styles.content}>
         <div className={styles.buySection}>
           <div className={styles.priceBlock}>
             <span className={styles.price}>{formatPrice(product.price, product.currency)}</span>

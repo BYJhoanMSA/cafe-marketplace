@@ -579,7 +579,7 @@ export interface OriginDetail {
   slug: string
   country: string
   region: string | null
-  subregion: string | null
+  municipio: string | null
   description: string | null
   imageUrl: string | null
   products: ProductCard[]
@@ -595,7 +595,7 @@ export async function getOriginBySlug(slug: string): Promise<OriginDetail | null
           slug: true,
           country: true,
           region: true,
-          subregion: true,
+          municipio: true,
           description: true,
           imageUrl: true,
           products: {
@@ -617,7 +617,7 @@ export async function getOriginBySlug(slug: string): Promise<OriginDetail | null
         slug: origin.slug,
         country: origin.country,
         region: origin.region,
-        subregion: origin.subregion,
+        municipio: origin.municipio,
         description: origin.description,
         imageUrl: origin.imageUrl,
         products: origin.products.map(mapToProductCard),

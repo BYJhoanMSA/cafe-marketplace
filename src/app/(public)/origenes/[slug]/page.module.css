@@ -58,7 +58,7 @@
   margin: 0;
 }
 
-.subregion {
+.municipio {
   font-size: var(--text-base);
   font-weight: var(--font-weight-semibold);
   color: var(--terra-600);

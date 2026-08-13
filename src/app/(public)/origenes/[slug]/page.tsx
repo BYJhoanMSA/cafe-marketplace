@@ -49,8 +49,8 @@ export default async function OriginDetailPage({ params }: PageProps) {
         )}
         <div className={styles.headerContent}>
           <h1 className={styles.title}>{displayName}</h1>
-          {origin.subregion && (
-            <p className={styles.subregion}>{origin.subregion}</p>
+          {origin.municipio && (
+            <p className={styles.municipio}>{origin.municipio}</p>
           )}
           {origin.description && (
             <p className={styles.description}>{origin.description}</p>
