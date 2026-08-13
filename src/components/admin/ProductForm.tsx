@@ -82,6 +82,7 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
     isLimited: initialData?.isLimited || false,
     isOrganic: initialData?.isOrganic || false,
     isPublicity: initialData?.isPublicity || false,
+    sortOrder: initialData?.sortOrder || 0,
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -619,6 +620,20 @@ export function ProductForm({ initialData, vendors = [], categories = [], varian
           onChange={handleChange} 
           placeholder="88.5"
         />
+
+        {isAdmin && (
+          <Input 
+            label="Prioridad de catálogo" 
+            name="sortOrder" 
+            type="number"
+            min={0}
+            step={1}
+            value={formData.sortOrder}
+            onChange={(e) => setFormData(prev => ({ ...prev, sortOrder: parseInt(e.target.value, 10) || 0 }))}
+            placeholder="0"
+            hint="Más alto aparece primero. 0 = orden normal."
+          />
+        )}
       </div>
 
       <ProductBadgesSection

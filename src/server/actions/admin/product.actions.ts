@@ -40,6 +40,7 @@ const ProductSchema = z.object({
   isOrganic: z.boolean().default(false),
   isPublicity: z.boolean().default(false),
   isFairTrade: z.boolean().default(false),
+  sortOrder: z.number().int().min(0).default(0),
   images: z.array(z.object({
     url: z.string(),
     alt: z.string(),
@@ -113,9 +114,7 @@ export async function getAdminProducts(page = 1, limit = 50) {
         vendor: true,
         createdBy: { select: { id: true, email: true, firstName: true, lastName: true } },
       },
-      orderBy: {
-        createdAt: 'desc'
-      },
+      orderBy: [{ sortOrder: 'desc' }, { createdAt: 'desc' }],
       skip: (page - 1) * limit,
       take: limit,
     }),
@@ -204,6 +203,8 @@ export async function createProduct(data: Record<string, unknown>) {
     // "Publicidad" y "Destacado" son exclusivos del Administrador General
     const isPublicity = isAdmin ? (d.isPublicity ?? false) : false
     const isFeatured = isAdmin ? (d.isFeatured ?? false) : false
+    // La prioridad de catálogo solo la define el admin
+    const sortOrder = isAdmin ? (d.sortOrder ?? 0) : 0
     // Solo el admin puede publicar directo; el resto crea borradores en moderación
     const status = isAdmin ? (d.status || 'draft') : 'draft'
 
@@ -226,6 +227,7 @@ export async function createProduct(data: Record<string, unknown>) {
         isOrganic: d.isOrganic ?? false,
         isPublicity,
         isFairTrade: d.isFairTrade ?? false,
+        sortOrder,
         vendorId: vendor.vendorId,
         categoryId: d.categoryId || defaultCategory.id,
         originId: originId,
@@ -271,7 +273,7 @@ export async function updateProduct(id: string, data: any) {
   try {
     const existing = await prisma.product.findUnique({
       where: { id },
-      select: { id: true, createdById: true, vendorId: true, isPublicity: true, isFeatured: true, status: true },
+      select: { id: true, createdById: true, vendorId: true, isPublicity: true, isFeatured: true, status: true, sortOrder: true },
     })
 
     if (!existing) {
@@ -349,6 +351,8 @@ export async function updateProduct(id: string, data: any) {
     const isPublicity = isAdmin ? (data.isPublicity ?? existing.isPublicity) : false
     const isFeatured = isAdmin ? (data.isFeatured ?? existing.isFeatured) : existing.isFeatured
     const status = isAdmin ? data.status : existing.status
+    // La prioridad de catálogo solo la define el admin
+    const sortOrder = isAdmin ? (Number(data.sortOrder) || 0) : existing.sortOrder
 
     const product = await prisma.product.update({
       where: { id },
@@ -366,6 +370,7 @@ export async function updateProduct(id: string, data: any) {
         cuppingScore: data.cuppingScore ? parseFloat(data.cuppingScore) : null,
         isFeatured,
         isPublicity,
+        sortOrder,
         vendorId,
         categoryId: data.categoryId,
         ...(originId ? { originId } : {}),
@@ -509,5 +514,53 @@ export async function deleteProduct(formData: FormData): Promise<void> {
   } catch (error: any) {
     if (isForbiddenError(error)) return
     console.error('Error deleting product:', error)
+  }
+}
+
+// =============================================================================
+// POST reordenar prioridad — mover un producto ↑/↓ en la lista de catálogo
+// =============================================================================
+
+export async function reorderProduct(formData: FormData): Promise<void> {
+  const session = await requireRole(['admin'])
+
+  const id = formData.get('productId') as string
+  const direction = formData.get('direction') as 'up' | 'down'
+  if (!id || (direction !== 'up' && direction !== 'down')) return
+
+  try {
+    const products = await prisma.product.findMany({
+      where: { deletedAt: null },
+      orderBy: [{ sortOrder: 'desc' }, { createdAt: 'desc' }],
+      select: { id: true },
+    })
+
+    const index = products.findIndex((p) => p.id === id)
+    if (index === -1) return
+    const target = direction === 'up' ? index - 1 : index + 1
+    if (target < 0 || target >= products.length) return
+
+    const list = [...products]
+    const moving = list[index]!
+    const neighbor = list[target]!
+    list[index] = neighbor
+    list[target] = moving
+
+    await prisma.$transaction(
+      list.map((p, i) =>
+        prisma.product.update({
+          where: { id: p.id },
+          data: { sortOrder: list.length - i },
+        })
+      )
+    )
+
+    revalidatePath('/admin/productos')
+    revalidatePath('/catalogo')
+    revalidatePath('/')
+    invalidateProductsCache()
+  } catch (error: any) {
+    if (isForbiddenError(error)) return
+    console.error('Error reordering product:', error)
   }
 }

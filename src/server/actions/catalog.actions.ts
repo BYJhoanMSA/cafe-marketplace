@@ -135,7 +135,7 @@ export async function getActiveProducts(filters?: CatalogFilters, options?: { ta
       let products = await prisma.product.findMany({
         where,
         include: productCardInclude,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ sortOrder: 'desc' }, { createdAt: 'desc' }],
         take,
         skip,
       })

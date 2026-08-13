@@ -311,6 +311,9 @@ model Product {
   isPublicity      Boolean   @default(false)
   isFairTrade      Boolean   @default(false)
 
+  // Prioridad de display (más alto = aparece primero en catálogo/home)
+  sortOrder        Int       @default(0)
+
   // Métricas calculadas (se actualizan en cada review/venta)
   avgRating        Decimal   @default(0) @db.Decimal(3, 2)
   reviewCount      Int       @default(0)
@@ -353,6 +356,7 @@ model Product {
   @@index([isFeatured])
   @@index([isNew])
   @@index([cuppingScore])
+  @@index([sortOrder])
   @@index([deletedAt])
   @@map("products")
 }

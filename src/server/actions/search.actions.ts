@@ -46,7 +46,7 @@ export async function searchProducts(query: string) {
       },
       include: productCardInclude,
       take: 20,
-      orderBy: { createdAt: 'desc' }
+      orderBy: [{ sortOrder: 'desc' }, { createdAt: 'desc' }]
     }) as unknown as ProductWithRelations[]
 
     return products.map(mapToProductCard)

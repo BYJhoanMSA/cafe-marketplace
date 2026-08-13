@@ -2,8 +2,9 @@
 import Link from 'next/link'
 import { getAdminProducts } from '@/server/actions/admin/product.actions'
 import { Badge } from '@/components/ui/Badge'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
-import { deleteProduct } from '@/server/actions/admin/product.actions'
+import { Plus, Edit2, Trash2, ArrowUp, ArrowDown } from 'lucide-react'
+import { deleteProduct, reorderProduct } from '@/server/actions/admin/product.actions'
+import { auth } from '@/lib/auth'
 
 export const metadata = {
   title: 'Productos | Panel Admin',
@@ -11,6 +12,8 @@ export const metadata = {
 
 export default async function AdminProductsPage() {
   const { products, total } = await getAdminProducts()
+  const session = await auth()
+  const isAdmin = session?.user?.role === 'admin'
 
   return (
     <div>
@@ -48,6 +51,9 @@ export default async function AdminProductsPage() {
               <th style={{ padding: 'var(--space-4)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-ink-secondary)', fontSize: 'var(--text-xs)', textTransform: 'uppercase' }}>Producto</th>
               <th style={{ padding: 'var(--space-4)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-ink-secondary)', fontSize: 'var(--text-xs)', textTransform: 'uppercase' }}>Estado</th>
               <th style={{ padding: 'var(--space-4)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-ink-secondary)', fontSize: 'var(--text-xs)', textTransform: 'uppercase' }}>Vendor</th>
+              {isAdmin && (
+                <th style={{ padding: 'var(--space-4)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-ink-secondary)', fontSize: 'var(--text-xs)', textTransform: 'uppercase', textAlign: 'center' }}>Prioridad</th>
+              )}
               <th style={{ padding: 'var(--space-4)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-ink-secondary)', fontSize: 'var(--text-xs)', textTransform: 'uppercase', textAlign: 'right' }}>Acciones</th>
             </tr>
           </thead>
@@ -66,6 +72,29 @@ export default async function AdminProductsPage() {
                 <td style={{ padding: 'var(--space-4)', fontSize: 'var(--text-sm)', color: 'var(--color-ink-secondary)' }}>
                   {product.vendor.storeName}
                 </td>
+                {isAdmin && (
+                  <td style={{ padding: 'var(--space-4)', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)' }}>
+                      <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-ink-tertiary)', minWidth: '1.5rem' }}>
+                        {product.sortOrder || '—'}
+                      </span>
+                      <form action={reorderProduct}>
+                        <input type="hidden" name="productId" value={product.id} />
+                        <input type="hidden" name="direction" value="up" />
+                        <button type="submit" title="Mover arriba (más prioridad)" style={{ background: 'none', border: 'none', color: 'var(--color-ink-secondary)', cursor: 'pointer', padding: 'var(--space-1)' }}>
+                          <ArrowUp size={16} />
+                        </button>
+                      </form>
+                      <form action={reorderProduct}>
+                        <input type="hidden" name="productId" value={product.id} />
+                        <input type="hidden" name="direction" value="down" />
+                        <button type="submit" title="Mover abajo (menos prioridad)" style={{ background: 'none', border: 'none', color: 'var(--color-ink-secondary)', cursor: 'pointer', padding: 'var(--space-1)' }}>
+                          <ArrowDown size={16} />
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                )}
                 <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}>
                   <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
                     <Link 
@@ -87,7 +116,7 @@ export default async function AdminProductsPage() {
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan={4} style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-ink-secondary)' }}>
+                <td colSpan={isAdmin ? 5 : 4} style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-ink-secondary)' }}>
                   No hay productos registrados.
                 </td>
               </tr>
