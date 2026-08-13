@@ -37,6 +37,14 @@
   }
 }
 
+/* Mobile: el Ken Burns sobre una imagen full-screen obliga a la GPU a
+   recomponer cada frame (causa el "pegado"). Se deja la imagen estática. */
+@media (max-width: 767px) {
+  .heroImage {
+    animation: none;
+  }
+}
+
 /* Overlay gradiente — texto legible sobre imagen */
 .heroOverlay {
   position: absolute;
@@ -60,6 +68,14 @@
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
+}
+
+/* Mobile: el grano SVG + mix-blend-mode a pantalla completa es una capa de
+   composición carísima. Se elimina en mobile (visualmente imperceptible). */
+@media (max-width: 767px) {
+  .heroGrain {
+    display: none;
+  }
 }
 
 .heroContent {
@@ -809,6 +825,14 @@
   }
 }
 
+/* Mobile: la marquesina en movimiento perpetuo suma carga de GPU.
+   Se muestra solo en desktop. */
+@media (max-width: 767px) {
+  .marquee {
+    display: none;
+  }
+}
+
 /* ================================================================
    VAPOR — Banner de perfil de sabor (copa humeante)
    ================================================================ */
@@ -850,46 +874,73 @@
   }
 }
 
+/* Mobile: el blur animado del vapor es caro en móviles. Decorativo:
+   se oculta en mobile. */
+@media (max-width: 767px) {
+  .steam {
+    display: none;
+  }
+}
+
+/* ================================================================
+   MOBILE — renderizado bajo demanda
+   content-visibility: el navegador solo pinta lo que está en viewport.
+   El resto se dibuja al hacer scroll (reduce el trabajo inicial y el
+   bloqueo del hilo principal al cargar).
+   ================================================================ */
+@media (max-width: 767px) {
+  .section,
+  .originBanner,
+  .trustBar {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 700px;
+  }
+}
+
 /* ================================================================
    REVELADO AL HACER SCROLL — scroll-driven animations nativas
    Solo se aplica donde el navegador lo soporta (degradación: sin animación)
    ================================================================ */
-@supports (animation-timeline: view()) {
-  .sectionHeader,
-  .tasteProfileBanner {
-    animation: reveal-up var(--duration-deliberate) var(--ease-out) both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 30%;
-  }
+/* Solo desktop: en mobile los reveals escalonados crean muchos layers
+   que compiten durante el scroll (contenido del móvil aparece directo). */
+@media (min-width: 768px) {
+  @supports (animation-timeline: view()) {
+    .sectionHeader,
+    .tasteProfileBanner {
+      animation: reveal-up var(--duration-deliberate) var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
 
-  .productGrid > *,
-  .originGrid > *,
-  .valueGrid > *,
-  .testimonialGrid > * {
-    animation: reveal-fade var(--duration-slow) var(--ease-out) both;
-    animation-timeline: view();
-    animation-range: entry 6% entry 40%;
-  }
+    .productGrid > *,
+    .originGrid > *,
+    .valueGrid > *,
+    .testimonialGrid > * {
+      animation: reveal-fade var(--duration-slow) var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 6% entry 40%;
+    }
 
-  .productGrid > *:nth-child(2),
-  .originGrid > *:nth-child(2),
-  .valueGrid > *:nth-child(2),
-  .testimonialGrid > *:nth-child(2) { animation-range: entry 13% entry 47%; }
+    .productGrid > *:nth-child(2),
+    .originGrid > *:nth-child(2),
+    .valueGrid > *:nth-child(2),
+    .testimonialGrid > *:nth-child(2) { animation-range: entry 13% entry 47%; }
 
-  .productGrid > *:nth-child(3),
-  .originGrid > *:nth-child(3),
-  .valueGrid > *:nth-child(3),
-  .testimonialGrid > *:nth-child(3) { animation-range: entry 20% entry 54%; }
+    .productGrid > *:nth-child(3),
+    .originGrid > *:nth-child(3),
+    .valueGrid > *:nth-child(3),
+    .testimonialGrid > *:nth-child(3) { animation-range: entry 20% entry 54%; }
 
-  .productGrid > *:nth-child(4),
-  .originGrid > *:nth-child(4),
-  .valueGrid > *:nth-child(4) { animation-range: entry 27% entry 61%; }
+    .productGrid > *:nth-child(4),
+    .originGrid > *:nth-child(4),
+    .valueGrid > *:nth-child(4) { animation-range: entry 27% entry 61%; }
 
-  /* Parallax sutil del fondo del hero (misma feature: scroll(root)) */
-  .heroBackground {
-    animation: hero-parallax var(--duration-lazy) var(--ease-linear) backwards;
-    animation-timeline: scroll(root);
-    animation-range: 0px 700px;
+    /* Parallax sutil del fondo del hero (misma feature: scroll(root)) */
+    .heroBackground {
+      animation: hero-parallax var(--duration-lazy) var(--ease-linear) backwards;
+      animation-timeline: scroll(root);
+      animation-range: 0px 700px;
+    }
   }
 }
 
