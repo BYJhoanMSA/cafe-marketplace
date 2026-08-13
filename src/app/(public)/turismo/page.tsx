@@ -96,7 +96,7 @@ export default async function TurismoPage({ searchParams }: PageProps) {
             <div className={styles.empty}>
               <p className={styles.emptyTitle}>No encontramos recorridos con esos filtros.</p>
               <p className={styles.emptyText}>
-                Prueba con otra región o municipio, o contacta con nosotros por WhatsApp
+                Prueba con otro departamento o municipio, o contacta con nosotros por WhatsApp
                 para armarte una experiencia a medida.
               </p>
             </div>

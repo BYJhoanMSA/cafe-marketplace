@@ -34,6 +34,7 @@ export interface RecorridoTuristicoCard {
   dificultad: string | null
   capacidad: number | null
   imagen: string
+  imagenes: string[]
   destacado: boolean
 }
 
@@ -79,6 +80,7 @@ const cardSelect = {
   capacidad: true,
   imagen: true,
   destacado: true,
+  imagenes: { select: { url: true }, orderBy: { orden: 'asc' } },
 } as const
 
 function mapToCard(r: {
@@ -96,6 +98,7 @@ function mapToCard(r: {
   capacidad: number | null
   imagen: string
   destacado: boolean
+  imagenes: { url: string }[]
 }): RecorridoTuristicoCard {
   return {
     id: r.id,
@@ -111,6 +114,7 @@ function mapToCard(r: {
     dificultad: r.dificultad,
     capacidad: r.capacidad,
     imagen: r.imagen,
+    imagenes: r.imagenes.map((img) => img.url),
     destacado: r.destacado,
   }
 }

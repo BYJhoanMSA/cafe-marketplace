@@ -13,8 +13,7 @@ import { Select } from '@/components/ui/Select'
 import { ImageUploader, type UploadedImage } from '@/components/admin/ImageUploader'
 import { crearRecorrido, actualizarRecorrido } from '@/server/actions/turismo.actions'
 import { slugify } from '@/lib/utils'
-
-export const REGIONES_TURISMO = ['Andina', 'Cafetera', 'Caribe', 'Pacífico', 'Orinoquía', 'Amazonía', 'Insular']
+import { DEPARTAMENTOS_COLOMBIA, MUNICIPIOS_ANTIOQUIA } from '@/lib/colombia'
 
 const DIFICULTADES = ['baja', 'media', 'alta']
 
@@ -46,7 +45,7 @@ export function RecorridoForm({ initialData }: RecorridoFormProps) {
     descripcion: initialData?.descripcion || '',
     precio: initialData?.precio ? String(initialData.precio) : '',
     precioOriginal: initialData?.precioOriginal ? String(initialData.precioOriginal) : '',
-    region: initialData?.region || REGIONES_TURISMO[0] || '',
+    region: initialData?.region || 'Antioquia',
     municipio: initialData?.municipio || '',
     vereda: initialData?.vereda || '',
     duracion: initialData?.duracion || '',
@@ -199,17 +198,34 @@ export function RecorridoForm({ initialData }: RecorridoFormProps) {
 
       {/* Ubicación */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-        <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Región</label>
+        <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Departamento</label>
         <Select
-          options={REGIONES_TURISMO.map((r) => ({ label: r, value: r }))}
+          options={DEPARTAMENTOS_COLOMBIA.map((d) => ({ label: d, value: d }))}
           value={formData.region}
           onChange={(val) => handleSelectChange('region', val)}
-          aria-label="Región"
+          aria-label="Departamento"
         />
+        {formData.region !== 'Antioquia' && (
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-ink-secondary)' }}>
+            Solo contamos con lista de municipios para Antioquia; para otros departamentos escribe el municipio manualmente.
+          </p>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' }}>
-        <Input label="Municipio" name="municipio" value={formData.municipio} onChange={handleChange} required placeholder="Ej: Pereira" />
+        {formData.region === 'Antioquia' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <label style={{ fontSize: 'var(--text-sm)', fontWeight: 'var(--font-weight-medium)' }}>Municipio</label>
+            <Select
+              options={MUNICIPIOS_ANTIOQUIA.map((m) => ({ label: m, value: m }))}
+              value={formData.municipio}
+              onChange={(val) => handleSelectChange('municipio', val)}
+              aria-label="Municipio"
+            />
+          </div>
+        ) : (
+          <Input label="Municipio" name="municipio" value={formData.municipio} onChange={handleChange} required placeholder="Ej: Pereira" />
+        )}
         <Input label="Vereda (opcional)" name="vereda" value={formData.vereda} onChange={handleChange} placeholder="Ej: El Placer" />
         <Input label="Duración" name="duracion" value={formData.duracion} onChange={handleChange} placeholder="Ej: 5 horas" />
       </div>

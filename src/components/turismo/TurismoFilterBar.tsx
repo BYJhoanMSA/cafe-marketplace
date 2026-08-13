@@ -69,14 +69,14 @@ export function TurismoFilterBar({ initialRegion = '', initialMunicipio = '' }: 
           <Filter size={14} /> Filtros:
         </span>
 
-        {/* REGIÓN */}
+        {/* DEPARTAMENTO */}
         <select
           className={styles.filterSelect}
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
-          aria-label="Filtrar por región"
+          aria-label="Filtrar por departamento"
         >
-          <option value="">🌍 Todas las regiones</option>
+          <option value="">🌍 Todos los departamentos</option>
           {regiones.map((r) => (
             <option key={r.region} value={r.region}>
               {r.region} ({r.count})
